@@ -25,9 +25,9 @@ fn main() {
         logger.retention_days = 2;
         // The higher this level, the more will be omitted.
         //
-        // |<-- Low Level ----------------------- High level -->|
-        // |<-- High priority ----------------- Low priority -->|
-        // |Fatal < Error < Warn < Notice < Info < Debug < Trace|
+        // |<-- Low Level --------------------- High level -->|
+        // |<-- High priority --------------- Low priority -->|
+        // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
         logger.level = Level::Trace;
         // Remove old log files. This is determined by the
         //  StartDate in the filename.
@@ -35,18 +35,21 @@ fn main() {
     } else {
         0
     };
-    Log::noticeln(&format!("Remove file count={}", remove_num));
+    Log::noticeln(&format!("Remove {} files.", remove_num));
 
+    // Multi-line string.
     Log::infoln(
         "Hello, world!!
 こんにちわ、世界！！",
     );
 
+    // After explicitly checking the level.
     if Log::enabled(Level::Info) {
         let x = 100; // Time-consuming preparation, here.
         Log::infoln(&format!("x is {}.", x));
     }
 
+    // The level is implicitly confirmed.
     Log::trace("A,");
     Log::traceln("B,");
     Log::debug("C,");

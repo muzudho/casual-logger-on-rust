@@ -1,11 +1,11 @@
 [package]
 name = "casual_logger"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["むずでょ <muzudho1@gmail.com>"]
 edition = "2018"
 description = """
-A logger that can be easily installed to simplify the sample program.
-It only supports writing to files and deleting old log files.
+A logger used when practicing the example programs.
+Only write to file, rotate by date.
 """
 readme = "README.md"
 homepage = "https://github.com/muzudho/casual-logger-on-rust"

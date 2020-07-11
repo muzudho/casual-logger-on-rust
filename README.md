@@ -1,8 +1,8 @@
 # casual_logger
 
-A logger used when practicing the sample programs.  
+A logger used when practicing the example programs.  
 Only write to file, rotate by date.  
-Not for hard users.
+Not for hard users.  
 
 ## At first, Disclaim
 
@@ -36,9 +36,9 @@ fn main() {
         logger.retention_days = 2;
         // The higher this level, the more will be omitted.
         //
-        // |<-- Low Level ----------------------- High level -->|
-        // |<-- High priority ----------------- Low priority -->|
-        // |Fatal < Error < Warn < Notice < Info < Debug < Trace|
+        // |<-- Low Level --------------------- High level -->|
+        // |<-- High priority --------------- Low priority -->|
+        // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
         logger.level = Level::Trace;
         // Remove old log files. This is determined by the
         // StartDate in the filename.
@@ -46,7 +46,7 @@ fn main() {
     } else {
         0
     };
-    Log::noticeln(&format!("Remove file count={}", remove_num));
+    Log::noticeln(&format!("Remove {} files.", remove_num));
 
     Log::infoln(
         "Hello, world!!
@@ -148,15 +148,17 @@ For example: `./tic-tac-toe-2020-07-12.log.toml`
 
 Description:  
 
-* `./` - Working directory only.
-* `tic-tac-toe` - Prefix. Editable. Default: `default`.
-* `-2020-07-12` - StartDate. Auto generated.
-* `.log` - Suffix. Editable. Default: `.log`.
+| Part          | Name      | Description       | Default   |
+| ------------- | --------- | ----------------- | --------- |
+| `./`          |           | Working directory |           |
+|               |           | only.             |           |
+| `tic-tac-toe` | Prefix    | Editable.         | `default` |
+| `-2020-07-12` | StartDate | Auto generated.   |           |
+| `.log`        | Suffix    | Editable.         | `.log`    |
+| `.toml`       | Extension | Editable.         | `.toml`   |
 
 Suffix to be safe, include a word that  
 clearly states that you can delete the file.  
-
-* `.toml` - Extension. Editable. Default: `.toml`.
 
 If you don't like the .toml extension, leave  
 the suffix empty and the .log extension.  
@@ -175,36 +177,78 @@ fn main() {
 }
 ```
 
-Description of **retention_days**:  
+### Logger Properties
 
-* For example, `retention_days` is 2. Default: `7`.
+| Name             | Description                | Default |
+| ---------------- | -------------------------- | ------- |
+| `retention_days` | After this number of days, | `7`     |
+|                  | the file will be deleted.  |         |
+| `level`          | Used to switch between     | `Trace` |
+|                  | write and non-write.       |         |
+
+Example of **retention_days**:  
+
+* `retention_days` is 2.
 * Today is 2020-07-12.
 * The `./default-2020-07-09.log.toml` file will be deleted.
 * The `./default-2020-07-10.log.toml` remains.
 * Delete old files by date in filename.
 
-Description of **level**:  
+Example of **level**:  
 
-* There are 7 log levels. Default: `Trace`.
-  * `Fatal < Error < Warn < Notice < Info < Debug < Trace`.
-* Example:
-  * `Log::info("Hello, world!!");`
-  * `Log::infoln("Hello, world!!");`
-  * `if Log::enabled(Level::Info) {Log::infoln("Hello!");}`
+* There are 7 log levels.
+  * `|Fatal< Error < Warn < Notice < Info < Debug <Trace|`
+  * `|<-- Small ------------------------------ Large -->|`
+  * `|<-- Concise -------------------------- Verbose -->|`
+  * `|<-- Low Level --------------------- High level -->|`
+  * `|<-- High priority --------------- Low priority -->|`
+
+| Level    | Examle of use.                                     |
+| -------- | -------------------------------------------------- |
+| `Fatal`  | If the program cannot continue.                    |
+| `Error`  | I didn't get the expected result,                  |
+|          | so I'll continue with the other method.            |
+| `Warn`   | It will be abnormal soon,                          |
+|          | but there is no problem and you can ignore it.     |
+|          | For example:                                       |
+|          | (1) He reported that it took longer to access      |
+|          | than expected.                                     |
+|          | (2) Report that capacity is approaching the limit. |
+| `Notice` | It must be enabled in the server production        |
+|          | environment.                                       |
+|          | Record of passing important points correctly.      |
+|          | We are monitoring that it is working properly.     |
+| `Info`   | Report highlights.                                 |
+|          | Everything that needs to be reported regularly in  |
+|          | the production environment.                        |
+| `Debug`  | It should be in a place with many accidents.       |
+|          | This level is disabled in production environments. |
+|          | Leave it in the source and enable it for           |
+|          | troubleshooting.                                   |
+|          | Often, this is the production level of a desktop   |
+|          | operating environment.                             |
+| `Trace`  | Not included in the distribution.                  |
+|          | Remove this level from the source after using it   |
+|          | for debugging.                                     |
+|          | If you want to find a bug in the program,          |
+|          | write a lot.                                       |
 
 Code:  
 
 ```rust
+    // Multi-line string.
     Log::infoln(
         "Hello, world!!
 こんにちわ、世界！！",
     );
 
+    // After explicitly checking the level.
     if Log::enabled(Level::Info) {
         let x = 100; // Time-consuming preparation, here.
         Log::infoln(&format!("x is {}.", x));
     }
 
+    // The level is implicitly confirmed.
     Log::trace("A,");
     Log::traceln("B,");
     Log::debug("C,");
