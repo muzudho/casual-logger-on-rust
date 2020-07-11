@@ -6,7 +6,7 @@
 use casual_logger::{Level, Log, LOGGER};
 
 fn main() {
-    let remove_file_count = if let Ok(mut logger) = LOGGER.lock() {
+    let remove_num = if let Ok(mut logger) = LOGGER.lock() {
         // Do not call 'Log::xxxxx()' in this code block.
         //
         // Set file name.
@@ -14,25 +14,28 @@ fn main() {
         // All: 'tic-tac-toe-2020-07-11.log.toml'
         // Prefix: 'tic-tac-toe'
         // StartDate: '-2020-07-11' automatically.
-        // Suffix: '.log' - To be safe, include a word that clearly states that you can delete the file.
+        // Suffix: '.log' - To be safe, include a word that
+        //         clearly states that you can delete the file.
         // Extention: '.toml'
         //
-        // If you don't like the .toml extension, leave the suffix empty and the .log extension.
+        // If you don't like the .toml extension, leave the
+        // suffix empty and the .log extension.
         logger.set_file_name("tic-tac-toe", ".log", ".toml");
 
         logger.retention_days = 2;
         // The higher this level, the more will be omitted.
         //
-        // |<-- Low Level ------------------------- High level -->|
-        // |<-- High priority ------------------- Low priority -->|
-        // | Fatal < Error < Warn < Notice < Info < Debug < Trace |
+        // |<-- Low Level ----------------------- High level -->|
+        // |<-- High priority ----------------- Low priority -->|
+        // |Fatal < Error < Warn < Notice < Info < Debug < Trace|
         logger.level = Level::Trace;
-        // Remove old log files. This is determined by the StartDate in the filename.
+        // Remove old log files. This is determined by the
+        //  StartDate in the filename.
         logger.remove_old_logs()
     } else {
         0
     };
-    Log::noticeln(&format!("Remove file count={}", remove_file_count));
+    Log::noticeln(&format!("Remove file count={}", remove_num));
 
     Log::infoln(
         "Hello, world!!
