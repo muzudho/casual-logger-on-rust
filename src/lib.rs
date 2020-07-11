@@ -339,7 +339,7 @@ impl Logger {
     /// # Examples
     ///
     /// ```
-    /// use casual_logger_on_rust::{Level, Logger};
+    /// use casual_logger::{Level, Logger};
     /// use std::sync::Mutex;
     ///
     /// let mut logger = Logger::default();
