@@ -1,12 +1,8 @@
-# casual-logger-on-rust
-
-A logger that can be easily installed to simplify the sample program.  
-Ignore performance for ease of use.  
-It only supports writing to files and deleting old log files.  
-
-## How to use
-
-```rust
+//! Run:
+//!
+//! ```
+//! cargo run --example example
+//! ```
 use casual_logger::{Level, Log, LOGGER};
 
 fn main() {
@@ -63,4 +59,3 @@ fn main() {
     Log::fatal("M,");
     Log::fatalln("N!");
 }
-```

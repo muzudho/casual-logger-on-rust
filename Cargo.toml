@@ -1,0 +1,15 @@
+[package]
+name = "casual_logger"
+version = "0.1.0"
+authors = ["むずでょ <muzudho1@gmail.com>"]
+edition = "2018"
+description = "A logger that can be easily installed to simplify the sample program. It only supports writing to files and deleting old log files."
+license = "MIT"
+readme = "README.md"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+lazy_static = "1.4.0"
+chrono = "0.4"
+regex = "1"
