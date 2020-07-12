@@ -10,7 +10,7 @@ extern crate regex;
 use chrono::{Date, Duration, Local, TimeZone};
 use regex::Regex;
 use std::cell::RefCell;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::fs;
 use std::fs::{File, OpenOptions};
 use std::io::Write;
@@ -104,18 +104,17 @@ thread_local!(pub static SEQ: RefCell<u128> = {
 });
 
 pub struct Table {
-    string_map: HashMap<String, String>,
+    string_map: BTreeMap<String, String>,
 }
 impl Default for Table {
     fn default() -> Self {
         Table {
-            string_map: HashMap::new(),
+            string_map: BTreeMap::new(),
         }
     }
 }
 impl Table {
-    /// Insert string value.
-    pub fn str<'a>(&'a mut self, key: &'a str, value: &'a str) -> &'a mut Self {
+    pub fn format_str_value(value: &str) -> String {
         // Escape the trailing newline at last.
         let mut body = if value[value.len() - NEW_LINE.len()..] == *NEW_LINE {
             // Do.
@@ -126,23 +125,26 @@ impl Table {
         };
         // Escape the double quotation.
         body = body.replace("\"", "\\\"");
+        if 1 < value.lines().count() {
+            // Multi-line string.
+            format!(
+                "\"\"\"
+{}
+\"\"\"",
+                body
+            )
+        } else {
+            // One liner.
+            format!("\"{}\"", body)
+        }
+    }
+    /// Insert string value.
+    pub fn str<'a>(&'a mut self, key: &'a str, value: &'a str) -> &'a mut Self {
         self.string_map.insert(
             // Log detail level.
             key.to_string(),
             // Message.
-            if 1 < value.lines().count() {
-                // Multi-line string.
-                format!(
-                    "\"\"\"
-{}
-\"\"\"",
-                    body
-                )
-                .to_string()
-            } else {
-                // One liner.
-                format!("\"{}\"", body).to_string()
-            },
+            Table::format_str_value(value).to_string(),
         );
 
         self
@@ -426,7 +428,13 @@ impl Log {
                 // Line number. This is to avoid duplication.
                 seq.borrow(),
             );
-            table.str(level, s);
+            toml += &format!(
+                "{} = {}
+",
+                level,
+                Table::format_str_value(s).to_string()
+            )
+            .to_string();
             for (k, v) in &table.string_map {
                 toml += &format!(
                     "{} = {}

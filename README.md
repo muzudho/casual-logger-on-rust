@@ -78,58 +78,71 @@ fn main() {
 Output `./default-2020-07-12.log.toml` auto generated:  
 
 ```toml
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=1"]
-Notice = "Remove file count=0\r\n"
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=1"]
+Notice = "Remove 0 files.\r\n"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=2"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=2"]
 Info = """
 Hello, world!!
 こんにちわ、世界！！\r\n
 """
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=3"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=3"]
 Info = "x is 100.\r\n"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=4"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=4"]
+Info = """
+The sky is from top to bottom!!
+上から下まで空です！！\r\n
+"""
+ABird = "fly in the sky."
+ThreeMonkeys = """
+climb
+a tall
+tree.
+"""
+TwoFish = "swim."
+
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=5"]
 Trace = "A,"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=5"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=6"]
 Trace = "B,\r\n"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=6"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=7"]
 Debug = "C,"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=7"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=8"]
 Debug = "D,\r\n"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=8"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=9"]
 Info = "E,"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=9"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=10"]
 Info = "F,\r\n"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=10"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=11"]
 Notice = "G,"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=11"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=12"]
 Notice = "H,\r\n"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=12"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=13"]
 Warn = "I,"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=13"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=14"]
 Warn = "J,\r\n"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=14"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=15"]
 Error = "K,"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=15"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=16"]
 Error = "L,\r\n"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=16"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=17"]
 Fatal = "M,"
 
-["Now=2020-07-12 00:49:17&Pid=19548&Thr=ThreadId(1)&Seq=17"]
+["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=18"]
 Fatal = "N!\r\n"
 
 ```
@@ -252,9 +265,19 @@ Code:
     Log::infoln_t(
         "The sky is from top to bottom!!
 上から下まで空です！！",
-        Table::default().str("A bird", "fly in
-the sky.").str("Two fish", "swim.").str("Three monkeys","climb
-a tall tree.")
+        Table::default()
+            .str(
+                // Do not include spaces in your key.
+                "ABird",
+                "fly in the sky.",
+            )
+            .str("TwoFish", "swim.")
+            .str(
+                "ThreeMonkeys",
+                "climb
+a tall
+tree.",
+            ),
     );
 
     // The level is implicitly confirmed.
@@ -277,6 +300,8 @@ a tall tree.")
 ## TODO
 
 * [ ] Adding table items as toml.
+  * [x] str.
+  * [ ] Other type...
 * [ ] Spawn another thread for logging.
 
 ## Tested environment

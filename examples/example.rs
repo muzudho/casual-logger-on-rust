@@ -57,14 +57,14 @@ fn main() {
             .str(
                 // Do not include spaces in your key.
                 "ABird",
-                "fly in
-the sky.",
+                "fly in the sky.",
             )
             .str("TwoFish", "swim.")
             .str(
                 "ThreeMonkeys",
                 "climb
-a tall tree.",
+a tall
+tree.",
             ),
     );
 
