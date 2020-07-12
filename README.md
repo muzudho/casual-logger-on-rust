@@ -328,3 +328,34 @@ tree.",
 
 * OS: `Windows 10`.
 * Editor: `Visual studio code`.
+
+## Appendix
+
+### Customize method
+
+Code:  main.rs  
+
+```rust
+use casual_logger::Log;
+
+pub trait LogExt {
+    fn println(s: &str);
+}
+impl LogExt for Log {
+    /// Info level logging and add print to stdout.
+    fn println(s: &str) {
+        println!("{}", s);
+        Log::infoln(s);
+    }
+}
+```
+
+Usage:  other.rs
+
+```rust
+use crate::LogExt;
+
+pub fn test() {
+    Log::println("Hello, world!!");
+}
+```
