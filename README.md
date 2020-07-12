@@ -1,6 +1,6 @@
 # casual_logger
 
-A logger used when practicing the example programs.  
+This logger used when practicing the example programs.  
 Only write to file, rotate by date.  
 Not for hard users.  
 
@@ -152,7 +152,7 @@ Fatal = "N!\r\n"
 Code:  
 
 ```rust
-use casual_logger::{Level, Log, LOGGER};
+use casual_logger::{Level, Log, Table, LOGGER};
 ```
 
 At the timing of the first writing, a file with a  
@@ -163,17 +163,26 @@ Description:
 
 | Part          | Name      | Description       | Default   |
 | ------------- | --------- | ----------------- | --------- |
-| `./`          |           | Working directory |           |
+| `./`          | file path | Working directory |           |
 |               |           | only.             |           |
 | `tic-tac-toe` | Prefix    | Editable.         | `default` |
 | `-2020-07-12` | StartDate | Auto generated.   |           |
 | `.log`        | Suffix    | Editable.         | `.log`    |
 | `.toml`       | Extension | Editable.         | `.toml`   |
 
-Suffix to be safe, include a word that  
+
+It is difficult to explain the **file path** for beginners.  
+Therefore, it does not move.  
+
+Excite yourself with a **prefix**.  
+
+**StartDate** is basically today.  
+If the rotation fails, it is the start date.
+
+**Suffix** to be safe, include a word that  
 clearly states that you can delete the file.  
 
-If you don't like the .toml extension, leave  
+If you don't like the .toml **extension**, leave  
 the suffix empty and the .log extension.  
 
 Set up, Code:  
@@ -188,6 +197,17 @@ fn main() {
 
     // ...
 }
+```
+
+Log rotation, Code:  
+
+```rust
+    let remove_num = if let Ok(mut logger) = LOGGER.lock() {
+        logger.remove_old_logs()
+    } else {
+        0
+    };
+    Log::noticeln(&format!("Remove {} files.", remove_num));
 ```
 
 ### Logger Properties
