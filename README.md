@@ -11,10 +11,10 @@ Not for production, but better than not logging.
 
 ## At first, Disclaim
 
-* It differs from the standard Rust log interface.
-* Ignore performance for ease of use and **ease of explanation**.
+* It **differs** from the standard Rust log interface.
+* **Ignore performance** for ease of use and ease of explanation.
 * You **can break** the toml format. Do not validate.
-* The **writing order is unstable**. Check the serial "Seq" number.
+* The writing **order is unstable**. Check the serial "Seq" number.
 * If the log export fails, the **error is ignored** and it continues.
 * **Don't forget** wait for logging to complete at end of program.
 
