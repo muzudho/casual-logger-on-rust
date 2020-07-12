@@ -38,6 +38,7 @@ fn main() {
     Log::noticeln(&format!("Remove {} files.", remove_num));
 
     // Multi-line string.
+    // The suffix "ln" adds a newline at the end.
     Log::infoln(
         "Hello, world!!
 こんにちわ、世界！！",

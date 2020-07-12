@@ -1,13 +1,18 @@
 # casual_logger
 
-This logger used when practicing the example programs.  
-Only write to file, rotate by date.  
-Not for hard users.  
+This logger is intended to be **easy to explain** when teaching other example programs to friends.  
+Not for you, for self-study of beginner friends.  
+Of course you can use it.  
+Not for production, but better than not logging.  
+
+* Only write to 1 file on current directory.
+* Rotate by date.
+* Delete old files.
 
 ## At first, Disclaim
 
 * It differs from the standard Rust log interface.
-* Ignore performance for ease of use.
+* Ignore performance for ease of use and **ease of explanation**.
 
 ## At second, Overall view
 
@@ -48,16 +53,39 @@ fn main() {
     };
     Log::noticeln(&format!("Remove {} files.", remove_num));
 
+    // Multi-line string.
+    // The suffix "ln" adds a newline at the end.
     Log::infoln(
         "Hello, world!!
 こんにちわ、世界！！",
     );
 
+    // After explicitly checking the level.
     if Log::enabled(Level::Info) {
         let x = 100; // Time-consuming preparation, here.
         Log::infoln(&format!("x is {}.", x));
     }
 
+    // Suffix '_t'. TOML say a table. So-called map.
+    Log::infoln_t(
+        "The sky is from top to bottom!!
+上から下まで空です！！",
+        Table::default()
+            .str(
+                // Do not include spaces in your key.
+                "ABird",
+                "fly in the sky.",
+            )
+            .str("TwoFish", "swim.")
+            .str(
+                "ThreeMonkeys",
+                "climb
+a tall
+tree.",
+            ),
+    );
+
+    // The level is implicitly confirmed.
     Log::trace("A,");
     Log::traceln("B,");
     Log::debug("C,");
@@ -270,6 +298,7 @@ Code:
 
 ```rust
     // Multi-line string.
+    // The suffix "ln" adds a newline at the end.
     Log::infoln(
         "Hello, world!!
 こんにちわ、世界！！",
