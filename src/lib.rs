@@ -4,10 +4,8 @@
 //!
 //! Publish:  
 //!
-//! ```
 //! cargo publish --dry-run
 //! cargo publish
-//! ```
 
 #[macro_use]
 extern crate lazy_static;
