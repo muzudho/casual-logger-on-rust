@@ -1,6 +1,13 @@
 //! A logger that can be easily installed to simplify the sample program.
 //! Ignore performance for ease of use.
 //! It only supports writing to files and deleting old log files.
+//!
+//! Publish:  
+//!
+//! ```
+//! cargo publish --dry-run
+//! cargo publish
+//! ```
 
 #[macro_use]
 extern crate lazy_static;
