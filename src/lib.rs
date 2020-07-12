@@ -4,9 +4,13 @@
 //!
 //! Publish:  
 //!
-//! cargo test
-//! cargo publish --dry-run
-//! cargo publish
+//! (1) `cargo test`
+//! (2) `cargo run --example example`
+//! (3) Remove auto-generated log file.
+//! (4) `cargo doc --open`
+//! (5) Comit to Git-hub.
+//! (6) `cargo publish --dry-run`
+//! (7) `cargo publish`
 
 #[macro_use]
 extern crate lazy_static;
