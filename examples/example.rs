@@ -1,8 +1,3 @@
-//! Run:
-//!
-//! ```
-//! cargo run --example example
-//! ```
 use casual_logger::{Level, Log, Table, LOGGER};
 
 fn main() {
@@ -178,10 +173,7 @@ tree.",
     Log::fatalln("(1)Fatal on (1)Fatal.");
 
     // Wait for logging to complete. Time out 30 seconds.
-    Log::wait_for_logging_to_complete(30, |elapsed_secs, rest_threads| {
-        println!(
-            "{} second(s). Wait for {} thread(s).",
-            elapsed_secs, rest_threads
-        );
+    Log::wait_for_logging_to_complete(30, |s, th| {
+        println!("{} sec(s). Wait for {} thread(s).", s, th);
     });
 }
