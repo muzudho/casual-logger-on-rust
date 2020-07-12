@@ -1,0 +1,54 @@
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=1"]
+Notice = "Remove 0 files.\r\n"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=2"]
+Info = """
+Hello, world!!
+こんにちわ、世界！！\r\n
+"""
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=3"]
+Info = "x is 100.\r\n"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=4"]
+Trace = "A,"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=5"]
+Trace = "B,\r\n"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=6"]
+Debug = "C,"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=7"]
+Debug = "D,\r\n"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=8"]
+Info = "E,"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=9"]
+Info = "F,\r\n"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=10"]
+Notice = "G,"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=11"]
+Notice = "H,\r\n"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=12"]
+Warn = "I,"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=13"]
+Warn = "J,\r\n"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=14"]
+Error = "K,"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=15"]
+Error = "L,\r\n"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=16"]
+Fatal = "M,"
+
+["Now=2020-07-12 12:38:47&Pid=17952&Thr=ThreadId(1)&Seq=17"]
+Fatal = "N!\r\n"
+

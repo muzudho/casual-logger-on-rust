@@ -10,6 +10,7 @@ extern crate regex;
 use chrono::{Date, Duration, Local, TimeZone};
 use regex::Regex;
 use std::cell::RefCell;
+use std::collections::HashMap;
 use std::fs;
 use std::fs::{File, OpenOptions};
 use std::io::Write;
@@ -249,12 +250,11 @@ impl Log {
         body = body.replace("\"", "\\\"");
         SEQ.with(move |seq| {
             // Write as TOML.
-            let toml = format!(
+            // Table name.
+            let mut toml = format!(
                 // Table name to keep for ordering.
                 // For example, you can parse it easily by writing the table name like a GET query.
                 "[\"Now={}&Pid={}&Thr={:?}&Seq={}\"]
-{} = {}
-
 ",
                 // If you use ISO8601, It's "%Y-%m-%dT%H:%M:%S%z". However, it does not set the date format.
                 // Make it easier to read.
@@ -265,6 +265,9 @@ impl Log {
                 thread::current().id(),
                 // Line number. This is to avoid duplication.
                 seq.borrow(),
+            );
+            let mut map = HashMap::new();
+            map.insert(
                 // Log detail level.
                 level,
                 // Message.
@@ -280,8 +283,18 @@ impl Log {
                 } else {
                     // One liner.
                     format!("\"{}\"", body).to_string()
-                }
+                },
             );
+            for (k, v) in &map {
+                toml += &format!(
+                    "{} = {}
+",
+                    k, v
+                )
+                .to_string();
+            }
+            toml += "
+";
             *seq.borrow_mut() += 1;
             if let Ok(mut logger) = LOGGER.lock() {
                 // write_all method required to use 'use std::io::Write;'.
