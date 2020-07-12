@@ -235,19 +235,39 @@ impl Log {
         let s = &format!("{}{}", s, NEW_LINE);
         Log::write(s, level);
     }
-    /// Write to a log file. No trailing newline.
-    #[allow(dead_code)]
-    fn write(s: &str, level: &str) {
+    fn insert_string(map: &mut HashMap<String, String>, key: &str, value: &str) {
         // Escape the trailing newline at last.
-        let mut body = if s[s.len() - NEW_LINE.len()..] == *NEW_LINE {
+        let mut body = if value[value.len() - NEW_LINE.len()..] == *NEW_LINE {
             // Do.
-            format!("{}{}", s.trim_end(), NEW_LINE_SEQUENCE)
+            format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE)
         } else {
             // Don't.
-            s.to_string()
+            value.to_string()
         };
         // Escape the double quotation.
         body = body.replace("\"", "\\\"");
+        map.insert(
+            // Log detail level.
+            key.to_string(),
+            // Message.
+            if 1 < value.lines().count() {
+                // Multi-line string.
+                format!(
+                    "\"\"\"
+{}
+\"\"\"",
+                    body
+                )
+                .to_string()
+            } else {
+                // One liner.
+                format!("\"{}\"", body).to_string()
+            },
+        );
+    }
+    /// Write to a log file. No trailing newline.
+    #[allow(dead_code)]
+    fn write(s: &str, level: &str) {
         SEQ.with(move |seq| {
             // Write as TOML.
             // Table name.
@@ -266,26 +286,9 @@ impl Log {
                 // Line number. This is to avoid duplication.
                 seq.borrow(),
             );
-            let mut map = HashMap::new();
-            map.insert(
-                // Log detail level.
-                level,
-                // Message.
-                if 1 < s.lines().count() {
-                    // Multi-line string.
-                    format!(
-                        "\"\"\"
-{}
-\"\"\"",
-                        body
-                    )
-                    .to_string()
-                } else {
-                    // One liner.
-                    format!("\"{}\"", body).to_string()
-                },
-            );
-            for (k, v) in &map {
+            let mut string_map = HashMap::new();
+            Log::insert_string(&mut string_map, level, s);
+            for (k, v) in &string_map {
                 toml += &format!(
                     "{} = {}
 ",
