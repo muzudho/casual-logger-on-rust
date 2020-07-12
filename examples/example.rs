@@ -3,7 +3,7 @@
 //! ```
 //! cargo run --example example
 //! ```
-use casual_logger::{Level, Log, LOGGER};
+use casual_logger::{Level, Log, Table, LOGGER};
 
 fn main() {
     let remove_num = if let Ok(mut logger) = LOGGER.lock() {
@@ -48,6 +48,25 @@ fn main() {
         let x = 100; // Time-consuming preparation, here.
         Log::infoln(&format!("x is {}.", x));
     }
+
+    // Suffix '_t'. TOML say a table. So-called map.
+    Log::infoln_t(
+        "The sky is from top to bottom!!
+上から下まで空です！！",
+        Table::default()
+            .str(
+                // Do not include spaces in your key.
+                "ABird",
+                "fly in
+the sky.",
+            )
+            .str("TwoFish", "swim.")
+            .str(
+                "ThreeMonkeys",
+                "climb
+a tall tree.",
+            ),
+    );
 
     // The level is implicitly confirmed.
     Log::trace("A,");

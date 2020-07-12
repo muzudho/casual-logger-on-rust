@@ -166,7 +166,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn trace(s: &str) {
         if Log::enabled(Level::Trace) {
-            Log::write(s, "Trace")
+            let mut table = Table::default();
+            Log::write(s, "Trace", &mut table)
         }
     }
 
@@ -174,7 +175,24 @@ impl Log {
     #[allow(dead_code)]
     pub fn traceln(s: &str) {
         if Log::enabled(Level::Trace) {
-            Log::writeln(s, "Trace");
+            let mut table = Table::default();
+            Log::writeln(s, "Trace", &mut table);
+        }
+    }
+
+    /// Trace level. No trailing newline. Use table.
+    #[allow(dead_code)]
+    pub fn trace_t(s: &str, table: &mut Table) {
+        if Log::enabled(Level::Trace) {
+            Log::write(s, "Trace", table)
+        }
+    }
+
+    /// Trace level. There is a trailing newline. Use table.
+    #[allow(dead_code)]
+    pub fn traceln_t(s: &str, table: &mut Table) {
+        if Log::enabled(Level::Trace) {
+            Log::writeln(s, "Trace", table);
         }
     }
 
@@ -182,7 +200,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn debug(s: &str) {
         if Log::enabled(Level::Debug) {
-            Log::write(s, "Debug")
+            let mut table = Table::default();
+            Log::write(s, "Debug", &mut table)
         }
     }
 
@@ -190,7 +209,24 @@ impl Log {
     #[allow(dead_code)]
     pub fn debugln(s: &str) {
         if Log::enabled(Level::Debug) {
-            Log::writeln(s, "Debug");
+            let mut table = Table::default();
+            Log::writeln(s, "Debug", &mut table);
+        }
+    }
+
+    /// Debug level. No trailing newline. Use table.
+    #[allow(dead_code)]
+    pub fn debug_t(s: &str, table: &mut Table) {
+        if Log::enabled(Level::Debug) {
+            Log::write(s, "Debug", table)
+        }
+    }
+
+    /// Debug level. There is a trailing newline. Use table.
+    #[allow(dead_code)]
+    pub fn debugln_t(s: &str, table: &mut Table) {
+        if Log::enabled(Level::Debug) {
+            Log::writeln(s, "Debug", table);
         }
     }
 
@@ -198,7 +234,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn info(s: &str) {
         if Log::enabled(Level::Info) {
-            Log::write(s, "Info")
+            let mut table = Table::default();
+            Log::write(s, "Info", &mut table)
         }
     }
 
@@ -206,15 +243,32 @@ impl Log {
     #[allow(dead_code)]
     pub fn infoln(s: &str) {
         if Log::enabled(Level::Info) {
-            Log::writeln(s, "Info");
+            let mut table = Table::default();
+            Log::writeln(s, "Info", &mut table);
         }
     }
 
+    /// Info level. No trailing newline. Use table.
+    #[allow(dead_code)]
+    pub fn info_t(s: &str, table: &mut Table) {
+        if Log::enabled(Level::Info) {
+            Log::write(s, "Info", table)
+        }
+    }
+
+    /// Info level. There is a trailing newline. Use table.
+    #[allow(dead_code)]
+    pub fn infoln_t(s: &str, table: &mut Table) {
+        if Log::enabled(Level::Info) {
+            Log::writeln(s, "Info", table);
+        }
+    }
     /// Notice level. No trailing newline.
     #[allow(dead_code)]
     pub fn notice(s: &str) {
         if Log::enabled(Level::Notice) {
-            Log::write(s, "Notice")
+            let mut table = Table::default();
+            Log::write(s, "Notice", &mut table)
         }
     }
 
@@ -222,7 +276,23 @@ impl Log {
     #[allow(dead_code)]
     pub fn noticeln(s: &str) {
         if Log::enabled(Level::Notice) {
-            Log::writeln(s, "Notice");
+            let mut table = Table::default();
+            Log::writeln(s, "Notice", &mut table);
+        }
+    }
+    /// Notice level. No trailing newline. Use table.
+    #[allow(dead_code)]
+    pub fn notice_t(s: &str, table: &mut Table) {
+        if Log::enabled(Level::Notice) {
+            Log::write(s, "Notice", table)
+        }
+    }
+
+    /// Notice level. There is a trailing newline. Use table.
+    #[allow(dead_code)]
+    pub fn noticeln_t(s: &str, table: &mut Table) {
+        if Log::enabled(Level::Notice) {
+            Log::writeln(s, "Notice", table);
         }
     }
 
@@ -230,7 +300,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn warn(s: &str) {
         if Log::enabled(Level::Warn) {
-            Log::write(s, "Warn")
+            let mut table = Table::default();
+            Log::write(s, "Warn", &mut table)
         }
     }
 
@@ -238,7 +309,24 @@ impl Log {
     #[allow(dead_code)]
     pub fn warnln(s: &str) {
         if Log::enabled(Level::Warn) {
-            Log::writeln(s, "Warn");
+            let mut table = Table::default();
+            Log::writeln(s, "Warn", &mut table);
+        }
+    }
+
+    /// Warning level. No trailing newline. Use table.
+    #[allow(dead_code)]
+    pub fn warn_t(s: &str, table: &mut Table) {
+        if Log::enabled(Level::Warn) {
+            Log::write(s, "Warn", table)
+        }
+    }
+
+    /// Warning level. There is a trailing newline. Use table.
+    #[allow(dead_code)]
+    pub fn warnln_t(s: &str, table: &mut Table) {
+        if Log::enabled(Level::Warn) {
+            Log::writeln(s, "Warn", table);
         }
     }
 
@@ -246,7 +334,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn error(s: &str) {
         if Log::enabled(Level::Error) {
-            Log::write(s, "Error")
+            let mut table = Table::default();
+            Log::write(s, "Error", &mut table)
         }
     }
 
@@ -254,16 +343,33 @@ impl Log {
     #[allow(dead_code)]
     pub fn errorln(s: &str) {
         if Log::enabled(Level::Error) {
-            Log::writeln(s, "Error");
+            let mut table = Table::default();
+            Log::writeln(s, "Error", &mut table);
         }
     }
 
+    /// Error level. No trailing newline. Use table.
+    #[allow(dead_code)]
+    pub fn error_t(s: &str, table: &mut Table) {
+        if Log::enabled(Level::Error) {
+            Log::write(s, "Error", table)
+        }
+    }
+
+    /// Error level. There is a trailing newline. Use table.
+    #[allow(dead_code)]
+    pub fn errorln_t(s: &str, table: &mut Table) {
+        if Log::enabled(Level::Error) {
+            Log::writeln(s, "Error", table);
+        }
+    }
     /// Fatal level. No trailing newline.
     /// 'panic!' Pass this as the first argument.
     #[allow(dead_code)]
     pub fn fatal(s: &str) -> String {
         let t = format!("{}", s).to_string();
-        Log::write(&t, "Fatal");
+        let mut table = Table::default();
+        Log::write(&t, "Fatal", &mut table);
         t
     }
     /// Fatal level. There is a trailing newline.
@@ -271,19 +377,37 @@ impl Log {
     #[allow(dead_code)]
     pub fn fatalln(s: &str) -> String {
         let t = format!("{}{}", s, NEW_LINE).to_string();
-        Log::write(&t, "Fatal");
+        let mut table = Table::default();
+        Log::write(&t, "Fatal", &mut table);
+        t
+    }
+
+    /// Fatal level. No trailing newline.
+    /// 'panic!' Pass this as the first argument.
+    #[allow(dead_code)]
+    pub fn fatal_t(s: &str, table: &mut Table) -> String {
+        let t = format!("{}", s).to_string();
+        Log::write(&t, "Fatal", table);
+        t
+    }
+    /// Fatal level. There is a trailing newline.
+    /// 'panic!' Pass this as the first argument.
+    #[allow(dead_code)]
+    pub fn fatalln_t(s: &str, table: &mut Table) -> String {
+        let t = format!("{}{}", s, NEW_LINE).to_string();
+        Log::write(&t, "Fatal", table);
         t
     }
 
     /// Write to a log file. There is a trailing newline.
     #[allow(dead_code)]
-    fn writeln(s: &str, level: &str) {
+    fn writeln(s: &str, level: &str, table: &mut Table) {
         let s = &format!("{}{}", s, NEW_LINE);
-        Log::write(s, level);
+        Log::write(s, level, table);
     }
     /// Write to a log file. No trailing newline.
     #[allow(dead_code)]
-    fn write(s: &str, level: &str) {
+    fn write(s: &str, level: &str, table: &mut Table) {
         SEQ.with(move |seq| {
             // Write as TOML.
             // Table name.
@@ -302,7 +426,6 @@ impl Log {
                 // Line number. This is to avoid duplication.
                 seq.borrow(),
             );
-            let mut table = Table::default();
             table.str(level, s);
             for (k, v) in &table.string_map {
                 toml += &format!(

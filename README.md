@@ -14,7 +14,7 @@ Not for hard users.
 Your code:  
 
 ```rust
-use casual_logger::{Level, Log, LOGGER};
+use casual_logger::{Level, Log, Table, LOGGER};
 
 fn main() {
     let remove_num = if let Ok(mut logger) = LOGGER.lock() {
@@ -248,6 +248,15 @@ Code:
         Log::infoln(&format!("x is {}.", x));
     }
 
+    // Suffix '_t'. TOML say a table. So-called map.
+    Log::infoln_t(
+        "The sky is from top to bottom!!
+上から下まで空です！！",
+        Table::default().str("A bird", "fly in
+the sky.").str("Two fish", "swim.").str("Three monkeys","climb
+a tall tree.")
+    );
+
     // The level is implicitly confirmed.
     Log::trace("A,");
     Log::traceln("B,");
@@ -268,6 +277,7 @@ Code:
 ## TODO
 
 * [ ] Adding table items as toml.
+* [ ] Spawn another thread for logging.
 
 ## Tested environment
 
