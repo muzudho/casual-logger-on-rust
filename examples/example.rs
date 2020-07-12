@@ -176,4 +176,12 @@ tree.",
     Log::warnln("(3)Warn on (1)Fatal.");
     Log::errorln("(2)Error on (1)Fatal.");
     Log::fatalln("(1)Fatal on (1)Fatal.");
+
+    // Wait for logging to complete. Time out 30 seconds.
+    Log::wait_for_logging_to_complete(30, |elapsed_secs, rest_threads| {
+        println!(
+            "{} second(s). Wait for {} thread(s).",
+            elapsed_secs, rest_threads
+        );
+    });
 }
