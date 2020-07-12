@@ -6,11 +6,13 @@
 //!
 //! (1) `cargo test`
 //! (2) `cargo run --example example`
-//! (3) Remove auto-generated log file.
-//! (4) `cargo doc --open`
-//! (5) Comit to Git-hub.
-//! (6) `cargo publish --dry-run`
-//! (7) `cargo publish`
+//! (3) Open auto-generated log file. I check it.
+//! (4) Remove the log file.
+//! (5) Version up on Cargo.toml.
+//! (6) `cargo doc --open`
+//! (7) Comit to Git-hub.
+//! (8) `cargo publish --dry-run`
+//! (9) `cargo publish`
 
 #[macro_use]
 extern crate lazy_static;
