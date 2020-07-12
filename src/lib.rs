@@ -116,6 +116,7 @@ thread_local!(pub static SEQ: RefCell<u128> = {
     RefCell::new(1)
 });
 
+#[derive(Clone)]
 pub struct Table {
     sorted_map: BTreeMap<String, String>,
 }
@@ -193,9 +194,13 @@ impl Log {
     pub fn trace(s: &str) {
         if Log::enabled(Level::Trace) {
             let thread_id = format!("{:?}", thread::current().id());
-            let mut table = Table::default();
+            let s_str = s.to_string();
             SEQ.with(move |seq| {
-                Log::write(&thread_id, &seq.borrow(), s, "Trace", &mut table);
+                let seq_clone = seq.borrow().clone();
+                thread::spawn(move || {
+                    let mut table = Table::default();
+                    Log::write(&thread_id, seq_clone, &s_str, "Trace", &mut table);
+                });
                 *seq.borrow_mut() += 1;
             });
         }
@@ -206,9 +211,13 @@ impl Log {
     pub fn traceln(s: &str) {
         if Log::enabled(Level::Trace) {
             let thread_id = format!("{:?}", thread::current().id());
-            let mut table = Table::default();
+            let s_str = s.to_string();
             SEQ.with(move |seq| {
-                Log::writeln(&thread_id, &seq.borrow(), s, "Trace", &mut table);
+                let seq_clone = seq.borrow().clone();
+                thread::spawn(move || {
+                    let mut table = Table::default();
+                    Log::writeln(&thread_id, seq_clone, &s_str, "Trace", &mut table);
+                });
                 *seq.borrow_mut() += 1;
             });
         }
@@ -219,8 +228,13 @@ impl Log {
     pub fn trace_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Trace) {
             let thread_id = format!("{:?}", thread::current().id());
+            let s_str = s.to_string();
+            let table_clone = table.clone();
             SEQ.with(move |seq| {
-                Log::write(&thread_id, &seq.borrow(), s, "Trace", table);
+                let seq_clone = seq.borrow().clone();
+                thread::spawn(move || {
+                    Log::write(&thread_id, seq_clone, &s_str, "Trace", &table_clone);
+                });
                 *seq.borrow_mut() += 1;
             });
         }
@@ -231,8 +245,13 @@ impl Log {
     pub fn traceln_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Trace) {
             let thread_id = format!("{:?}", thread::current().id());
+            let s_str = s.to_string();
+            let table_clone = table.clone();
             SEQ.with(move |seq| {
-                Log::writeln(&thread_id, &seq.borrow(), s, "Trace", table);
+                let seq_clone = seq.borrow().clone();
+                thread::spawn(move || {
+                    Log::writeln(&thread_id, seq_clone, &s_str, "Trace", &table_clone);
+                });
                 *seq.borrow_mut() += 1;
             });
         }
@@ -243,9 +262,13 @@ impl Log {
     pub fn debug(s: &str) {
         if Log::enabled(Level::Debug) {
             let thread_id = format!("{:?}", thread::current().id());
+            let s_str = s.to_string();
             let mut table = Table::default();
             SEQ.with(move |seq| {
-                Log::write(&thread_id, &seq.borrow(), s, "Debug", &mut table);
+                let seq_clone = seq.borrow().clone();
+                thread::spawn(move || {
+                    Log::write(&thread_id, seq_clone, &s_str, "Debug", &mut table);
+                });
                 *seq.borrow_mut() += 1;
             });
         }
@@ -256,9 +279,13 @@ impl Log {
     pub fn debugln(s: &str) {
         if Log::enabled(Level::Debug) {
             let thread_id = format!("{:?}", thread::current().id());
+            let s_str = s.to_string();
             let mut table = Table::default();
             SEQ.with(move |seq| {
-                Log::writeln(&thread_id, &seq.borrow(), s, "Debug", &mut table);
+                let seq_clone = seq.borrow().clone();
+                thread::spawn(move || {
+                    Log::writeln(&thread_id, seq_clone, &s_str, "Debug", &mut table);
+                });
                 *seq.borrow_mut() += 1;
             });
         }
@@ -269,8 +296,13 @@ impl Log {
     pub fn debug_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Debug) {
             let thread_id = format!("{:?}", thread::current().id());
+            let s_str = s.to_string();
+            let table_clone = table.clone();
             SEQ.with(move |seq| {
-                Log::write(&thread_id, &seq.borrow(), s, "Debug", table);
+                let seq_clone = seq.borrow().clone();
+                thread::spawn(move || {
+                    Log::write(&thread_id, seq_clone, &s_str, "Debug", &table_clone);
+                });
                 *seq.borrow_mut() += 1;
             });
         }
@@ -281,8 +313,13 @@ impl Log {
     pub fn debugln_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Debug) {
             let thread_id = format!("{:?}", thread::current().id());
+            let s_str = s.to_string();
+            let table_clone = table.clone();
             SEQ.with(move |seq| {
-                Log::writeln(&thread_id, &seq.borrow(), s, "Debug", table);
+                let seq_clone = seq.borrow().clone();
+                thread::spawn(move || {
+                    Log::writeln(&thread_id, seq_clone, &s_str, "Debug", &table_clone);
+                });
                 *seq.borrow_mut() += 1;
             });
         }
@@ -292,10 +329,14 @@ impl Log {
     #[allow(dead_code)]
     pub fn info(s: &str) {
         if Log::enabled(Level::Info) {
+            let s_clone = s.to_string().clone();
             let thread_id = format!("{:?}", thread::current().id());
-            let mut table = Table::default();
             SEQ.with(move |seq| {
-                Log::write(&thread_id, &seq.borrow(), s, "Info", &mut table);
+                let seq_num = seq.borrow().clone();
+                thread::spawn(move || {
+                    let mut table = Table::default();
+                    Log::write(&thread_id, seq_num, &s_clone, "Info", &mut table);
+                });
                 *seq.borrow_mut() += 1;
             });
         }
@@ -305,13 +346,13 @@ impl Log {
     #[allow(dead_code)]
     pub fn infoln(s: &str) {
         if Log::enabled(Level::Info) {
-            let t = s.to_string().clone();
+            let s_clone = s.to_string().clone();
             let thread_id = format!("{:?}", thread::current().id()).to_string().clone();
             SEQ.with(move |seq| {
                 let seq_num = seq.borrow().clone();
                 thread::spawn(move || {
                     let mut table = Table::default();
-                    Log::writeln(&thread_id, &seq_num, &t, "Info", &mut table);
+                    Log::writeln(&thread_id, seq_num, &s_clone, "Info", &mut table);
                 });
                 *seq.borrow_mut() += 1;
             });
@@ -324,7 +365,8 @@ impl Log {
         if Log::enabled(Level::Info) {
             let thread_id = format!("{:?}", thread::current().id());
             SEQ.with(move |seq| {
-                Log::write(&thread_id, &seq.borrow(), s, "Info", table);
+                let seq_num = seq.borrow().clone();
+                Log::write(&thread_id, seq_num, s, "Info", table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -336,7 +378,8 @@ impl Log {
         if Log::enabled(Level::Info) {
             let thread_id = format!("{:?}", thread::current().id());
             SEQ.with(move |seq| {
-                Log::writeln(&thread_id, &seq.borrow(), s, "Info", table);
+                let seq_num = seq.borrow().clone();
+                Log::writeln(&thread_id, seq_num, s, "Info", table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -348,7 +391,8 @@ impl Log {
             let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
             SEQ.with(move |seq| {
-                Log::write(&thread_id, &seq.borrow(), s, "Notice", &mut table);
+                let seq_num = seq.borrow().clone();
+                Log::write(&thread_id, seq_num, s, "Notice", &mut table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -361,7 +405,8 @@ impl Log {
             let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
             SEQ.with(move |seq| {
-                Log::writeln(&thread_id, &seq.borrow(), s, "Notice", &mut table);
+                let seq_num = seq.borrow().clone();
+                Log::writeln(&thread_id, seq_num, s, "Notice", &mut table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -372,7 +417,8 @@ impl Log {
         if Log::enabled(Level::Notice) {
             let thread_id = format!("{:?}", thread::current().id());
             SEQ.with(move |seq| {
-                Log::write(&thread_id, &seq.borrow(), s, "Notice", table);
+                let seq_num = seq.borrow().clone();
+                Log::write(&thread_id, seq_num, s, "Notice", table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -384,7 +430,8 @@ impl Log {
         if Log::enabled(Level::Notice) {
             let thread_id = format!("{:?}", thread::current().id());
             SEQ.with(move |seq| {
-                Log::writeln(&thread_id, &seq.borrow(), s, "Notice", table);
+                let seq_num = seq.borrow().clone();
+                Log::writeln(&thread_id, seq_num, s, "Notice", table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -397,7 +444,8 @@ impl Log {
             let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
             SEQ.with(move |seq| {
-                Log::write(&thread_id, &seq.borrow(), s, "Warn", &mut table);
+                let seq_num = seq.borrow().clone();
+                Log::write(&thread_id, seq_num, s, "Warn", &mut table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -410,7 +458,8 @@ impl Log {
             let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
             SEQ.with(move |seq| {
-                Log::writeln(&thread_id, &seq.borrow(), s, "Warn", &mut table);
+                let seq_num = seq.borrow().clone();
+                Log::writeln(&thread_id, seq_num, s, "Warn", &mut table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -422,7 +471,8 @@ impl Log {
         if Log::enabled(Level::Warn) {
             let thread_id = format!("{:?}", thread::current().id());
             SEQ.with(move |seq| {
-                Log::write(&thread_id, &seq.borrow(), s, "Warn", table);
+                let seq_num = seq.borrow().clone();
+                Log::write(&thread_id, seq_num, s, "Warn", table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -434,7 +484,8 @@ impl Log {
         if Log::enabled(Level::Warn) {
             let thread_id = format!("{:?}", thread::current().id());
             SEQ.with(move |seq| {
-                Log::writeln(&thread_id, &seq.borrow(), s, "Warn", table);
+                let seq_num = seq.borrow().clone();
+                Log::writeln(&thread_id, seq_num, s, "Warn", table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -447,7 +498,8 @@ impl Log {
             let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
             SEQ.with(move |seq| {
-                Log::write(&thread_id, &seq.borrow(), s, "Error", &mut table);
+                let seq_num = seq.borrow().clone();
+                Log::write(&thread_id, seq_num, s, "Error", &mut table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -460,7 +512,8 @@ impl Log {
             let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
             SEQ.with(move |seq| {
-                Log::writeln(&thread_id, &seq.borrow(), s, "Error", &mut table);
+                let seq_num = seq.borrow().clone();
+                Log::writeln(&thread_id, seq_num, s, "Error", &mut table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -472,7 +525,8 @@ impl Log {
         if Log::enabled(Level::Error) {
             let thread_id = format!("{:?}", thread::current().id());
             SEQ.with(move |seq| {
-                Log::write(&thread_id, &seq.borrow(), s, "Error", table);
+                let seq_num = seq.borrow().clone();
+                Log::write(&thread_id, seq_num, s, "Error", table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -484,7 +538,8 @@ impl Log {
         if Log::enabled(Level::Error) {
             let thread_id = format!("{:?}", thread::current().id());
             SEQ.with(move |seq| {
-                Log::writeln(&thread_id, &seq.borrow(), s, "Error", table);
+                let seq_num = seq.borrow().clone();
+                Log::writeln(&thread_id, seq_num, s, "Error", table);
                 *seq.borrow_mut() += 1;
             });
         }
@@ -499,7 +554,7 @@ impl Log {
         let mut table = Table::default();
         SEQ.with(move |seq| {
             let seq_num = seq.borrow().clone();
-            Log::write(&thread_id, &seq_num, &s_clone, "Fatal", &mut table);
+            Log::write(&thread_id, seq_num, &s_clone, "Fatal", &mut table);
             *seq.borrow_mut() += 1;
         });
         s_str
@@ -513,7 +568,8 @@ impl Log {
         let s_clone = s_str.clone();
         let mut table = Table::default();
         SEQ.with(move |seq| {
-            Log::write(&thread_id, &seq.borrow(), &s_clone, "Fatal", &mut table);
+            let seq_num = seq.borrow().clone();
+            Log::write(&thread_id, seq_num, &s_clone, "Fatal", &mut table);
             *seq.borrow_mut() += 1;
         });
         s_str
@@ -527,7 +583,8 @@ impl Log {
         let s_str = format!("{}", s).to_string();
         let s_clone = s_str.clone();
         SEQ.with(move |seq| {
-            Log::write(&thread_id, &seq.borrow(), &s_clone, "Fatal", table);
+            let seq_num = seq.borrow().clone();
+            Log::write(&thread_id, seq_num, &s_clone, "Fatal", table);
             *seq.borrow_mut() += 1;
         });
         s_str
@@ -540,7 +597,8 @@ impl Log {
         let s_str = format!("{}{}", s, NEW_LINE).to_string();
         let s_clone = s_str.clone();
         SEQ.with(move |seq| {
-            Log::write(&thread_id, &seq.borrow(), &s_clone, "Fatal", table);
+            let seq_num = seq.borrow().clone();
+            Log::write(&thread_id, seq_num, &s_clone, "Fatal", table);
             *seq.borrow_mut() += 1;
         });
         s_str
@@ -548,13 +606,13 @@ impl Log {
 
     /// Write to a log file. There is a trailing newline.
     #[allow(dead_code)]
-    fn writeln(thread_id: &str, seq: &u128, s: &str, level: &str, table: &mut Table) {
+    fn writeln(thread_id: &str, seq: u128, s: &str, level: &str, table: &Table) {
         let s = &format!("{}{}", s, NEW_LINE);
         Log::write(thread_id, seq, s, level, table);
     }
     /// Write to a log file. No trailing newline.
     #[allow(dead_code)]
-    fn write(thread_id: &str, seq: &u128, s: &str, level: &str, table: &mut Table) {
+    fn write(thread_id: &str, seq: u128, s: &str, level: &str, table: &Table) {
         // Write as TOML.
         // Table name.
         let mut toml = format!(
