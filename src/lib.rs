@@ -4,6 +4,7 @@
 //!
 //! Publish:  
 //!
+//! cargo test
 //! cargo publish --dry-run
 //! cargo publish
 
