@@ -14,6 +14,8 @@ Not for production, but better than not logging.
 * It differs from the standard Rust log interface.
 * Ignore performance for ease of use and **ease of explanation**.
 * You **can break** the toml format. Do not validate.
+* Since the **writing order is unknown**, I assigned a serial 'Seq' number.
+* If the log export fails, the **error is ignored** and it continues.
 
 ## At second, Overall view
 

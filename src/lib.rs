@@ -30,7 +30,7 @@ use std::io::Write;
 use std::ops::Add;
 use std::path::Path;
 use std::process;
-use std::sync::Mutex;
+use std::sync::{mpsc, Mutex};
 use std::thread;
 
 // For multi-platform. Windows, or not.
@@ -189,20 +189,46 @@ impl Log {
         false
     }
 
-    /// Trace level. No trailing newline.
-    #[allow(dead_code)]
-    pub fn trace(s: &str) {
-        if Log::enabled(Level::Trace) {
+    pub fn send(level: &str, message: &str) {
+        let thread_id = format!("{:?}", thread::current().id());
+        let level_str = level.to_string();
+        let message_str = message.to_string();
+        SEQ.with(move |seq| {
+            let (sender, receiver) = mpsc::channel();
+            thread::spawn(move || {
+                let mut table = Table::default();
+                if let Ok(seq_clone) = receiver.recv() {
+                    Log::write(&thread_id, seq_clone, &message_str, &level_str, &mut table);
+                }
+            });
+            let seq_clone = seq.borrow().clone();
+            if let Err(_) = sender.send(seq_clone) {
+                // ignore
+            }
+            *seq.borrow_mut() += 1;
+        });
+        /* TODO 消す。
+        if Log::enabled(Level::Debug) {
+            Log::send("Debug", message);
             let thread_id = format!("{:?}", thread::current().id());
-            let s_str = s.to_string();
+            let s_str = message.to_string();
             SEQ.with(move |seq| {
                 let seq_clone = seq.borrow().clone();
                 thread::spawn(move || {
                     let mut table = Table::default();
-                    Log::write(&thread_id, seq_clone, &s_str, "Trace", &mut table);
+                    Log::write(&thread_id, seq_clone, &s_str, "Debug", &mut table);
                 });
                 *seq.borrow_mut() += 1;
             });
+        }
+        */
+    }
+
+    /// Trace level. No trailing newline.
+    #[allow(dead_code)]
+    pub fn trace(message: &str) {
+        if Log::enabled(Level::Trace) {
+            Log::send("Trace", message);
         }
     }
 
@@ -259,18 +285,9 @@ impl Log {
 
     /// Debug level. No trailing newline.
     #[allow(dead_code)]
-    pub fn debug(s: &str) {
+    pub fn debug(message: &str) {
         if Log::enabled(Level::Debug) {
-            let thread_id = format!("{:?}", thread::current().id());
-            let s_str = s.to_string();
-            let mut table = Table::default();
-            SEQ.with(move |seq| {
-                let seq_clone = seq.borrow().clone();
-                thread::spawn(move || {
-                    Log::write(&thread_id, seq_clone, &s_str, "Debug", &mut table);
-                });
-                *seq.borrow_mut() += 1;
-            });
+            Log::send("Debug", message);
         }
     }
 
@@ -327,18 +344,9 @@ impl Log {
 
     /// Info level. No trailing newline.
     #[allow(dead_code)]
-    pub fn info(s: &str) {
+    pub fn info(message: &str) {
         if Log::enabled(Level::Info) {
-            let s_clone = s.to_string().clone();
-            let thread_id = format!("{:?}", thread::current().id());
-            SEQ.with(move |seq| {
-                let seq_num = seq.borrow().clone();
-                thread::spawn(move || {
-                    let mut table = Table::default();
-                    Log::write(&thread_id, seq_num, &s_clone, "Info", &mut table);
-                });
-                *seq.borrow_mut() += 1;
-            });
+            Log::send("Info", message);
         }
     }
 
@@ -386,15 +394,9 @@ impl Log {
     }
     /// Notice level. No trailing newline.
     #[allow(dead_code)]
-    pub fn notice(s: &str) {
+    pub fn notice(message: &str) {
         if Log::enabled(Level::Notice) {
-            let thread_id = format!("{:?}", thread::current().id());
-            let mut table = Table::default();
-            SEQ.with(move |seq| {
-                let seq_num = seq.borrow().clone();
-                Log::write(&thread_id, seq_num, s, "Notice", &mut table);
-                *seq.borrow_mut() += 1;
-            });
+            Log::send("Notice", message);
         }
     }
 
@@ -439,15 +441,9 @@ impl Log {
 
     /// Warning level. No trailing newline.
     #[allow(dead_code)]
-    pub fn warn(s: &str) {
+    pub fn warn(message: &str) {
         if Log::enabled(Level::Warn) {
-            let thread_id = format!("{:?}", thread::current().id());
-            let mut table = Table::default();
-            SEQ.with(move |seq| {
-                let seq_num = seq.borrow().clone();
-                Log::write(&thread_id, seq_num, s, "Warn", &mut table);
-                *seq.borrow_mut() += 1;
-            });
+            Log::send("Warn", message);
         }
     }
 
@@ -493,15 +489,9 @@ impl Log {
 
     /// Error level. No trailing newline.
     #[allow(dead_code)]
-    pub fn error(s: &str) {
+    pub fn error(message: &str) {
         if Log::enabled(Level::Error) {
-            let thread_id = format!("{:?}", thread::current().id());
-            let mut table = Table::default();
-            SEQ.with(move |seq| {
-                let seq_num = seq.borrow().clone();
-                Log::write(&thread_id, seq_num, s, "Error", &mut table);
-                *seq.borrow_mut() += 1;
-            });
+            Log::send("Error", message);
         }
     }
 
@@ -547,17 +537,10 @@ impl Log {
     /// Fatal level. No trailing newline.
     /// 'panic!' Pass this as the first argument.
     #[allow(dead_code)]
-    pub fn fatal(s: &str) -> String {
-        let thread_id = format!("{:?}", thread::current().id());
-        let s_str = s.to_string();
-        let s_clone = s_str.clone();
-        let mut table = Table::default();
-        SEQ.with(move |seq| {
-            let seq_num = seq.borrow().clone();
-            Log::write(&thread_id, seq_num, &s_clone, "Fatal", &mut table);
-            *seq.borrow_mut() += 1;
-        });
-        s_str
+    pub fn fatal(message: &str) -> String {
+        // Fatal runs at any level.
+        Log::send("Fatal", message);
+        message.to_string()
     }
     /// Fatal level. There is a trailing newline.
     /// 'panic!' Pass this as the first argument.
