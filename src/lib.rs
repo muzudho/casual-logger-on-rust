@@ -103,6 +103,52 @@ thread_local!(pub static SEQ: RefCell<u128> = {
     RefCell::new(1)
 });
 
+pub struct Table {
+    string_map: HashMap<String, String>,
+}
+impl Default for Table {
+    fn default() -> Self {
+        Table {
+            string_map: HashMap::new(),
+        }
+    }
+}
+impl Table {
+    /// Insert string value.
+    pub fn str<'a>(&'a mut self, key: &'a str, value: &'a str) -> &'a mut Self {
+        // Escape the trailing newline at last.
+        let mut body = if value[value.len() - NEW_LINE.len()..] == *NEW_LINE {
+            // Do.
+            format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE)
+        } else {
+            // Don't.
+            value.to_string()
+        };
+        // Escape the double quotation.
+        body = body.replace("\"", "\\\"");
+        self.string_map.insert(
+            // Log detail level.
+            key.to_string(),
+            // Message.
+            if 1 < value.lines().count() {
+                // Multi-line string.
+                format!(
+                    "\"\"\"
+{}
+\"\"\"",
+                    body
+                )
+                .to_string()
+            } else {
+                // One liner.
+                format!("\"{}\"", body).to_string()
+            },
+        );
+
+        self
+    }
+}
+
 // Easy to use logging.
 pub struct Log {}
 impl Log {
@@ -235,36 +281,6 @@ impl Log {
         let s = &format!("{}{}", s, NEW_LINE);
         Log::write(s, level);
     }
-    fn insert_string(map: &mut HashMap<String, String>, key: &str, value: &str) {
-        // Escape the trailing newline at last.
-        let mut body = if value[value.len() - NEW_LINE.len()..] == *NEW_LINE {
-            // Do.
-            format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE)
-        } else {
-            // Don't.
-            value.to_string()
-        };
-        // Escape the double quotation.
-        body = body.replace("\"", "\\\"");
-        map.insert(
-            // Log detail level.
-            key.to_string(),
-            // Message.
-            if 1 < value.lines().count() {
-                // Multi-line string.
-                format!(
-                    "\"\"\"
-{}
-\"\"\"",
-                    body
-                )
-                .to_string()
-            } else {
-                // One liner.
-                format!("\"{}\"", body).to_string()
-            },
-        );
-    }
     /// Write to a log file. No trailing newline.
     #[allow(dead_code)]
     fn write(s: &str, level: &str) {
@@ -286,9 +302,9 @@ impl Log {
                 // Line number. This is to avoid duplication.
                 seq.borrow(),
             );
-            let mut string_map = HashMap::new();
-            Log::insert_string(&mut string_map, level, s);
-            for (k, v) in &string_map {
+            let mut table = Table::default();
+            table.str(level, s);
+            for (k, v) in &table.string_map {
                 toml += &format!(
                     "{} = {}
 ",
