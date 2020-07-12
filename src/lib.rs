@@ -192,8 +192,9 @@ impl Log {
     #[allow(dead_code)]
     pub fn trace(s: &str) {
         if Log::enabled(Level::Trace) {
+            let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
-            Log::write(s, "Trace", &mut table)
+            Log::write(&thread_id, s, "Trace", &mut table)
         }
     }
 
@@ -201,8 +202,9 @@ impl Log {
     #[allow(dead_code)]
     pub fn traceln(s: &str) {
         if Log::enabled(Level::Trace) {
+            let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
-            Log::writeln(s, "Trace", &mut table);
+            Log::writeln(&thread_id, s, "Trace", &mut table);
         }
     }
 
@@ -210,7 +212,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn trace_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Trace) {
-            Log::write(s, "Trace", table)
+            let thread_id = format!("{:?}", thread::current().id());
+            Log::write(&thread_id, s, "Trace", table)
         }
     }
 
@@ -218,7 +221,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn traceln_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Trace) {
-            Log::writeln(s, "Trace", table);
+            let thread_id = format!("{:?}", thread::current().id());
+            Log::writeln(&thread_id, s, "Trace", table);
         }
     }
 
@@ -226,8 +230,9 @@ impl Log {
     #[allow(dead_code)]
     pub fn debug(s: &str) {
         if Log::enabled(Level::Debug) {
+            let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
-            Log::write(s, "Debug", &mut table)
+            Log::write(&thread_id, s, "Debug", &mut table)
         }
     }
 
@@ -235,8 +240,9 @@ impl Log {
     #[allow(dead_code)]
     pub fn debugln(s: &str) {
         if Log::enabled(Level::Debug) {
+            let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
-            Log::writeln(s, "Debug", &mut table);
+            Log::writeln(&thread_id, s, "Debug", &mut table);
         }
     }
 
@@ -244,7 +250,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn debug_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Debug) {
-            Log::write(s, "Debug", table)
+            let thread_id = format!("{:?}", thread::current().id());
+            Log::write(&thread_id, s, "Debug", table)
         }
     }
 
@@ -252,7 +259,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn debugln_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Debug) {
-            Log::writeln(s, "Debug", table);
+            let thread_id = format!("{:?}", thread::current().id());
+            Log::writeln(&thread_id, s, "Debug", table);
         }
     }
 
@@ -260,8 +268,9 @@ impl Log {
     #[allow(dead_code)]
     pub fn info(s: &str) {
         if Log::enabled(Level::Info) {
+            let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
-            Log::write(s, "Info", &mut table)
+            Log::write(&thread_id, s, "Info", &mut table)
         }
     }
 
@@ -269,8 +278,12 @@ impl Log {
     #[allow(dead_code)]
     pub fn infoln(s: &str) {
         if Log::enabled(Level::Info) {
-            let mut table = Table::default();
-            Log::writeln(s, "Info", &mut table);
+            let t = s.to_string().clone();
+            let thread_id = format!("{:?}", thread::current().id());
+            thread::spawn(move || {
+                let mut table = Table::default();
+                Log::writeln(&thread_id, &t, "Info", &mut table);
+            });
         }
     }
 
@@ -278,7 +291,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn info_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Info) {
-            Log::write(s, "Info", table)
+            let thread_id = format!("{:?}", thread::current().id());
+            Log::write(&thread_id, s, "Info", table)
         }
     }
 
@@ -286,15 +300,17 @@ impl Log {
     #[allow(dead_code)]
     pub fn infoln_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Info) {
-            Log::writeln(s, "Info", table);
+            let thread_id = format!("{:?}", thread::current().id());
+            Log::writeln(&thread_id, s, "Info", table);
         }
     }
     /// Notice level. No trailing newline.
     #[allow(dead_code)]
     pub fn notice(s: &str) {
         if Log::enabled(Level::Notice) {
+            let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
-            Log::write(s, "Notice", &mut table)
+            Log::write(&thread_id, s, "Notice", &mut table)
         }
     }
 
@@ -302,15 +318,17 @@ impl Log {
     #[allow(dead_code)]
     pub fn noticeln(s: &str) {
         if Log::enabled(Level::Notice) {
+            let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
-            Log::writeln(s, "Notice", &mut table);
+            Log::writeln(&thread_id, s, "Notice", &mut table);
         }
     }
     /// Notice level. No trailing newline. Use table.
     #[allow(dead_code)]
     pub fn notice_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Notice) {
-            Log::write(s, "Notice", table)
+            let thread_id = format!("{:?}", thread::current().id());
+            Log::write(&thread_id, s, "Notice", table)
         }
     }
 
@@ -318,7 +336,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn noticeln_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Notice) {
-            Log::writeln(s, "Notice", table);
+            let thread_id = format!("{:?}", thread::current().id());
+            Log::writeln(&thread_id, s, "Notice", table);
         }
     }
 
@@ -326,8 +345,9 @@ impl Log {
     #[allow(dead_code)]
     pub fn warn(s: &str) {
         if Log::enabled(Level::Warn) {
+            let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
-            Log::write(s, "Warn", &mut table)
+            Log::write(&thread_id, s, "Warn", &mut table)
         }
     }
 
@@ -335,8 +355,9 @@ impl Log {
     #[allow(dead_code)]
     pub fn warnln(s: &str) {
         if Log::enabled(Level::Warn) {
+            let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
-            Log::writeln(s, "Warn", &mut table);
+            Log::writeln(&thread_id, s, "Warn", &mut table);
         }
     }
 
@@ -344,7 +365,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn warn_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Warn) {
-            Log::write(s, "Warn", table)
+            let thread_id = format!("{:?}", thread::current().id());
+            Log::write(&thread_id, s, "Warn", table)
         }
     }
 
@@ -352,7 +374,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn warnln_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Warn) {
-            Log::writeln(s, "Warn", table);
+            let thread_id = format!("{:?}", thread::current().id());
+            Log::writeln(&thread_id, s, "Warn", table);
         }
     }
 
@@ -360,8 +383,9 @@ impl Log {
     #[allow(dead_code)]
     pub fn error(s: &str) {
         if Log::enabled(Level::Error) {
+            let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
-            Log::write(s, "Error", &mut table)
+            Log::write(&thread_id, s, "Error", &mut table)
         }
     }
 
@@ -369,8 +393,9 @@ impl Log {
     #[allow(dead_code)]
     pub fn errorln(s: &str) {
         if Log::enabled(Level::Error) {
+            let thread_id = format!("{:?}", thread::current().id());
             let mut table = Table::default();
-            Log::writeln(s, "Error", &mut table);
+            Log::writeln(&thread_id, s, "Error", &mut table);
         }
     }
 
@@ -378,7 +403,8 @@ impl Log {
     #[allow(dead_code)]
     pub fn error_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Error) {
-            Log::write(s, "Error", table)
+            let thread_id = format!("{:?}", thread::current().id());
+            Log::write(&thread_id, s, "Error", table)
         }
     }
 
@@ -386,25 +412,28 @@ impl Log {
     #[allow(dead_code)]
     pub fn errorln_t(s: &str, table: &mut Table) {
         if Log::enabled(Level::Error) {
-            Log::writeln(s, "Error", table);
+            let thread_id = format!("{:?}", thread::current().id());
+            Log::writeln(&thread_id, s, "Error", table);
         }
     }
     /// Fatal level. No trailing newline.
     /// 'panic!' Pass this as the first argument.
     #[allow(dead_code)]
     pub fn fatal(s: &str) -> String {
+        let thread_id = format!("{:?}", thread::current().id());
         let t = format!("{}", s).to_string();
         let mut table = Table::default();
-        Log::write(&t, "Fatal", &mut table);
+        Log::write(&thread_id, &t, "Fatal", &mut table);
         t
     }
     /// Fatal level. There is a trailing newline.
     /// 'panic!' Pass this as the first argument.
     #[allow(dead_code)]
     pub fn fatalln(s: &str) -> String {
+        let thread_id = format!("{:?}", thread::current().id());
         let t = format!("{}{}", s, NEW_LINE).to_string();
         let mut table = Table::default();
-        Log::write(&t, "Fatal", &mut table);
+        Log::write(&thread_id, &t, "Fatal", &mut table);
         t
     }
 
@@ -412,35 +441,37 @@ impl Log {
     /// 'panic!' Pass this as the first argument.
     #[allow(dead_code)]
     pub fn fatal_t(s: &str, table: &mut Table) -> String {
+        let thread_id = format!("{:?}", thread::current().id());
         let t = format!("{}", s).to_string();
-        Log::write(&t, "Fatal", table);
+        Log::write(&thread_id, &t, "Fatal", table);
         t
     }
     /// Fatal level. There is a trailing newline.
     /// 'panic!' Pass this as the first argument.
     #[allow(dead_code)]
     pub fn fatalln_t(s: &str, table: &mut Table) -> String {
+        let thread_id = format!("{:?}", thread::current().id());
         let t = format!("{}{}", s, NEW_LINE).to_string();
-        Log::write(&t, "Fatal", table);
+        Log::write(&thread_id, &t, "Fatal", table);
         t
     }
 
     /// Write to a log file. There is a trailing newline.
     #[allow(dead_code)]
-    fn writeln(s: &str, level: &str, table: &mut Table) {
+    fn writeln(thread_id: &str, s: &str, level: &str, table: &mut Table) {
         let s = &format!("{}{}", s, NEW_LINE);
-        Log::write(s, level, table);
+        Log::write(thread_id, s, level, table);
     }
     /// Write to a log file. No trailing newline.
     #[allow(dead_code)]
-    fn write(s: &str, level: &str, table: &mut Table) {
+    fn write(thread_id: &str, s: &str, level: &str, table: &mut Table) {
         SEQ.with(move |seq| {
             // Write as TOML.
             // Table name.
             let mut toml = format!(
                 // Table name to keep for ordering.
                 // For example, you can parse it easily by writing the table name like a GET query.
-                "[\"Now={}&Pid={}&Thr={:?}&Seq={}\"]
+                "[\"Now={}&Pid={}&Thr={}&Seq={}\"]
 ",
                 // If you use ISO8601, It's "%Y-%m-%dT%H:%M:%S%z". However, it does not set the date format.
                 // Make it easier to read.
@@ -448,7 +479,7 @@ impl Log {
                 // Process ID.
                 process::id(),
                 // Thread ID. However, Note that you are not limited to numbers.
-                thread::current().id(),
+                thread_id,
                 // Line number. This is to avoid duplication.
                 seq.borrow(),
             );

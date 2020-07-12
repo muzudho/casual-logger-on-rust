@@ -5,7 +5,7 @@ Not for you, for self-study of beginner friends.
 Of course you can use it.  
 Not for production, but better than not logging.  
 
-* Only write to 1 file on current directory.
+* Only write to 1 file on working directory.
 * Rotate by date.
 * Delete old files.
 
@@ -13,7 +13,7 @@ Not for production, but better than not logging.
 
 * It differs from the standard Rust log interface.
 * Ignore performance for ease of use and **ease of explanation**.
-* You can break the toml format. Do not validate.
+* You **can break** the toml format. Do not validate.
 
 ## At second, Overall view
 
