@@ -13,6 +13,7 @@ Not for production, but better than not logging.
 
 * It differs from the standard Rust log interface.
 * Ignore performance for ease of use and **ease of explanation**.
+* You can break the toml format. Do not validate.
 
 ## At second, Overall view
 
@@ -66,25 +67,6 @@ fn main() {
         Log::infoln(&format!("x is {}.", x));
     }
 
-    // Suffix '_t'. TOML say a table. So-called map.
-    Log::infoln_t(
-        "The sky is from top to bottom!!
-上から下まで空です！！",
-        Table::default()
-            .str(
-                // Do not include spaces in your key.
-                "ABird",
-                "fly in the sky.",
-            )
-            .str("TwoFish", "swim.")
-            .str(
-                "ThreeMonkeys",
-                "climb
-a tall
-tree.",
-            ),
-    );
-
     // The level is implicitly confirmed.
     Log::trace("A,");
     Log::traceln("B,");
@@ -100,78 +82,98 @@ tree.",
     Log::errorln("L,");
     Log::fatal("M,");
     Log::fatalln("N!");
+
+    // Suffix '_t'. TOML say a table. So-called map.
+    Log::infoln_t(
+        "The sky is from top to bottom!!
+上から下まで空です！！",
+        Table::default()
+            .str(
+                // Do not include spaces in your key.
+                "ABird",
+                "fly in the sky.",
+            )
+            // Not enclose this value in quotation marks.
+            .literal("NumberOfSwimmingFish", "2")
+            .str(
+                "ThreeMonkeys",
+                "climb
+a tall
+tree.",
+            ),
+    );
 }
 ```
 
 Output `./default-2020-07-12.log.toml` auto generated:  
 
 ```toml
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=1"]
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=1"]
 Notice = "Remove 0 files.\r\n"
 
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=2"]
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=2"]
 Info = """
 Hello, world!!
 こんにちわ、世界！！\r\n
 """
 
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=3"]
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=3"]
 Info = "x is 100.\r\n"
 
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=4"]
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=4"]
+Trace = "A,"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=5"]
+Trace = "B,\r\n"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=6"]
+Debug = "C,"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=7"]
+Debug = "D,\r\n"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=8"]
+Info = "E,"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=9"]
+Info = "F,\r\n"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=10"]
+Notice = "G,"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=11"]
+Notice = "H,\r\n"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=12"]
+Warn = "I,"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=13"]
+Warn = "J,\r\n"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=14"]
+Error = "K,"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=15"]
+Error = "L,\r\n"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=16"]
+Fatal = "M,"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=17"]
+Fatal = "N!\r\n"
+
+["Now=2020-07-12 18:51:25&Pid=10864&Thr=ThreadId(1)&Seq=18"]
 Info = """
 The sky is from top to bottom!!
 上から下まで空です！！\r\n
 """
 ABird = "fly in the sky."
+NumberOfSwimmingFish = 2
 ThreeMonkeys = """
 climb
 a tall
 tree.
 """
-TwoFish = "swim."
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=5"]
-Trace = "A,"
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=6"]
-Trace = "B,\r\n"
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=7"]
-Debug = "C,"
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=8"]
-Debug = "D,\r\n"
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=9"]
-Info = "E,"
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=10"]
-Info = "F,\r\n"
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=11"]
-Notice = "G,"
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=12"]
-Notice = "H,\r\n"
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=13"]
-Warn = "I,"
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=14"]
-Warn = "J,\r\n"
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=15"]
-Error = "K,"
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=16"]
-Error = "L,\r\n"
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=17"]
-Fatal = "M,"
-
-["Now=2020-07-12 14:18:13&Pid=7528&Thr=ThreadId(1)&Seq=18"]
-Fatal = "N!\r\n"
 
 ```
 
@@ -310,25 +312,6 @@ Code:
         Log::infoln(&format!("x is {}.", x));
     }
 
-    // Suffix '_t'. TOML say a table. So-called map.
-    Log::infoln_t(
-        "The sky is from top to bottom!!
-上から下まで空です！！",
-        Table::default()
-            .str(
-                // Do not include spaces in your key.
-                "ABird",
-                "fly in the sky.",
-            )
-            .str("TwoFish", "swim.")
-            .str(
-                "ThreeMonkeys",
-                "climb
-a tall
-tree.",
-            ),
-    );
-
     // The level is implicitly confirmed.
     Log::trace("A,");
     Log::traceln("B,");
@@ -346,11 +329,72 @@ tree.",
     Log::fatalln("N!");
 ```
 
+### Usage of Table
+
+| Static method | Description        |
+| ------------- | ------------------ |
+| `::default()` | Create a instance. |
+
+| Instance method        | Description                    |
+| ---------------------- | ------------------------------ |
+| `.str(key, value)`     | Insert a string.               |
+|                        | Multi-line string are          |
+|                        | output with multiple lines.    |
+| `.literal(key, value)` | Not enclose this value in      |
+|                        | quotation marks.               |
+|                        | You can break the toml format. |
+|                        | Do not validate.               |
+
+Do not include spaces in the **key**. TOML collapses.  
+
+It is difficult to explain to beginners how to use TOML.  
+If you make a TOML that cannot be parsed **literal**ly,  
+please correct it.  
+
+Code:  
+
+```rust
+    // Suffix '_t'. TOML say a table. So-called map.
+    Log::infoln_t(
+        "The sky is from top to bottom!!
+上から下まで空です！！",
+        Table::default()
+            .str(
+                // Do not include spaces in your key.
+                "ABird",
+                "fly in the sky.",
+            )
+            // Not enclose this value in quotation marks.
+            .literal("NumberOfSwimmingFish", "2")
+            .str(
+                "ThreeMonkeys",
+                "climb
+a tall
+tree.",
+            ),
+    );
+```
+
+Output:  
+
+```toml
+["Now=2020-07-12 18:35:23&Pid=20872&Thr=ThreadId(1)&Seq=18"]
+Info = """
+The sky is from top to bottom!!
+上から下まで空です！！\r\n
+"""
+ABird = "fly in the sky."
+NumberOfSwimmingFish = 2
+ThreeMonkeys = """
+climb
+a tall
+tree.
+"""
+
+```
+
 ## TODO
 
-* [ ] Adding table items as toml.
-  * [x] str.
-  * [ ] Other type...
 * [ ] Spawn another thread for logging.
 
 ## Tested environment

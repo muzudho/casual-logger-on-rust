@@ -50,25 +50,6 @@ fn main() {
         Log::infoln(&format!("x is {}.", x));
     }
 
-    // Suffix '_t'. TOML say a table. So-called map.
-    Log::infoln_t(
-        "The sky is from top to bottom!!
-上から下まで空です！！",
-        Table::default()
-            .str(
-                // Do not include spaces in your key.
-                "ABird",
-                "fly in the sky.",
-            )
-            .str("TwoFish", "swim.")
-            .str(
-                "ThreeMonkeys",
-                "climb
-a tall
-tree.",
-            ),
-    );
-
     // The level is implicitly confirmed.
     Log::trace("A,");
     Log::traceln("B,");
@@ -84,4 +65,24 @@ tree.",
     Log::errorln("L,");
     Log::fatal("M,");
     Log::fatalln("N!");
+
+    // Suffix '_t'. TOML say a table. So-called map.
+    Log::infoln_t(
+        "The sky is from top to bottom!!
+上から下まで空です！！",
+        Table::default()
+            .str(
+                // Do not include spaces in your key.
+                "ABird",
+                "fly in the sky.",
+            )
+            // Not enclose this value in quotation marks.
+            .literal("NumberOfSwimmingFish", "2")
+            .str(
+                "ThreeMonkeys",
+                "climb
+a tall
+tree.",
+            ),
+    );
 }

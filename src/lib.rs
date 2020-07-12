@@ -1,18 +1,19 @@
-//! A logger that can be easily installed to simplify the sample program.
-//! Ignore performance for ease of use.
-//! It only supports writing to files and deleting old log files.
-//!
-//! Publish:  
-//!
-//! (1) `cargo test`
-//! (2) `cargo run --example example`
-//! (3) Open auto-generated log file. I check it.
-//! (4) Remove the log file.
-//! (5) Version up on Cargo.toml.
-//! (6) `cargo doc --open`
-//! (7) Comit to Git-hub.
-//! (8) `cargo publish --dry-run`
-//! (9) `cargo publish`
+//! This logger is intended to be easy to explain when teaching other example programs to friends.
+//! Not for you, for self-study of beginner friends.
+//! Of course you can use it.
+//! Not for production, but better than not logging.
+
+// Publish:
+//
+// (1) `cargo test`
+// (2) `cargo run --example example`
+// (3) Open auto-generated log file. I check it.
+// (4) Remove the log file.
+// (5) Version up on Cargo.toml.
+// (6) `cargo doc --open`
+// (7) Comit to Git-hub.
+// (8) `cargo publish --dry-run`
+// (9) `cargo publish`
 
 #[macro_use]
 extern crate lazy_static;
@@ -116,12 +117,12 @@ thread_local!(pub static SEQ: RefCell<u128> = {
 });
 
 pub struct Table {
-    string_map: BTreeMap<String, String>,
+    sorted_map: BTreeMap<String, String>,
 }
 impl Default for Table {
     fn default() -> Self {
         Table {
-            string_map: BTreeMap::new(),
+            sorted_map: BTreeMap::new(),
         }
     }
 }
@@ -152,11 +153,22 @@ impl Table {
     }
     /// Insert string value.
     pub fn str<'a>(&'a mut self, key: &'a str, value: &'a str) -> &'a mut Self {
-        self.string_map.insert(
+        self.sorted_map.insert(
             // Log detail level.
             key.to_string(),
             // Message.
             Table::format_str_value(value).to_string(),
+        );
+
+        self
+    }
+    /// Insert literal string value.
+    pub fn literal<'a>(&'a mut self, key: &'a str, value: &'a str) -> &'a mut Self {
+        self.sorted_map.insert(
+            // Log detail level.
+            key.to_string(),
+            // Message.
+            value.to_string(),
         );
 
         self
@@ -447,7 +459,7 @@ impl Log {
                 Table::format_str_value(s).to_string()
             )
             .to_string();
-            for (k, v) in &table.string_map {
+            for (k, v) in &table.sorted_map {
                 toml += &format!(
                     "{} = {}
 ",
