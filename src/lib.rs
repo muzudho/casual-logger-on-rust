@@ -138,6 +138,8 @@ thread_local!(pub static SEQ: RefCell<u128> = {
 
 #[derive(Clone)]
 pub struct Table {
+    /// Thread ID. However, Note that you are not limited to numbers.
+    thread_id: String,
     seq: u128,
     level: Level,
     message: String,
@@ -147,6 +149,7 @@ pub struct Table {
 impl Default for Table {
     fn default() -> Self {
         Table {
+            thread_id: "".to_string(),
             seq: 0,
             sorted_map: BTreeMap::new(),
             level: Level::Trace,
@@ -158,6 +161,7 @@ impl Default for Table {
 impl Table {
     fn new(level: Level, message: &str, trailing_newline: bool) -> Self {
         Table {
+            thread_id: "".to_string(),
             seq: 0,
             sorted_map: BTreeMap::new(),
             level: level,
@@ -514,8 +518,8 @@ impl Log {
     }
 
     fn send(table: &Table) {
-        let thread_id = format!("{:?}", thread::current().id());
         let mut table_clone = table.clone();
+        table_clone.thread_id = format!("{:?}", thread::current().id());
         if let Ok(mut pool) = POOL.lock() {
             pool.increase_thread_count();
         }
@@ -528,7 +532,7 @@ impl Log {
             }
 
             thread::spawn(move || {
-                Log::flush(&thread_id);
+                Log::flush();
 
                 if let Ok(mut pool) = POOL.lock() {
                     pool.decrease_thread_count();
@@ -540,14 +544,14 @@ impl Log {
 
     /// Continue writing until the queue is empty.
     /// However, it ends with 50 tables.
-    fn flush(thread_id: &str) {
+    fn flush() {
         for _i in 0..50 {
             if let Ok(mut queue) = QUEUE.lock() {
                 // if queue.is_empty() {
                 //     break;
                 // }
                 if let Some(table) = queue.pop_back() {
-                    Log::write(thread_id, &table);
+                    Log::write(&table);
                 } else {
                     break;
                 }
@@ -558,7 +562,7 @@ impl Log {
     /// Write to a log file.
     /// This is time consuming and should be done in a separate thread.
     #[allow(dead_code)]
-    fn write(thread_id: &str, table: &Table) {
+    fn write(table: &Table) {
         let message = if table.message_trailing_newline {
             // There is a trailing newline.
             format!("{}{}", table.message, NEW_LINE)
@@ -578,7 +582,7 @@ impl Log {
             // Process ID.
             process::id(),
             // Thread ID. However, Note that you are not limited to numbers.
-            thread_id,
+            table.thread_id,
             // Line number. This is to avoid duplication.
             table.seq,
         );
