@@ -106,7 +106,7 @@ fn main() {
     Log::fatal("(13)FATAL");
     Log::fatalln("(14)fatal-line");
 
-    // Fatal is designed to be used as the first argument of Panic!.
+    // Fatal is Panic! Can be used as the first argument of.
     // panic!(Log::fatal(&format!("Invalid number=|{}|", 99)));
 
     // Suffix '_t'. TOML say a table. So-called map.
@@ -548,10 +548,17 @@ Code:
     Log::errorln("(12)error-line");
     Log::fatal("(13)FATAL");
     Log::fatalln("(14)fatal-line");
-
-    // Fatal is designed to be used as the first argument of Panic!.
-    // panic!(Log::fatal(&format!("Invalid number=|{}|", 99)));
 ```
+
+A piece of advice.  
+
+```rust
+    // Fatal is Panic! Can be used as the first argument of.
+    panic!(Log::fatal(&format!("Invalid number=|{}|", 99)));
+```
+
+Fatal returns a string so you can try to record a panic message.  
+However, the last log may not be written if the program exits first.  
 
 ### Usage of Table
 
@@ -634,6 +641,7 @@ the program will exit before writing all the logs.
 ## TODO
 
 * [ ] Dogfooding.
+* [ ] Fatal returns a string so you can try to record a panic message. However, the last log may not be written if the program exits first.
 
 ## Tested environment
 

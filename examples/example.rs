@@ -64,7 +64,7 @@ fn main() {
     Log::fatal("(13)FATAL");
     Log::fatalln("(14)fatal-line");
 
-    // Fatal is designed to be used as the first argument of Panic!.
+    // Fatal is Panic! Can be used as the first argument of.
     // panic!(Log::fatal(&format!("Invalid number=|{}|", 99)));
 
     // Suffix '_t'. TOML say a table. So-called map.

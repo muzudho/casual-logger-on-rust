@@ -476,7 +476,7 @@ impl Log {
         }
     }
     /// Fatal level. No trailing newline.
-    /// Fatal is designed to be used as the first argument of Panic!.
+    /// Fatal is Panic! Can be used as the first argument of.
     #[allow(dead_code)]
     pub fn fatal(message: &str) -> String {
         // Fatal runs at any level.
@@ -484,7 +484,7 @@ impl Log {
         message.to_string()
     }
     /// Fatal level. There is a trailing newline.
-    /// Fatal is designed to be used as the first argument of Panic!.
+    /// Fatal is Panic! Can be used as the first argument of.
     #[allow(dead_code)]
     pub fn fatalln(message: &str) -> String {
         // Fatal runs at any level.
@@ -494,7 +494,7 @@ impl Log {
     }
 
     /// Fatal level. No trailing newline.
-    /// Fatal is designed to be used as the first argument of Panic!.
+    /// Fatal is Panic! Can be used as the first argument of.
     #[allow(dead_code)]
     pub fn fatal_t(message: &str, table: &mut Table) -> String {
         // Fatal runs at any level.
@@ -505,7 +505,7 @@ impl Log {
         message.to_string()
     }
     /// Fatal level. There is a trailing newline.
-    /// Fatal is designed to be used as the first argument of Panic!.
+    /// Fatal is Panic! Can be used as the first argument of.
     #[allow(dead_code)]
     pub fn fatalln_t(message: &str, table: &mut Table) -> String {
         // Fatal runs at any level.
