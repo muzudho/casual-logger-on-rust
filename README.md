@@ -1,30 +1,35 @@
 # casual_logger
 
-It focuses only on the features that you need **during example-programming self-study**.  
+There are only features that are used **for self-study** of programming examples.  
 Not for production, but better than not logging anything.  
 
 Interested:  
 
 * **Rotate** log by date.
 * **Delete** old log files. (semi-automatic)
-* Use the **TOML table** format for logs. A human-readable format that can be analyzed by a computer.
+* Write the log as a **TOML table**. A human-readable format that can be analyzed by a computer.
 
 Not interested:  
 
 * Only write to 1 file on working directory.
 * The file path **cannot** be set.
+* There is no configuration file.
 
 ## Do you have this problem?
 
-(Problem-1) I wanted to self-learn short programming with a logger, but setting up a logger is **difficult than that short programming**. For example, a tic-tac-toe program. The logging period is short.  
+(Problem-1)  
+I wanted to self-learn short programming with a logger, but setting up a logger is **difficult than that short programming**. For example, a tic-tac-toe program. The logging period is short.  
 
-(Problem-2) Writing a log parser is **tedious**.  
+(Problem-2)  
+Writing a log parser is **tedious**.  
 
 ### This logger solves the problem in this way.
 
-(Problem-1 solution) All features are described in **one copy and paste**. See "At second, Overall" view below.  
+(Problem-1 solution)  
+All features are described in **one copy and paste**. See "At second, Overall" view below.  
 
-(Problem-2 solution) Writing with TOML table.  
+(Problem-2 solution)  
+Write the log as a **TOML table**. A human-readable format that can be analyzed by a computer.  
 
 ## At first, Disclaim
 
