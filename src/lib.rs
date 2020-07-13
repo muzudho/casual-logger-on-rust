@@ -513,6 +513,15 @@ impl Log {
     pub fn fatal(message: &str) -> String {
         // Fatal runs at any level.
         Log::send(&Table::new(Level::Fatal, message, false));
+
+        let timeout_secs = if let Ok(logger) = LOGGER.lock() {
+            logger.fatal_timeout_secs
+        } else {
+            1
+        };
+        Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
+            eprintln!("{} sec(s). {}", secs, message);
+        });
         message.to_string()
     }
     /// Fatal level. There is a trailing newline.
@@ -521,6 +530,15 @@ impl Log {
     pub fn fatalln(message: &str) -> String {
         // Fatal runs at any level.
         Log::send(&Table::new(Level::Fatal, message, true));
+
+        let timeout_secs = if let Ok(logger) = LOGGER.lock() {
+            logger.fatal_timeout_secs
+        } else {
+            1
+        };
+        Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
+            eprintln!("{} sec(s). {}", secs, message);
+        });
         // Append trailing newline.
         format!("{}{}", message, NEW_LINE).to_string()
     }
@@ -534,6 +552,15 @@ impl Log {
         table.message = message.to_string();
         table.message_trailing_newline = false;
         Log::send(table);
+
+        let timeout_secs = if let Ok(logger) = LOGGER.lock() {
+            logger.fatal_timeout_secs
+        } else {
+            1
+        };
+        Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
+            eprintln!("{} sec(s). {}", secs, message);
+        });
         message.to_string()
     }
     /// Fatal level. There is a trailing newline.
@@ -545,6 +572,15 @@ impl Log {
         table.message = message.to_string();
         table.message_trailing_newline = true;
         Log::send(table);
+
+        let timeout_secs = if let Ok(logger) = LOGGER.lock() {
+            logger.fatal_timeout_secs
+        } else {
+            1
+        };
+        Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
+            eprintln!("{} sec(s). {}", secs, message);
+        });
         // Append trailing newline.
         format!("{}{}", message, NEW_LINE).to_string()
     }
@@ -705,6 +741,8 @@ pub struct Logger {
     log_file: Option<LogFile>,
     /// Activation.
     pub level: Level,
+    /// Timeout seconds when fatal.
+    pub fatal_timeout_secs: u64,
 }
 impl Default for Logger {
     fn default() -> Self {
@@ -718,6 +756,7 @@ impl Default for Logger {
             retention_days: 7,
             log_file: None,
             level: Level::Trace,
+            fatal_timeout_secs: 30,
         }
     }
 }

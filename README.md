@@ -74,6 +74,12 @@ fn main() {
         // |<-- High priority --------------- Low priority -->|
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
         logger.level = Level::Trace;
+
+        // Wait for seconds logging to complete when fatal.
+        // By default it's set to 30 seconds,
+        // so you probably don't need to set it.
+        logger.fatal_timeout_secs = 30;
+
         // Remove old log files. This is determined by the
         // StartDate in the filename.
         logger.remove_old_logs()
@@ -566,6 +572,18 @@ A piece of advice.
 
 Fatal returns a string so you can try to record a panic message.  
 However, the last log may not be written if the program exits first.  
+So there is a **fatal_timeout_secs** parameter.
+
+Code:  
+
+```rust
+    if let Ok(mut logger) = LOGGER.lock() {
+        // Wait for seconds logging to complete when fatal.
+        // By default it's set to 30 seconds,
+        // so you probably don't need to set it.
+        logger.fatal_timeout_secs = 30;
+    }
+```
 
 ### Usage of Table
 
@@ -649,7 +667,6 @@ the program will exit before writing all the logs.
 ## TODO
 
 * [ ] Dogfooding.
-* [ ] Fatal returns a string so you can try to record a panic message. However, the last log may not be written if the program exits first.
 
 ## Tested environment
 
