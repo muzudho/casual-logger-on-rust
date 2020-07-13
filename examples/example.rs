@@ -19,7 +19,6 @@ fn main() {
         // suffix empty and the .log extension.
         logger.set_file_name("tic-tac-toe", ".log", ".toml");
 
-        logger.retention_days = 2;
         // The higher this level, the more will be omitted.
         //
         // |<-- Low Level --------------------- High level -->|
@@ -34,6 +33,7 @@ fn main() {
 
         // Remove old log files. This is determined by the
         // StartDate in the filename.
+        logger.retention_days = 2;
         logger.remove_old_logs()
     } else {
         // Setup failed. Continue with the default settings.

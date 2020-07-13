@@ -7,9 +7,9 @@ fn main() {
     let stopwatch = Instant::now();
     let remove_num = if let Ok(mut logger) = LOGGER.lock() {
         logger.set_file_name("performance-check", ".log", ".toml");
-        logger.retention_days = 2;
         logger.level = Level::Trace;
         logger.fatal_timeout_secs = 30;
+        logger.retention_days = 2;
         logger.remove_old_logs()
     } else {
         0

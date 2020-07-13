@@ -37,7 +37,7 @@ Write the log as a **TOML table**. A human-readable format that can be analyzed 
 * **Ignore performance** for ease of use and ease of explanation.
 * You can break the toml format. **Do not validate**.
 * Depending on the version of this program, the log writing order may be **unstable**. Check the serial "Seq" number.
-* If the log export fails, the **error is ignored** and it continues.
+* If the log export fails, the **error is ignored** or print stderr, and it continues.
 * There is a waiting time of **1 second or more** before the logger ends.
 * **Don't forget** wait for logging to complete at **end of program**.
 
@@ -67,7 +67,6 @@ fn main() {
         // suffix empty and the .log extension.
         logger.set_file_name("tic-tac-toe", ".log", ".toml");
 
-        logger.retention_days = 2;
         // The higher this level, the more will be omitted.
         //
         // |<-- Low Level --------------------- High level -->|
@@ -82,6 +81,7 @@ fn main() {
 
         // Remove old log files. This is determined by the
         // StartDate in the filename.
+        logger.retention_days = 2;
         logger.remove_old_logs()
     } else {
         // Setup failed. Continue with the default settings.
@@ -465,7 +465,6 @@ Set up, Code:
 fn main() {
     if let Ok(mut logger) = LOGGER.lock() {
         logger.set_file_name("tic-tac-toe", ".log", ".toml");
-        logger.retention_days = 2;
         logger.level = Level::Trace;
     }
 
@@ -477,6 +476,7 @@ Log rotation, Code:
 
 ```rust
     let remove_num = if let Ok(mut logger) = LOGGER.lock() {
+        logger.retention_days = 2;
         logger.remove_old_logs()
     } else {
         0
