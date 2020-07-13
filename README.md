@@ -7,28 +7,29 @@ Interested:
 
 * **Rotate** log by date.
 * **Delete** old log files. (semi-automatic)
-* Write the log as a **TOML table**. A human-readable format that can be analyzed by a computer.
+* Write the log as a **TOML table**.
+* There is **no configuration file**.
 
 Not interested:  
 
 * Only write to 1 file on working directory.
 * The file path **cannot** be set.
-* There is no configuration file.
 
-## Do you have this problem?
+## (Suggest a solution) Are you in trouble with this?
 
-(Problem-1)  
-I wanted to self-learn short programming with a logger, but setting up a logger is **difficult than that short programming**. For example, a tic-tac-toe program. The logging period is short.  
+(Case-1)  
+I wanted to self-learn short programming with a logger, but setting up a logger is **difficult than that short programming**.  
+For example, For beginners who want to write a tic-tac-toe program now, setting up a logger is a hassle.  
 
-(Problem-2)  
-Writing a log parser is **tedious**.  
+(Case-2)  
+Writing a log **parser** is tedious.  
 
 ### This logger solves the problem in this way.
 
-(Problem-1 solution)  
-All features are described in **one copy and paste**. See "At second, Overall" view below.  
+(Case-1 solution)  
+All features are trial in **one copy and paste**. See "At second, Overall" view below.  
 
-(Problem-2 solution)  
+(Case-2 solution)  
 Write the log as a **TOML table**. A human-readable format that can be analyzed by a computer.  
 
 ## At first, Disclaim
