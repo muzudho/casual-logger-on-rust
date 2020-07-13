@@ -24,6 +24,7 @@ use chrono::{Date, Duration, Local, TimeZone};
 use regex::Regex;
 use std::cell::RefCell;
 use std::collections::BTreeMap;
+use std::fmt;
 use std::fs;
 use std::fs::{File, OpenOptions};
 use std::io::Write;
@@ -48,6 +49,7 @@ const NEW_LINE_SEQUENCE: &'static str = "\\n";
 /// |<-- Low Level ------------------------- High level -->|
 /// |<-- High priority ------------------- Low priority -->|
 /// | Fatal < Error < Warn < Notice < Info < Debug < Trace |
+#[derive(Clone)]
 pub enum Level {
     /// If the program cannot continue.
     #[allow(dead_code)]
@@ -89,6 +91,19 @@ impl Level {
         }
     }
 }
+impl fmt::Display for Level {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Level::Fatal => write!(f, "Fatal"),
+            Level::Error => write!(f, "Error"),
+            Level::Warn => write!(f, "Warn"),
+            Level::Notice => write!(f, "Notice"),
+            Level::Info => write!(f, "Info"),
+            Level::Debug => write!(f, "Debug"),
+            Level::Trace => write!(f, "Trace"),
+        }
+    }
+}
 
 // ```
 // # Add one line to Cargo.toml
@@ -120,12 +135,16 @@ thread_local!(pub static SEQ: RefCell<u128> = {
 
 #[derive(Clone)]
 pub struct Table {
+    level: Level,
+    message: String,
     sorted_map: BTreeMap<String, String>,
 }
 impl Default for Table {
     fn default() -> Self {
         Table {
             sorted_map: BTreeMap::new(),
+            level: Level::Trace,
+            message: "".to_string(),
         }
     }
 }
@@ -215,7 +234,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn trace(message: &str) {
         if Log::enabled(Level::Trace) {
-            Log::send("Trace", message);
+            Log::send(Level::Trace, message);
         }
     }
 
@@ -223,7 +242,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn traceln(message: &str) {
         if Log::enabled(Level::Trace) {
-            Log::sendln("Trace", message);
+            Log::sendln(Level::Trace, message);
         }
     }
 
@@ -231,7 +250,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn trace_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Trace) {
-            Log::send_t("Trace", message, table);
+            Log::send_t(Level::Trace, message, table);
         }
     }
 
@@ -239,7 +258,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn traceln_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Trace) {
-            Log::sendln_t("Trace", message, table);
+            Log::sendln_t(Level::Trace, message, table);
         }
     }
 
@@ -247,7 +266,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn debug(message: &str) {
         if Log::enabled(Level::Debug) {
-            Log::send("Debug", message);
+            Log::send(Level::Debug, message);
         }
     }
 
@@ -255,7 +274,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn debugln(message: &str) {
         if Log::enabled(Level::Debug) {
-            Log::sendln("Debug", message);
+            Log::sendln(Level::Debug, message);
         }
     }
 
@@ -263,7 +282,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn debug_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Debug) {
-            Log::send_t("Debug", message, table);
+            Log::send_t(Level::Debug, message, table);
         }
     }
 
@@ -271,7 +290,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn debugln_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Debug) {
-            Log::sendln_t("Debug", message, table);
+            Log::sendln_t(Level::Debug, message, table);
         }
     }
 
@@ -279,7 +298,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn info(message: &str) {
         if Log::enabled(Level::Info) {
-            Log::send("Info", message);
+            Log::send(Level::Info, message);
         }
     }
 
@@ -287,7 +306,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn infoln(message: &str) {
         if Log::enabled(Level::Info) {
-            Log::sendln("Info", message);
+            Log::sendln(Level::Info, message);
         }
     }
 
@@ -295,7 +314,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn info_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Info) {
-            Log::send_t("Info", message, table);
+            Log::send_t(Level::Info, message, table);
         }
     }
 
@@ -303,14 +322,14 @@ impl Log {
     #[allow(dead_code)]
     pub fn infoln_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Info) {
-            Log::sendln_t("Info", message, table);
+            Log::sendln_t(Level::Info, message, table);
         }
     }
     /// Notice level. No trailing newline.
     #[allow(dead_code)]
     pub fn notice(message: &str) {
         if Log::enabled(Level::Notice) {
-            Log::send("Notice", message);
+            Log::send(Level::Notice, message);
         }
     }
 
@@ -318,14 +337,14 @@ impl Log {
     #[allow(dead_code)]
     pub fn noticeln(message: &str) {
         if Log::enabled(Level::Notice) {
-            Log::sendln("Notice", message);
+            Log::sendln(Level::Notice, message);
         }
     }
     /// Notice level. No trailing newline. Use table.
     #[allow(dead_code)]
     pub fn notice_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Notice) {
-            Log::send_t("Notice", message, table);
+            Log::send_t(Level::Notice, message, table);
         }
     }
 
@@ -333,7 +352,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn noticeln_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Notice) {
-            Log::sendln_t("Notice", message, table);
+            Log::sendln_t(Level::Notice, message, table);
         }
     }
 
@@ -341,7 +360,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn warn(message: &str) {
         if Log::enabled(Level::Warn) {
-            Log::send("Warn", message);
+            Log::send(Level::Warn, message);
         }
     }
 
@@ -349,7 +368,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn warnln(message: &str) {
         if Log::enabled(Level::Warn) {
-            Log::sendln("Warn", message);
+            Log::sendln(Level::Warn, message);
         }
     }
 
@@ -357,7 +376,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn warn_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Warn) {
-            Log::send_t("Warn", message, table);
+            Log::send_t(Level::Warn, message, table);
         }
     }
 
@@ -365,7 +384,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn warnln_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Warn) {
-            Log::sendln_t("Warn", message, table);
+            Log::sendln_t(Level::Warn, message, table);
         }
     }
 
@@ -373,7 +392,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn error(message: &str) {
         if Log::enabled(Level::Error) {
-            Log::send("Error", message);
+            Log::send(Level::Error, message);
         }
     }
 
@@ -381,7 +400,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn errorln(message: &str) {
         if Log::enabled(Level::Error) {
-            Log::sendln("Error", message);
+            Log::sendln(Level::Error, message);
         }
     }
 
@@ -389,7 +408,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn error_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Error) {
-            Log::send_t("Error", message, table);
+            Log::send_t(Level::Error, message, table);
         }
     }
 
@@ -397,7 +416,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn errorln_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Error) {
-            Log::sendln_t("Error", message, table);
+            Log::sendln_t(Level::Error, message, table);
         }
     }
     /// Fatal level. No trailing newline.
@@ -405,7 +424,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn fatal(message: &str) -> String {
         // Fatal runs at any level.
-        Log::send("Fatal", message);
+        Log::send(Level::Fatal, message);
         message.to_string()
     }
     /// Fatal level. There is a trailing newline.
@@ -413,7 +432,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn fatalln(message: &str) -> String {
         // Fatal runs at any level.
-        Log::sendln("Fatal", message);
+        Log::sendln(Level::Fatal, message);
         // Append trailing newline.
         format!("{}{}", message, NEW_LINE).to_string()
     }
@@ -423,7 +442,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn fatal_t(message: &str, table: &mut Table) -> String {
         // Fatal runs at any level.
-        Log::send_t("Fatal", message, table);
+        Log::send_t(Level::Fatal, message, table);
         message.to_string()
     }
     /// Fatal level. There is a trailing newline.
@@ -431,20 +450,20 @@ impl Log {
     #[allow(dead_code)]
     pub fn fatalln_t(message: &str, table: &mut Table) -> String {
         // Fatal runs at any level.
-        Log::sendln_t("Fatal", message, table);
+        Log::sendln_t(Level::Fatal, message, table);
         // Append trailing newline.
         format!("{}{}", message, NEW_LINE).to_string()
     }
 
     /// Write to a log file. There is a trailing newline.
     #[allow(dead_code)]
-    fn writeln(thread_id: &str, seq: u128, s: &str, level: &str, table: &Table) {
+    fn writeln(thread_id: &str, seq: u128, s: &str, level: Level, table: &Table) {
         let s = &format!("{}{}", s, NEW_LINE);
         Log::write(thread_id, seq, s, level, table);
     }
     /// Write to a log file. No trailing newline.
     #[allow(dead_code)]
-    fn write(thread_id: &str, seq: u128, s: &str, level: &str, table: &Table) {
+    fn write(thread_id: &str, seq: u128, s: &str, level: Level, table: &Table) {
         // Write as TOML.
         // Table name.
         let mut toml = format!(
@@ -489,16 +508,15 @@ impl Log {
         }
     }
 
-    pub fn send(level: &str, message: &str) {
+    pub fn send(level: Level, message: &str) {
         let thread_id = format!("{:?}", thread::current().id());
-        let level_str = level.to_string();
         let message_str = message.to_string();
         SEQ.with(|seq| {
             let (sender, receiver) = mpsc::channel();
             thread::spawn(move || {
                 if let Ok(seq_clone) = receiver.recv() {
                     let mut table = Table::default();
-                    Log::write(&thread_id, seq_clone, &message_str, &level_str, &mut table);
+                    Log::write(&thread_id, seq_clone, &message_str, level, &mut table);
                 }
             });
             let seq_clone = seq.borrow().clone();
@@ -509,9 +527,8 @@ impl Log {
         });
     }
 
-    pub fn sendln(level: &str, message: &str) {
+    pub fn sendln(level: Level, message: &str) {
         let thread_id = format!("{:?}", thread::current().id());
-        let level_str = level.to_string();
         let message_str = message.to_string();
         if let Ok(mut pool) = POOL.lock() {
             pool.increase_thread_count();
@@ -522,7 +539,7 @@ impl Log {
             thread::spawn(move || {
                 if let Ok(seq_clone) = receiver.recv() {
                     let mut table = Table::default();
-                    Log::writeln(&thread_id, seq_clone, &message_str, &level_str, &mut table);
+                    Log::writeln(&thread_id, seq_clone, &message_str, level, &mut table);
 
                     if let Ok(mut pool) = POOL.lock() {
                         pool.decrease_thread_count();
@@ -538,22 +555,15 @@ impl Log {
         });
     }
 
-    pub fn send_t(level: &str, message: &str, table: &mut Table) {
+    pub fn send_t(level: Level, message: &str, table: &mut Table) {
         let thread_id = format!("{:?}", thread::current().id());
-        let level_str = level.to_string();
         let message_str = message.to_string();
         let table_clone = table.clone();
         SEQ.with(move |seq| {
             let (sender, receiver) = mpsc::channel();
             thread::spawn(move || {
                 if let Ok(seq_clone) = receiver.recv() {
-                    Log::write(
-                        &thread_id,
-                        seq_clone,
-                        &message_str,
-                        &level_str,
-                        &table_clone,
-                    );
+                    Log::write(&thread_id, seq_clone, &message_str, level, &table_clone);
                 }
             });
             let seq_clone = seq.borrow().clone();
@@ -564,22 +574,15 @@ impl Log {
         });
     }
 
-    pub fn sendln_t(level: &str, message: &str, table: &mut Table) {
+    pub fn sendln_t(level: Level, message: &str, table: &mut Table) {
         let thread_id = format!("{:?}", thread::current().id());
-        let level_str = level.to_string();
         let message_str = message.to_string();
         let table_clone = table.clone();
         SEQ.with(move |seq| {
             let (sender, receiver) = mpsc::channel();
             thread::spawn(move || {
                 if let Ok(seq_clone) = receiver.recv() {
-                    Log::writeln(
-                        &thread_id,
-                        seq_clone,
-                        &message_str,
-                        &level_str,
-                        &table_clone,
-                    );
+                    Log::writeln(&thread_id, seq_clone, &message_str, level, &table_clone);
                 }
             });
             let seq_clone = seq.borrow().clone();
