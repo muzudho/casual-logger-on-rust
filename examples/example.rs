@@ -27,7 +27,7 @@ fn main() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
         logger.level = Level::Trace;
         // Remove old log files. This is determined by the
-        //  StartDate in the filename.
+        // StartDate in the filename.
         logger.remove_old_logs()
     } else {
         // Setup failed. Continue with the default settings.

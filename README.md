@@ -69,7 +69,7 @@ fn main() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
         logger.level = Level::Trace;
         // Remove old log files. This is determined by the
-        //  StartDate in the filename.
+        // StartDate in the filename.
         logger.remove_old_logs()
     } else {
         // Setup failed. Continue with the default settings.
@@ -534,20 +534,23 @@ Code:
     }
 
     // The level is implicitly confirmed.
-    Log::trace("A,");
-    Log::traceln("B,");
-    Log::debug("C,");
-    Log::debugln("D,");
-    Log::info("E,");
-    Log::infoln("F,");
-    Log::notice("G,");
-    Log::noticeln("H,");
-    Log::warn("I,");
-    Log::warnln("J,");
-    Log::error("K,");
-    Log::errorln("L,");
-    Log::fatal("M,");
-    Log::fatalln("N!");
+    Log::trace("( 1)TRACE");
+    Log::traceln("( 2)trace-line");
+    Log::debug("( 3)DEBUG");
+    Log::debugln("( 4)debug-line");
+    Log::info("( 5)INFO");
+    Log::infoln("( 6)info-line");
+    Log::notice("( 7)NOTICE");
+    Log::noticeln("( 8)notice-line");
+    Log::warn("( 9)WARN");
+    Log::warnln("(10)warn-line");
+    Log::error("(11)ERROR");
+    Log::errorln("(12)error-line");
+    Log::fatal("(13)FATAL");
+    Log::fatalln("(14)fatal-line");
+
+    // Fatal is designed to be used as the first argument of Panic!.
+    // panic!(Log::fatal(&format!("Invalid number=|{}|", 99)));
 ```
 
 ### Usage of Table
@@ -620,13 +623,8 @@ Code:
 
 ```rust
     // Wait for logging to complete. Time out 30 seconds.
-    Log::wait_for_logging_to_complete(
-        30, |elapsed_secs, rest_threads|
-    {
-        println!(
-            "{} second(s). Wait for {} thread(s).",
-            elapsed_secs, rest_threads
-        );
+    Log::wait_for_logging_to_complete(30, |s, th| {
+        println!("{} sec(s). Wait for {} thread(s).", s, th);
     });
 ```
 
@@ -635,7 +633,7 @@ the program will exit before writing all the logs.
 
 ## TODO
 
-* [ ] Output a stable log order.
+* [ ] Dogfooding.
 
 ## Tested environment
 
