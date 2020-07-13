@@ -1,3 +1,5 @@
+//! All features are described in one copy and paste.
+
 use casual_logger::{Level, Log, Table, LOGGER};
 
 fn main() {
@@ -28,6 +30,7 @@ fn main() {
         //  StartDate in the filename.
         logger.remove_old_logs()
     } else {
+        // Setup failed. Continue with the default settings.
         0
     };
     Log::noticeln(&format!("Remove {} files.", remove_num));
@@ -46,20 +49,23 @@ fn main() {
     }
 
     // The level is implicitly confirmed.
-    Log::trace("A,");
-    Log::traceln("B,");
-    Log::debug("C,");
-    Log::debugln("D,");
-    Log::info("E,");
-    Log::infoln("F,");
-    Log::notice("G,");
-    Log::noticeln("H,");
-    Log::warn("I,");
-    Log::warnln("J,");
-    Log::error("K,");
-    Log::errorln("L,");
-    Log::fatal("M,");
-    Log::fatalln("N!");
+    Log::trace("( 1)TRACE");
+    Log::traceln("( 2)trace-line");
+    Log::debug("( 3)DEBUG");
+    Log::debugln("( 4)debug-line");
+    Log::info("( 5)INFO");
+    Log::infoln("( 6)info-line");
+    Log::notice("( 7)NOTICE");
+    Log::noticeln("( 8)notice-line");
+    Log::warn("( 9)WARN");
+    Log::warnln("(10)warn-line");
+    Log::error("(11)ERROR");
+    Log::errorln("(12)error-line");
+    Log::fatal("(13)FATAL");
+    Log::fatalln("(14)fatal-line");
+
+    // Fatal is designed to be used as the first argument of Panic!.
+    // panic!(Log::fatal(&format!("Invalid number=|{}|", 99)));
 
     // Suffix '_t'. TOML say a table. So-called map.
     Log::infoln_t(
@@ -83,94 +89,101 @@ tree.",
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |                                             *****|
         logger.level = Level::Trace;
     }
 
-    Log::traceln("(7)Trace on (7)Trace.");
-    Log::debugln("(6)Debug on (7)Trace.");
-    Log::infoln("(5)Info on (7)Trace.");
-    Log::noticeln("(4)Notice on (7)Trace.");
-    Log::warnln("(3)Warn on (7)Trace.");
-    Log::errorln("(2)Error on (7)Trace.");
-    Log::fatalln("(1)Fatal on (7)Trace.");
+    Log::trace("(7)Trace on (7)Trace.");
+    Log::debug("(6)Debug on (7)Trace.");
+    Log::info("(5)Info on (7)Trace.");
+    Log::notice("(4)Notice on (7)Trace.");
+    Log::warn("(3)Warn on (7)Trace.");
+    Log::error("(2)Error on (7)Trace.");
+    Log::fatal("(1)Fatal on (7)Trace.");
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |                                      *****       |
         logger.level = Level::Debug;
     }
 
-    Log::traceln("(7)Trace on (6)debug.");
-    Log::debugln("(6)Debug on (6)debug.");
-    Log::infoln("(5)Info on (6)debug.");
-    Log::noticeln("(4)Notice on (6)debug.");
-    Log::warnln("(3)Warn on (6)debug.");
-    Log::errorln("(2)Error on (6)debug.");
-    Log::fatalln("(1)Fatal on (6)debug.");
+    Log::trace("(7)Trace on (6)debug. Skip!");
+    Log::debug("(6)Debug on (6)debug.");
+    Log::info("(5)Info on (6)debug.");
+    Log::notice("(4)Notice on (6)debug.");
+    Log::warn("(3)Warn on (6)debug.");
+    Log::error("(2)Error on (6)debug.");
+    Log::fatal("(1)Fatal on (6)debug.");
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |                               *****              |
         logger.level = Level::Info;
     }
 
-    Log::traceln("(7)Trace on (5)Info.");
-    Log::debugln("(6)Debug on (5)Info.");
-    Log::infoln("(5)Info on (5)Info.");
-    Log::noticeln("(4)Notice on (5)Info.");
-    Log::warnln("(3)Warn on (5)Info.");
-    Log::errorln("(2)Error on (5)Info.");
-    Log::fatalln("(1)Fatal on (5)Info.");
+    Log::trace("(7)Trace on (5)Info. Skip!");
+    Log::debug("(6)Debug on (5)Info. Skip!");
+    Log::info("(5)Info on (5)Info.");
+    Log::notice("(4)Notice on (5)Info.");
+    Log::warn("(3)Warn on (5)Info.");
+    Log::error("(2)Error on (5)Info.");
+    Log::fatal("(1)Fatal on (5)Info.");
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |                      ******                      |
         logger.level = Level::Notice;
     }
 
-    Log::traceln("(7)Trace on (4)Notice.");
-    Log::debugln("(6)Debug on (4)Notice.");
-    Log::infoln("(5)Info on (4)Notice.");
-    Log::noticeln("(4)Notice on (4)Notice.");
-    Log::warnln("(3)Warn on (4)Notice.");
-    Log::errorln("(2)Error on (4)Notice.");
-    Log::fatalln("(1)Fatal on (4)Notice.");
+    Log::trace("(7)Trace on (4)Notice. Skip!");
+    Log::debug("(6)Debug on (4)Notice. Skip!");
+    Log::info("(5)Info on (4)Notice. Skip!");
+    Log::notice("(4)Notice on (4)Notice.");
+    Log::warn("(3)Warn on (4)Notice.");
+    Log::error("(2)Error on (4)Notice.");
+    Log::fatal("(1)Fatal on (4)Notice.");
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |               ****                               |
         logger.level = Level::Warn;
     }
 
-    Log::traceln("(7)Trace on (3)Warn.");
-    Log::debugln("(6)Debug on (3)Warn.");
-    Log::infoln("(5)Info on (3)Warn.");
-    Log::noticeln("(4)Notice on (3)Warn.");
-    Log::warnln("(3)Warn on (3)Warn.");
-    Log::errorln("(2)Error on (3)Warn.");
-    Log::fatalln("(1)Fatal on (3)Warn.");
+    Log::trace("(7)Trace on (3)Warn. Skip!");
+    Log::debug("(6)Debug on (3)Warn. Skip!");
+    Log::info("(5)Info on (3)Warn. Skip!");
+    Log::notice("(4)Notice on (3)Warn. Skip!");
+    Log::warn("(3)Warn on (3)Warn.");
+    Log::error("(2)Error on (3)Warn.");
+    Log::fatal("(1)Fatal on (3)Warn.");
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |       *****                                      |
         logger.level = Level::Error;
     }
 
-    Log::traceln("(7)Trace on (2)Error.");
-    Log::debugln("(6)Debug on (2)Error.");
-    Log::infoln("(5)Info on (2)Error.");
-    Log::noticeln("(4)Notice on (2)Error.");
-    Log::warnln("(3)Warn on (2)Error.");
-    Log::errorln("(2)Error on (2)Error.");
-    Log::fatalln("(1)Fatal on (2)Error.");
+    Log::trace("(7)Trace on (2)Error. Skip!");
+    Log::debug("(6)Debug on (2)Error. Skip!");
+    Log::info("(5)Info on (2)Error. Skip!");
+    Log::notice("(4)Notice on (2)Error. Skip!");
+    Log::warn("(3)Warn on (2)Error. Skip!");
+    Log::error("(2)Error on (2)Error.");
+    Log::fatal("(1)Fatal on (2)Error.");
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |*****                                             |
         logger.level = Level::Fatal;
     }
 
-    Log::traceln("(7)Trace on (1)Fatal.");
-    Log::debugln("(6)Debug on (1)Fatal.");
-    Log::infoln("(5)Info on (1)Fatal.");
-    Log::noticeln("(4)Notice on (1)Fatal.");
-    Log::warnln("(3)Warn on (1)Fatal.");
-    Log::errorln("(2)Error on (1)Fatal.");
-    Log::fatalln("(1)Fatal on (1)Fatal.");
+    Log::trace("(7)Trace on (1)Fatal. Skip!");
+    Log::debug("(6)Debug on (1)Fatal. Skip!");
+    Log::info("(5)Info on (1)Fatal. Skip!");
+    Log::notice("(4)Notice on (1)Fatal. Skip!");
+    Log::warn("(3)Warn on (1)Fatal. Skip!");
+    Log::error("(2)Error on (1)Fatal. Skip!");
+    Log::fatal("(1)Fatal on (1)Fatal.");
 
     // Wait for logging to complete. Time out 30 seconds.
     Log::wait_for_logging_to_complete(30, |s, th| {

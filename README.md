@@ -1,34 +1,47 @@
 # casual_logger
 
 It focuses only on the features that you need **during example-programming self-study**.  
-For example, I am studying tic-tac-toe program. The logging period is short.  
 Not for production, but better than not logging anything.  
 
 Interested:  
 
-* Only write to 1 file on working directory.
 * **Rotate** log by date.
-* **Delete** old log files.
+* **Delete** old log files. (semi-automatic)
+* Use the **TOML table** format for logs. A human-readable format that can be analyzed by a computer.
 
 Not interested:  
 
+* Only write to 1 file on working directory.
 * The file path **cannot** be set.
-* The format is **decided** to look like a Toml table.
+
+## Do you have this problem?
+
+(Problem-1) I wanted to self-learn short programming with a logger, but setting up a logger is **difficult than that short programming**. For example, a tic-tac-toe program. The logging period is short.  
+
+(Problem-2) Writing a log parser is **tedious**.  
+
+### This logger solves the problem in this way.
+
+(Problem-1 solution) All features are described in **one copy and paste**. See "At second, Overall" view below.  
+
+(Problem-2 solution) Writing with TOML table.  
 
 ## At first, Disclaim
 
 * It **differs** from the standard Rust log interface.
 * **Ignore performance** for ease of use and ease of explanation.
-* You **can break** the toml format. Do not validate.
-* The writing **order is unstable**. Check the serial "Seq" number.
+* You can break the toml format. **Do not validate**.
+* Depending on the version of this program, the log writing order may be **unstable**. Check the serial "Seq" number.
 * If the log export fails, the **error is ignored** and it continues.
-* **Don't forget** wait for logging to complete at end of program.
+* **Don't forget** wait for logging to complete at **end of program**.
 
 ## At second, Overall view
 
 Your code:  
 
 ```rust
+//! All features are described in one copy and paste.
+
 use casual_logger::{Level, Log, Table, LOGGER};
 
 fn main() {
@@ -59,6 +72,7 @@ fn main() {
         //  StartDate in the filename.
         logger.remove_old_logs()
     } else {
+        // Setup failed. Continue with the default settings.
         0
     };
     Log::noticeln(&format!("Remove {} files.", remove_num));
@@ -77,20 +91,23 @@ fn main() {
     }
 
     // The level is implicitly confirmed.
-    Log::trace("A,");
-    Log::traceln("B,");
-    Log::debug("C,");
-    Log::debugln("D,");
-    Log::info("E,");
-    Log::infoln("F,");
-    Log::notice("G,");
-    Log::noticeln("H,");
-    Log::warn("I,");
-    Log::warnln("J,");
-    Log::error("K,");
-    Log::errorln("L,");
-    Log::fatal("M,");
-    Log::fatalln("N!");
+    Log::trace("( 1)TRACE");
+    Log::traceln("( 2)trace-line");
+    Log::debug("( 3)DEBUG");
+    Log::debugln("( 4)debug-line");
+    Log::info("( 5)INFO");
+    Log::infoln("( 6)info-line");
+    Log::notice("( 7)NOTICE");
+    Log::noticeln("( 8)notice-line");
+    Log::warn("( 9)WARN");
+    Log::warnln("(10)warn-line");
+    Log::error("(11)ERROR");
+    Log::errorln("(12)error-line");
+    Log::fatal("(13)FATAL");
+    Log::fatalln("(14)fatal-line");
+
+    // Fatal is designed to be used as the first argument of Panic!.
+    // panic!(Log::fatal(&format!("Invalid number=|{}|", 99)));
 
     // Suffix '_t'. TOML say a table. So-called map.
     Log::infoln_t(
@@ -114,94 +131,101 @@ tree.",
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |                                             *****|
         logger.level = Level::Trace;
     }
 
-    Log::traceln("(7)Trace on (7)Trace.");
-    Log::debugln("(6)Debug on (7)Trace.");
-    Log::infoln("(5)Info on (7)Trace.");
-    Log::noticeln("(4)Notice on (7)Trace.");
-    Log::warnln("(3)Warn on (7)Trace.");
-    Log::errorln("(2)Error on (7)Trace.");
-    Log::fatalln("(1)Fatal on (7)Trace.");
+    Log::trace("(7)Trace on (7)Trace.");
+    Log::debug("(6)Debug on (7)Trace.");
+    Log::info("(5)Info on (7)Trace.");
+    Log::notice("(4)Notice on (7)Trace.");
+    Log::warn("(3)Warn on (7)Trace.");
+    Log::error("(2)Error on (7)Trace.");
+    Log::fatal("(1)Fatal on (7)Trace.");
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |                                      *****       |
         logger.level = Level::Debug;
     }
 
-    Log::traceln("(7)Trace on (6)debug.");
-    Log::debugln("(6)Debug on (6)debug.");
-    Log::infoln("(5)Info on (6)debug.");
-    Log::noticeln("(4)Notice on (6)debug.");
-    Log::warnln("(3)Warn on (6)debug.");
-    Log::errorln("(2)Error on (6)debug.");
-    Log::fatalln("(1)Fatal on (6)debug.");
+    Log::trace("(7)Trace on (6)debug. Skip!");
+    Log::debug("(6)Debug on (6)debug.");
+    Log::info("(5)Info on (6)debug.");
+    Log::notice("(4)Notice on (6)debug.");
+    Log::warn("(3)Warn on (6)debug.");
+    Log::error("(2)Error on (6)debug.");
+    Log::fatal("(1)Fatal on (6)debug.");
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |                               *****              |
         logger.level = Level::Info;
     }
 
-    Log::traceln("(7)Trace on (5)Info.");
-    Log::debugln("(6)Debug on (5)Info.");
-    Log::infoln("(5)Info on (5)Info.");
-    Log::noticeln("(4)Notice on (5)Info.");
-    Log::warnln("(3)Warn on (5)Info.");
-    Log::errorln("(2)Error on (5)Info.");
-    Log::fatalln("(1)Fatal on (5)Info.");
+    Log::trace("(7)Trace on (5)Info. Skip!");
+    Log::debug("(6)Debug on (5)Info. Skip!");
+    Log::info("(5)Info on (5)Info.");
+    Log::notice("(4)Notice on (5)Info.");
+    Log::warn("(3)Warn on (5)Info.");
+    Log::error("(2)Error on (5)Info.");
+    Log::fatal("(1)Fatal on (5)Info.");
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |                      ******                      |
         logger.level = Level::Notice;
     }
 
-    Log::traceln("(7)Trace on (4)Notice.");
-    Log::debugln("(6)Debug on (4)Notice.");
-    Log::infoln("(5)Info on (4)Notice.");
-    Log::noticeln("(4)Notice on (4)Notice.");
-    Log::warnln("(3)Warn on (4)Notice.");
-    Log::errorln("(2)Error on (4)Notice.");
-    Log::fatalln("(1)Fatal on (4)Notice.");
+    Log::trace("(7)Trace on (4)Notice. Skip!");
+    Log::debug("(6)Debug on (4)Notice. Skip!");
+    Log::info("(5)Info on (4)Notice. Skip!");
+    Log::notice("(4)Notice on (4)Notice.");
+    Log::warn("(3)Warn on (4)Notice.");
+    Log::error("(2)Error on (4)Notice.");
+    Log::fatal("(1)Fatal on (4)Notice.");
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |               ****                               |
         logger.level = Level::Warn;
     }
 
-    Log::traceln("(7)Trace on (3)Warn.");
-    Log::debugln("(6)Debug on (3)Warn.");
-    Log::infoln("(5)Info on (3)Warn.");
-    Log::noticeln("(4)Notice on (3)Warn.");
-    Log::warnln("(3)Warn on (3)Warn.");
-    Log::errorln("(2)Error on (3)Warn.");
-    Log::fatalln("(1)Fatal on (3)Warn.");
+    Log::trace("(7)Trace on (3)Warn. Skip!");
+    Log::debug("(6)Debug on (3)Warn. Skip!");
+    Log::info("(5)Info on (3)Warn. Skip!");
+    Log::notice("(4)Notice on (3)Warn. Skip!");
+    Log::warn("(3)Warn on (3)Warn.");
+    Log::error("(2)Error on (3)Warn.");
+    Log::fatal("(1)Fatal on (3)Warn.");
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |       *****                                      |
         logger.level = Level::Error;
     }
 
-    Log::traceln("(7)Trace on (2)Error.");
-    Log::debugln("(6)Debug on (2)Error.");
-    Log::infoln("(5)Info on (2)Error.");
-    Log::noticeln("(4)Notice on (2)Error.");
-    Log::warnln("(3)Warn on (2)Error.");
-    Log::errorln("(2)Error on (2)Error.");
-    Log::fatalln("(1)Fatal on (2)Error.");
+    Log::trace("(7)Trace on (2)Error. Skip!");
+    Log::debug("(6)Debug on (2)Error. Skip!");
+    Log::info("(5)Info on (2)Error. Skip!");
+    Log::notice("(4)Notice on (2)Error. Skip!");
+    Log::warn("(3)Warn on (2)Error. Skip!");
+    Log::error("(2)Error on (2)Error.");
+    Log::fatal("(1)Fatal on (2)Error.");
 
     if let Ok(mut logger) = LOGGER.lock() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+        // |*****                                             |
         logger.level = Level::Fatal;
     }
 
-    Log::traceln("(7)Trace on (1)Fatal.");
-    Log::debugln("(6)Debug on (1)Fatal.");
-    Log::infoln("(5)Info on (1)Fatal.");
-    Log::noticeln("(4)Notice on (1)Fatal.");
-    Log::warnln("(3)Warn on (1)Fatal.");
-    Log::errorln("(2)Error on (1)Fatal.");
-    Log::fatalln("(1)Fatal on (1)Fatal.");
+    Log::trace("(7)Trace on (1)Fatal. Skip!");
+    Log::debug("(6)Debug on (1)Fatal. Skip!");
+    Log::info("(5)Info on (1)Fatal. Skip!");
+    Log::notice("(4)Notice on (1)Fatal. Skip!");
+    Log::warn("(3)Warn on (1)Fatal. Skip!");
+    Log::error("(2)Error on (1)Fatal. Skip!");
+    Log::fatal("(1)Fatal on (1)Fatal.");
 
     // Wait for logging to complete. Time out 30 seconds.
     Log::wait_for_logging_to_complete(30, |s, th| {
@@ -213,61 +237,61 @@ tree.",
 Output `./default-2020-07-13.log.toml` auto generated:  
 
 ```toml
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=1"]
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=1"]
 Notice = "Remove 0 files.\r\n"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=2"]
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=2"]
 Info = """
 Hello, world!!
 こんにちわ、世界！！\r\n
 """
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=3"]
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=3"]
 Info = "x is 100.\r\n"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=4"]
-Trace = "A,"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=4"]
+Trace = "( 1)TRACE"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=5"]
-Trace = "B,\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=5"]
+Trace = "( 2)trace-line\r\n"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=6"]
-Debug = "C,"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=6"]
+Debug = "( 3)DEBUG"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=7"]
-Debug = "D,\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=7"]
+Debug = "( 4)debug-line\r\n"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=8"]
-Info = "E,"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=8"]
+Info = "( 5)INFO"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=9"]
-Info = "F,\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=9"]
+Info = "( 6)info-line\r\n"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=10"]
-Notice = "G,"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=10"]
+Notice = "( 7)NOTICE"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=11"]
-Notice = "H,\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=11"]
+Notice = "( 8)notice-line\r\n"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=12"]
-Warn = "I,"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=12"]
+Warn = "( 9)WARN"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=13"]
-Warn = "J,\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=13"]
+Warn = "(10)warn-line\r\n"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=14"]
-Error = "K,"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=14"]
+Error = "(11)ERROR"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=15"]
-Error = "L,\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=15"]
+Error = "(12)error-line\r\n"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=16"]
-Fatal = "M,"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=16"]
+Fatal = "(13)FATAL"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=17"]
-Fatal = "N!\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=17"]
+Fatal = "(14)fatal-line\r\n"
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=18"]
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=18"]
 Info = """
 The sky is from top to bottom!!
 上から下まで空です！！\r\n
@@ -280,89 +304,89 @@ a tall
 tree.
 """
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=19"]
-Trace = "(7)Trace on (7)Trace.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=19"]
+Trace = "(7)Trace on (7)Trace."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=20"]
-Debug = "(6)Debug on (7)Trace.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=20"]
+Debug = "(6)Debug on (7)Trace."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=21"]
-Info = "(5)Info on (7)Trace.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=21"]
+Info = "(5)Info on (7)Trace."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=22"]
-Notice = "(4)Notice on (7)Trace.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=22"]
+Notice = "(4)Notice on (7)Trace."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=23"]
-Warn = "(3)Warn on (7)Trace.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=23"]
+Warn = "(3)Warn on (7)Trace."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=24"]
-Error = "(2)Error on (7)Trace.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=24"]
+Error = "(2)Error on (7)Trace."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=25"]
-Fatal = "(1)Fatal on (7)Trace.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=25"]
+Fatal = "(1)Fatal on (7)Trace."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=26"]
-Debug = "(6)Debug on (6)debug.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=26"]
+Debug = "(6)Debug on (6)debug."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=27"]
-Info = "(5)Info on (6)debug.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=27"]
+Info = "(5)Info on (6)debug."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=28"]
-Notice = "(4)Notice on (6)debug.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=28"]
+Notice = "(4)Notice on (6)debug."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=29"]
-Warn = "(3)Warn on (6)debug.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=29"]
+Warn = "(3)Warn on (6)debug."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=30"]
-Error = "(2)Error on (6)debug.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=30"]
+Error = "(2)Error on (6)debug."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=31"]
-Fatal = "(1)Fatal on (6)debug.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=31"]
+Fatal = "(1)Fatal on (6)debug."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=32"]
-Info = "(5)Info on (5)Info.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=32"]
+Info = "(5)Info on (5)Info."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=33"]
-Notice = "(4)Notice on (5)Info.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=33"]
+Notice = "(4)Notice on (5)Info."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=34"]
-Warn = "(3)Warn on (5)Info.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=34"]
+Warn = "(3)Warn on (5)Info."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=35"]
-Error = "(2)Error on (5)Info.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=35"]
+Error = "(2)Error on (5)Info."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=36"]
-Fatal = "(1)Fatal on (5)Info.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=36"]
+Fatal = "(1)Fatal on (5)Info."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=37"]
-Notice = "(4)Notice on (4)Notice.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=37"]
+Notice = "(4)Notice on (4)Notice."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=38"]
-Warn = "(3)Warn on (4)Notice.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=38"]
+Warn = "(3)Warn on (4)Notice."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=39"]
-Error = "(2)Error on (4)Notice.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=39"]
+Error = "(2)Error on (4)Notice."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=40"]
-Fatal = "(1)Fatal on (4)Notice.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=40"]
+Fatal = "(1)Fatal on (4)Notice."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=41"]
-Warn = "(3)Warn on (3)Warn.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=41"]
+Warn = "(3)Warn on (3)Warn."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=42"]
-Error = "(2)Error on (3)Warn.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=42"]
+Error = "(2)Error on (3)Warn."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=43"]
-Fatal = "(1)Fatal on (3)Warn.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=43"]
+Fatal = "(1)Fatal on (3)Warn."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=44"]
-Error = "(2)Error on (2)Error.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=44"]
+Error = "(2)Error on (2)Error."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=45"]
-Fatal = "(1)Fatal on (2)Error.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=45"]
+Fatal = "(1)Fatal on (2)Error."
 
-["Now=2020-07-13 19:14:23&Pid=20656&Thr=ThreadId(1)&Seq=46"]
-Fatal = "(1)Fatal on (1)Fatal.\r\n"
+["Now=2020-07-13 21:08:00&Pid=20652&Thr=ThreadId(1)&Seq=46"]
+Fatal = "(1)Fatal on (1)Fatal."
 
 
 ```
@@ -370,7 +394,7 @@ Fatal = "(1)Fatal on (1)Fatal.\r\n"
 Output to terminal:  
 
 ```plain
-0 sec(s). Wait for 2 thread(s).
+0 sec(s). Wait for 1 thread(s).
 1 sec(s). Wait for 0 thread(s).
 ```
 
