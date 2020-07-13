@@ -38,6 +38,7 @@ Write the log as a **TOML table**. A human-readable format that can be analyzed 
 * You can break the toml format. **Do not validate**.
 * Depending on the version of this program, the log writing order may be **unstable**. Check the serial "Seq" number.
 * If the log export fails, the **error is ignored** and it continues.
+* There is a waiting time of **1 second or more** before the logger ends.
 * **Don't forget** wait for logging to complete at **end of program**.
 
 ## At second, Overall view

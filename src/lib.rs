@@ -34,6 +34,7 @@ use std::path::Path;
 use std::process;
 use std::sync::Mutex;
 use std::thread;
+use std::time::Instant;
 
 // For multi-platform. Windows, or not.
 #[cfg(windows)]
@@ -125,6 +126,8 @@ lazy_static! {
     static ref POOL: Mutex<Pool> = Mutex::new(Pool::default());
     /// Wait for logging to complete.
     static ref QUEUE: Mutex<VecDeque<Table>> = Mutex::new(VecDeque::<Table>::new());
+    /// Erapsed time.
+    static ref LAST_FLUSH_TIME: Mutex<LastFlushTime> = Mutex::new(LastFlushTime::default());
 }
 // Use the line number in the log.
 //
@@ -231,7 +234,15 @@ impl Log {
                 let num = pool.get_thread_count();
                 count_down(elapsed_secs, num);
                 if num < 1 {
-                    break;
+                    if let Ok(queue) = QUEUE.lock() {
+                        // println!("Queue len={}", queue.len());
+                        if queue.is_empty() {
+                            break;
+                        }
+                    }
+
+                    // Out of QUEUE.lock().
+                    Log::flush();
                 }
             }
 
@@ -520,9 +531,6 @@ impl Log {
     fn send(table: &Table) {
         let mut table_clone = table.clone();
         table_clone.thread_id = format!("{:?}", thread::current().id());
-        if let Ok(mut pool) = POOL.lock() {
-            pool.increase_thread_count();
-        }
 
         SEQ.with(move |seq| {
             table_clone.seq = seq.borrow().clone();
@@ -531,38 +539,52 @@ impl Log {
                 queue.push_front(table_clone);
             }
 
-            thread::spawn(move || {
-                Log::flush();
+            let can_flush = if let Ok(last_flush_time) = LAST_FLUSH_TIME.lock() {
+                last_flush_time.can_flush()
+            } else {
+                false
+            };
 
+            if can_flush {
                 if let Ok(mut pool) = POOL.lock() {
-                    pool.decrease_thread_count();
+                    pool.increase_thread_count();
                 }
-            });
+                thread::spawn(move || {
+                    Log::flush();
+                    if let Ok(mut pool) = POOL.lock() {
+                        pool.decrease_thread_count();
+                    }
+                });
+            }
             *seq.borrow_mut() += 1;
         });
     }
 
-    /// Continue writing until the queue is empty.
-    /// However, it ends with 50 tables.
+    /// Write a some strings from the queue.
     fn flush() {
-        for _i in 0..50 {
-            if let Ok(mut queue) = QUEUE.lock() {
-                // if queue.is_empty() {
-                //     break;
-                // }
+        // By buffering, the number of file writes is reduced.
+        let mut toml = String::new();
+        if let Ok(mut queue) = QUEUE.lock() {
+            // However, it ends with 50 tables.
+            // TODO I want to automatically adjust how good it is.
+            let stopwatch = Instant::now();
+            while stopwatch.elapsed().as_secs() < 2 {
                 if let Some(table) = queue.pop_back() {
-                    Log::write(&table);
+                    toml.push_str(&Log::convert_table_to_string(&table));
                 } else {
                     break;
                 }
             }
         }
+        // Flush! (Outside the lock on the Queue.)
+        Log::write(&toml);
+
+        if let Ok(mut last_flush_time) = LAST_FLUSH_TIME.lock() {
+            last_flush_time.reset();
+        }
     }
 
-    /// Write to a log file.
-    /// This is time consuming and should be done in a separate thread.
-    #[allow(dead_code)]
-    fn write(table: &Table) {
+    fn convert_table_to_string(table: &Table) -> String {
         let message = if table.message_trailing_newline {
             // There is a trailing newline.
             format!("{}{}", table.message, NEW_LINE)
@@ -603,6 +625,11 @@ impl Log {
         }
         toml += "
 ";
+        toml
+    }
+    /// Write to a log file.
+    /// This is time consuming and should be done in a separate thread.
+    fn write(toml: &str) {
         if let Ok(mut logger) = LOGGER.lock() {
             // write_all method required to use 'use std::io::Write;'.
             if let Err(_why) = logger.current_file().write_all(toml.as_bytes()) {
@@ -880,5 +907,27 @@ impl LogFile {
             start_date: start_date,
             file: file,
         }
+    }
+}
+
+struct LastFlushTime {
+    pub last_flush_time: Instant,
+}
+impl Default for LastFlushTime {
+    fn default() -> Self {
+        LastFlushTime {
+            last_flush_time: Instant::now(),
+        }
+    }
+}
+impl LastFlushTime {
+    fn reset(&mut self) {
+        if 1 <= self.last_flush_time.elapsed().as_secs() {
+            self.last_flush_time = Instant::now();
+        }
+    }
+    fn can_flush(&self) -> bool {
+        // println!("elapsed={}", self.last_flush_time.elapsed().as_secs());
+        1 <= self.last_flush_time.elapsed().as_secs()
     }
 }
