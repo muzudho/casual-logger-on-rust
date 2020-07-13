@@ -32,7 +32,7 @@ use std::io::Write;
 use std::ops::Add;
 use std::path::Path;
 use std::process;
-use std::sync::{mpsc, Mutex};
+use std::sync::Mutex;
 use std::thread;
 
 // For multi-platform. Windows, or not.
@@ -138,6 +138,7 @@ thread_local!(pub static SEQ: RefCell<u128> = {
 
 #[derive(Clone)]
 pub struct Table {
+    seq: u128,
     level: Level,
     message: String,
     message_trailing_newline: bool,
@@ -146,6 +147,7 @@ pub struct Table {
 impl Default for Table {
     fn default() -> Self {
         Table {
+            seq: 0,
             sorted_map: BTreeMap::new(),
             level: Level::Trace,
             message: "".to_string(),
@@ -156,6 +158,7 @@ impl Default for Table {
 impl Table {
     fn new(level: Level, message: &str, trailing_newline: bool) -> Self {
         Table {
+            seq: 0,
             sorted_map: BTreeMap::new(),
             level: level,
             message: message.to_string(),
@@ -512,44 +515,39 @@ impl Log {
 
     fn send(table: &Table) {
         let thread_id = format!("{:?}", thread::current().id());
-        let table_clone = table.clone();
+        let mut table_clone = table.clone();
         if let Ok(mut pool) = POOL.lock() {
             pool.increase_thread_count();
         }
 
         SEQ.with(move |seq| {
+            table_clone.seq = seq.borrow().clone();
+
             if let Ok(mut queue) = QUEUE.lock() {
                 queue.push_front(table_clone);
             }
 
-            let (sender, receiver) = mpsc::channel();
             thread::spawn(move || {
-                if let Ok(seq_clone) = receiver.recv() {
-                    Log::flush(&thread_id, seq_clone);
+                Log::flush(&thread_id);
 
-                    if let Ok(mut pool) = POOL.lock() {
-                        pool.decrease_thread_count();
-                    }
+                if let Ok(mut pool) = POOL.lock() {
+                    pool.decrease_thread_count();
                 }
             });
-            let seq_clone = seq.borrow().clone();
-            if let Err(_) = sender.send(seq_clone) {
-                // ignore
-            }
             *seq.borrow_mut() += 1;
         });
     }
 
     /// Continue writing until the queue is empty.
     /// However, it ends with 50 tables.
-    fn flush(thread_id: &str, seq: u128) {
+    fn flush(thread_id: &str) {
         for _i in 0..50 {
             if let Ok(mut queue) = QUEUE.lock() {
                 // if queue.is_empty() {
                 //     break;
                 // }
                 if let Some(table) = queue.pop_back() {
-                    Log::write(thread_id, seq, &table);
+                    Log::write(thread_id, &table);
                 } else {
                     break;
                 }
@@ -560,7 +558,7 @@ impl Log {
     /// Write to a log file.
     /// This is time consuming and should be done in a separate thread.
     #[allow(dead_code)]
-    fn write(thread_id: &str, seq: u128, table: &Table) {
+    fn write(thread_id: &str, table: &Table) {
         let message = if table.message_trailing_newline {
             // There is a trailing newline.
             format!("{}{}", table.message, NEW_LINE)
@@ -582,7 +580,7 @@ impl Log {
             // Thread ID. However, Note that you are not limited to numbers.
             thread_id,
             // Line number. This is to avoid duplication.
-            seq,
+            table.seq,
         );
         toml += &format!(
             "{} = {}
