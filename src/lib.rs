@@ -226,25 +226,46 @@ impl Log {
     /// Wait for logging to complete.
     pub fn wait_for_logging_to_complete<F>(timeout_secs: u64, count_down: F)
     where
-        F: Fn(u64, u32),
+        F: Fn(u64, String),
     {
         let mut elapsed_secs = 0;
         while elapsed_secs < timeout_secs {
+            let mut thr_num = None;
+            let mut queue_len = None;
             if let Ok(pool) = POOL.lock() {
-                let num = pool.get_thread_count();
-                count_down(elapsed_secs, num);
-                if num < 1 {
+                let thr_num_val = pool.get_thread_count();
+                thr_num = Some(thr_num_val);
+                if thr_num_val < 1 {
                     if let Ok(queue) = QUEUE.lock() {
-                        // println!("Queue len={}", queue.len());
                         if queue.is_empty() {
+                            count_down(elapsed_secs, "Completed.".to_string());
                             break;
                         }
+                        queue_len = Some(queue.len());
                     }
 
                     // Out of QUEUE.lock().
                     Log::flush();
                 }
             }
+            count_down(
+                elapsed_secs,
+                format!(
+                    "{}{}",
+                    if let Some(thr_num_val) = thr_num {
+                        format!("Wait for {} thread(s). ", thr_num_val)
+                    } else {
+                        "".to_string()
+                    },
+                    if let Some(queue_len_val) = queue_len {
+                        format!("Queue len={}. ", queue_len_val)
+                    } else {
+                        "".to_string()
+                    }
+                )
+                .trim_end()
+                .to_string(),
+            );
 
             thread::sleep(std::time::Duration::from_secs(1));
             elapsed_secs += 1;

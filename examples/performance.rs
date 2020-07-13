@@ -20,8 +20,8 @@ fn main() {
     }
 
     // Wait for logging to complete. Time out 30 seconds.
-    Log::wait_for_logging_to_complete(30, |s, th| {
-        println!("{} sec(s). Wait for {} thread(s).", s, th);
+    Log::wait_for_logging_to_complete(30, |secs, message| {
+        println!("{} sec(s). {}", secs, message);
     });
     println!("Performance: {} ms.", stopwatch.elapsed().as_millis())
 }
