@@ -1,8 +1,10 @@
 //! Performance check
 
 use casual_logger::{Level, Log, LOGGER};
+use std::time::Instant;
 
 fn main() {
+    let stopwatch = Instant::now();
     let remove_num = if let Ok(mut logger) = LOGGER.lock() {
         logger.set_file_name("performance-check", ".log", ".toml");
         logger.retention_days = 2;
@@ -21,4 +23,5 @@ fn main() {
     Log::wait_for_logging_to_complete(30, |s, th| {
         println!("{} sec(s). Wait for {} thread(s).", s, th);
     });
+    println!("Performance: {} ms.", stopwatch.elapsed().as_millis())
 }
