@@ -238,7 +238,7 @@ impl Log {
                 if thr_num_val < 1 {
                     if let Ok(queue) = QUEUE.lock() {
                         if queue.is_empty() {
-                            count_down(elapsed_secs, "Completed.".to_string());
+                            // count_down(elapsed_secs, "Completed.".to_string());
                             break;
                         }
                         queue_len = Some(queue.len());
@@ -253,12 +253,20 @@ impl Log {
                 format!(
                     "{}{}",
                     if let Some(thr_num_val) = thr_num {
-                        format!("Wait for {} thread(s). ", thr_num_val)
+                        if 0 < thr_num_val {
+                            format!("Wait for {} thread(s). ", thr_num_val)
+                        } else {
+                            "".to_string()
+                        }
                     } else {
                         "".to_string()
                     },
                     if let Some(queue_len_val) = queue_len {
-                        format!("Queue len={}. ", queue_len_val)
+                        if 0 < queue_len_val {
+                            format!("{} table(s) left. ", queue_len_val)
+                        } else {
+                            "".to_string()
+                        }
                     } else {
                         "".to_string()
                     }
@@ -520,7 +528,7 @@ impl Log {
             1
         };
         Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
-            eprintln!("{} sec(s). {}", secs, message);
+            eprintln!("casual_logger fatal: {} sec(s). {}", secs, message);
         });
         message.to_string()
     }
@@ -537,7 +545,7 @@ impl Log {
             1
         };
         Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
-            eprintln!("{} sec(s). {}", secs, message);
+            eprintln!("casual_logger fatalln: {} sec(s). {}", secs, message);
         });
         // Append trailing newline.
         format!("{}{}", message, NEW_LINE).to_string()
@@ -559,7 +567,7 @@ impl Log {
             1
         };
         Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
-            eprintln!("{} sec(s). {}", secs, message);
+            eprintln!("casual_logger fatal_t: {} sec(s). {}", secs, message);
         });
         message.to_string()
     }
@@ -579,7 +587,7 @@ impl Log {
             1
         };
         Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
-            eprintln!("{} sec(s). {}", secs, message);
+            eprintln!("casual_logger fatalln_t: {} sec(s). {}", secs, message);
         });
         // Append trailing newline.
         format!("{}{}", message, NEW_LINE).to_string()
