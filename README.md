@@ -213,67 +213,64 @@ tree.",
 Output `./default-2020-07-13.log.toml` auto generated:  
 
 ```toml
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=1"]
-Notice = "Remove 0 files.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=2"]
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=2"]
 Info = """
 Hello, world!!
 こんにちわ、世界！！\r\n
 """
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=6"]
-Debug = "C,"
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=11"]
+Notice = "H,\r\n"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=3"]
-Info = "x is 100.\r\n"
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=1"]
+Notice = "Remove 0 files.\r\n"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=8"]
-Info = "E,"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=22"]
-Notice = "(4)Notice on (7)Trace.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=10"]
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=10"]
 Notice = "G,"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=21"]
-Info = "(5)Info on (7)Trace.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=28"]
-Notice = "(4)Notice on (6)debug.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=4"]
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=4"]
 Trace = "A,"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=33"]
-Notice = "(4)Notice on (5)Info.\r\n"
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=3"]
+Info = "x is 100.\r\n"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=13"]
-Warn = "J,\r\n"
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=9"]
+Info = "F,\r\n"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=17"]
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=31"]
+Fatal = "(1)Fatal on (6)debug.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=6"]
+Debug = "C,"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=5"]
+Trace = "B,\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=35"]
+Error = "(2)Error on (5)Info.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=20"]
+Debug = "(6)Debug on (7)Trace.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=17"]
 Fatal = "N!\r\n"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=14"]
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=14"]
 Error = "K,"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=42"]
-Error = "(2)Error on (3)Warn.\r\n"
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=28"]
+Notice = "(4)Notice on (6)debug.\r\n"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=27"]
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=36"]
+Fatal = "(1)Fatal on (5)Info.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=27"]
 Info = "(5)Info on (6)debug.\r\n"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=23"]
-Warn = "(3)Warn on (7)Trace.\r\n"
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=29"]
+Warn = "(3)Warn on (6)debug.\r\n"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=19"]
-Trace = "(7)Trace on (7)Trace.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=7"]
-Debug = "D,\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=18"]
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=18"]
 Info = """
 The sky is from top to bottom!!
 上から下まで空です！！\r\n
@@ -286,84 +283,94 @@ a tall
 tree.
 """
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=37"]
-Notice = "(4)Notice on (4)Notice.\r\n"
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=22"]
+Notice = "(4)Notice on (7)Trace.\r\n"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=5"]
-Trace = "B,\r\n"
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=19"]
+Trace = "(7)Trace on (7)Trace.\r\n"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=16"]
-Fatal = "M,"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=35"]
-Error = "(2)Error on (5)Info.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=38"]
-Warn = "(3)Warn on (4)Notice.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=41"]
-Warn = "(3)Warn on (3)Warn.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=44"]
-Error = "(2)Error on (2)Error.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=36"]
-Fatal = "(1)Fatal on (5)Info.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=30"]
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=30"]
 Error = "(2)Error on (6)debug.\r\n"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=31"]
-Fatal = "(1)Fatal on (6)debug.\r\n"
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=7"]
+Debug = "D,\r\n"
 
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=29"]
-Warn = "(3)Warn on (6)debug.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=40"]
-Fatal = "(1)Fatal on (4)Notice.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=26"]
-Debug = "(6)Debug on (6)debug.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=15"]
-Error = "L,\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=34"]
-Warn = "(3)Warn on (5)Info.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=39"]
-Error = "(2)Error on (4)Notice.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=46"]
-Fatal = "(1)Fatal on (1)Fatal.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=25"]
-Fatal = "(1)Fatal on (7)Trace.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=9"]
-Info = "F,\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=32"]
-Info = "(5)Info on (5)Info.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=43"]
-Fatal = "(1)Fatal on (3)Warn.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=12"]
-Warn = "I,"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=45"]
-Fatal = "(1)Fatal on (2)Error.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=11"]
-Notice = "H,\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=20"]
-Debug = "(6)Debug on (7)Trace.\r\n"
-
-["Now=2020-07-13 00:56:00&Pid=16792&Thr=ThreadId(1)&Seq=24"]
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=24"]
 Error = "(2)Error on (7)Trace.\r\n"
 
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=42"]
+Error = "(2)Error on (3)Warn.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=34"]
+Warn = "(3)Warn on (5)Info.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=16"]
+Fatal = "M,"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=32"]
+Info = "(5)Info on (5)Info.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=46"]
+Fatal = "(1)Fatal on (1)Fatal.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=21"]
+Info = "(5)Info on (7)Trace.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=33"]
+Notice = "(4)Notice on (5)Info.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=8"]
+Info = "E,"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=23"]
+Warn = "(3)Warn on (7)Trace.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=12"]
+Warn = "I,"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=44"]
+Error = "(2)Error on (2)Error.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=43"]
+Fatal = "(1)Fatal on (3)Warn.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=26"]
+Debug = "(6)Debug on (6)debug.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=25"]
+Fatal = "(1)Fatal on (7)Trace.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=39"]
+Error = "(2)Error on (4)Notice.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=37"]
+Notice = "(4)Notice on (4)Notice.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=38"]
+Warn = "(3)Warn on (4)Notice.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=41"]
+Warn = "(3)Warn on (3)Warn.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=15"]
+Error = "L,\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=40"]
+Fatal = "(1)Fatal on (4)Notice.\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=13"]
+Warn = "J,\r\n"
+
+["Now=2020-07-13 18:11:52&Pid=19948&Thr=ThreadId(1)&Seq=45"]
+Fatal = "(1)Fatal on (2)Error.\r\n"
+
+```
+
+Output to terminal:  
+
+```plain
+0 sec(s). Wait for 46 thread(s).
+1 sec(s). Wait for 0 thread(s).
 ```
 
 ## At third, Description
