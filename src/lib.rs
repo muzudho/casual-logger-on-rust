@@ -223,6 +223,23 @@ impl Table {
 // Easy to use logging.
 pub struct Log {}
 impl Log {
+    /// # Returns
+    ///
+    /// Number of deleted log files.
+    pub fn remove_old_logs() -> usize {
+        let remove_num = if let Ok(logger) = LOGGER.lock() {
+            // Do not call 'Log::xxxxx()' in this code block.
+            let remove_num = logger.remove_old_logs();
+            if logger.development {
+                println!("casual_logger: Remove {} log file(s).", remove_num);
+            }
+            remove_num
+        } else {
+            // Setup failed. Continue with the default settings.
+            0
+        };
+        remove_num
+    }
     /// Wait for logging to complete.
     ///
     /// See also: logger.timeout_secs, Logger.development.
@@ -863,7 +880,10 @@ impl Logger {
         (start_date, file)
     }
     /// For log rotation.
-    #[allow(dead_code)]
+    #[deprecated(
+        since = "0.3.3",
+        note = "Please use the Log::remove_old_logs() method instead"
+    )]
     pub fn remove_old_logs(&self) -> usize {
         // Removed files count.
         let mut count = 0;
@@ -933,7 +953,6 @@ impl Logger {
                             // Nothing is output even if log writing fails.
                             // Submitting a message to the competition can result in fouls.
                             // println!("! {:?}", why.kind());
-                        } else {
                             count += 1;
                         }
                     }

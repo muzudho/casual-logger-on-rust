@@ -5,19 +5,16 @@ use std::time::Instant;
 
 fn main() {
     let stopwatch = Instant::now();
-    let remove_num = if let Ok(mut logger) = LOGGER.lock() {
+    if let Ok(mut logger) = LOGGER.lock() {
         logger.set_file_name("performance-check", ".log", ".toml");
         logger.level = Level::Trace;
         logger.timeout_secs = 30;
         logger.development = true;
         logger.retention_days = 2;
-        logger.remove_old_logs()
-    } else {
-        0
-    };
-    Log::noticeln(&format!("Remove {} files.", remove_num));
+    }
+    Log::remove_old_logs();
 
-    for _i in 0..100000 {
+    for _i in 0..100_000 {
         Log::infoln("Hello, world!!");
     }
 

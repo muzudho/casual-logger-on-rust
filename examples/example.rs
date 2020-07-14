@@ -3,7 +3,7 @@
 use casual_logger::{Level, Log, Table, LOGGER};
 
 fn main() {
-    let remove_num = if let Ok(mut logger) = LOGGER.lock() {
+    if let Ok(mut logger) = LOGGER.lock() {
         // Do not call 'Log::xxxxx()' in this code block.
         //
         // Set file name.
@@ -39,12 +39,10 @@ fn main() {
         // Remove old log files. This is determined by the
         // StartDate in the filename.
         logger.retention_days = 2;
-        logger.remove_old_logs()
-    } else {
-        // Setup failed. Continue with the default settings.
-        0
-    };
-    Log::noticeln(&format!("Remove {} files.", remove_num));
+    }
+    // Remove old log files. This is determined by the
+    // StartDate in the filename.
+    Log::remove_old_logs();
 
     // Multi-line string.
     // The suffix "ln" adds a newline at the end.
