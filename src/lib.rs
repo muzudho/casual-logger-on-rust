@@ -28,7 +28,7 @@ use std::collections::VecDeque;
 use std::fmt;
 use std::fs;
 use std::fs::{File, OpenOptions};
-use std::io::Write;
+use std::io::{BufWriter, Write};
 use std::ops::Add;
 use std::path::Path;
 use std::process;
@@ -653,8 +653,9 @@ impl Log {
                         break;
                     }
                 }
+                let mut file_buf = BufWriter::new(logger.current_file());
                 // write_all method required to use 'use std::io::Write;'.
-                if let Err(_why) = logger.current_file().write_all(toml.as_bytes()) {
+                if let Err(_why) = file_buf.write(toml.as_bytes()) {
                     // Nothing is output even if log writing fails.
                     // Submitting a message to the competition can result in fouls.
                     // panic!("couldn't write log. : {}",Error::description(&why)),
