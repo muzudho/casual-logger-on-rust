@@ -261,7 +261,10 @@ impl Log {
         });
     }
     /// Wait for logging to complete.
-    #[deprecated(since = "0.3.2", note = "Please use the wait method instead")]
+    #[deprecated(
+        since = "0.3.2",
+        note = "Please use the casual_logger::Log::wait() method instead"
+    )]
     pub fn wait_for_logging_to_complete<F>(timeout_secs: u64, count_down: F)
     where
         F: Fn(u64, String),
@@ -767,7 +770,10 @@ pub struct Logger {
     /// Activation.
     pub level: Level,
     /// Timeout seconds when fatal.
-    #[deprecated(since = "0.3.2", note = "Please use the timeout_secs property instead")]
+    #[deprecated(
+        since = "0.3.2",
+        note = "Please use the logger.timeout_secs property instead"
+    )]
     pub fatal_timeout_secs: u64,
     /// Timeout seconds.
     pub timeout_secs: u64,
@@ -892,7 +898,7 @@ impl Logger {
     /// For log rotation.
     #[deprecated(
         since = "0.3.3",
-        note = "Please use the Log::remove_old_logs() method instead"
+        note = "Please use the casual_logger::Log::remove_old_logs() method instead"
     )]
     pub fn remove_old_logs(&self) -> usize {
         // Removed files count.

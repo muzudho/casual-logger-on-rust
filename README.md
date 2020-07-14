@@ -1,7 +1,8 @@
 # casual_logger
 
-This logger **for self-study** programming.  
-Not for production. For example, it is suitable for tutorials.  
+This logger **for self-study** of programming.  
+Ease it to deal with a large number of **tutorials**.  
+Not for production. 
 
 Code:  
 
@@ -32,19 +33,24 @@ Info = "Hello, world!!\r\n"
 
 ## Abstract
 
-### The concept used by beginners
+The concept used by beginners.
 
-* (1) Used in one example, throw away:
-  * **There is no** configuration file.
-  * **Rotate** log by date automatically.
-  * **Delete** old log files. (semi-automatic)
-  * Log files can **only be placed** in the working directory.
-  * Only write to **1 file**.
-* (2) Human readable log:
-  * TOML does not spoil it.
-* (3) Possibility as a tutorial
-  * **Short introduction**.
-  * Write the log as a TOML table, it can be **easily parsed**.
+### 1. Used in one example, throw away
+
+* **There is no** configuration file.
+* **Rotate** log by date automatically.
+* **Delete** old log files. (semi-automatic)
+* Log files can **only be placed** in the working directory.
+* Only write to **1 file**.
+
+### 2. Human readable log
+
+* TOML does not spoil it.
+
+### 3. Possibility as a tutorial
+
+* **Short introduction**.
+* Write the log as a TOML table, it can be **easily parsed**.
 
 ### Disclaim
 
