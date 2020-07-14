@@ -523,7 +523,7 @@ impl Log {
         Log::send(&Table::new(Level::Fatal, message, false));
 
         let timeout_secs = if let Ok(logger) = LOGGER.lock() {
-            logger.fatal_timeout_secs
+            Logger::get_timeout_sec(&logger)
         } else {
             1
         };
@@ -540,7 +540,7 @@ impl Log {
         Log::send(&Table::new(Level::Fatal, message, true));
 
         let timeout_secs = if let Ok(logger) = LOGGER.lock() {
-            logger.fatal_timeout_secs
+            Logger::get_timeout_sec(&logger)
         } else {
             1
         };
@@ -562,7 +562,7 @@ impl Log {
         Log::send(table);
 
         let timeout_secs = if let Ok(logger) = LOGGER.lock() {
-            logger.fatal_timeout_secs
+            Logger::get_timeout_sec(&logger)
         } else {
             1
         };
@@ -582,7 +582,7 @@ impl Log {
         Log::send(table);
 
         let timeout_secs = if let Ok(logger) = LOGGER.lock() {
-            logger.fatal_timeout_secs
+            Logger::get_timeout_sec(&logger)
         } else {
             1
         };
@@ -750,7 +750,12 @@ pub struct Logger {
     /// Activation.
     pub level: Level,
     /// Timeout seconds when fatal.
+    #[deprecated(since = "0.3.2", note = "Please use the timeout_secs property instead")]
     pub fatal_timeout_secs: u64,
+    /// Timeout seconds.
+    pub timeout_secs: u64,
+    /// Set to true to allow Casual_logger to output information to stdout and stderr.
+    pub development: bool,
 }
 impl Default for Logger {
     fn default() -> Self {
@@ -765,10 +770,21 @@ impl Default for Logger {
             log_file: None,
             level: Level::Trace,
             fatal_timeout_secs: 30,
+            timeout_secs: 30,
+            development: false,
         }
     }
 }
 impl Logger {
+    fn get_timeout_sec(logger: &Logger) -> u64 {
+        if logger.timeout_secs != 30 {
+            logger.timeout_secs
+        } else if logger.fatal_timeout_secs != 30 {
+            logger.fatal_timeout_secs
+        } else {
+            logger.timeout_secs
+        }
+    }
     /// Check level.
     ///
     /// # Examples

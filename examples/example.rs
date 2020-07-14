@@ -26,10 +26,15 @@ fn main() {
         // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
         logger.level = Level::Trace;
 
-        // Wait for seconds logging to complete when fatal.
+        // Wait for seconds logging to complete.
         // By default it's set to 30 seconds,
         // so you probably don't need to set it.
-        logger.fatal_timeout_secs = 30;
+        logger.timeout_secs = 30;
+        // Set to true to allow Casual_logger to
+        // output information to stdout and stderr.
+        // By default it's set to false,
+        // so you probably don't need to set it.
+        logger.development = true;
 
         // Remove old log files. This is determined by the
         // StartDate in the filename.
