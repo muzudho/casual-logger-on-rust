@@ -1,7 +1,7 @@
 # casual_logger
 
-There are only features that are used **for self-study** of programming examples.  
-Not for production, but better than not logging anything.  
+This logger **for self-study** programming.  
+Not for production, but it to bridge the gap until your programming skills improve.  
 
 Interested:  
 
