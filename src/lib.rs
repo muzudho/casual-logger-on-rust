@@ -135,10 +135,11 @@ lazy_static! {
 //
 // * References
 //      * [ミュータブルなスレッドローカルデータを thread_local!() マクロと RefCell で実現する](https://qiita.com/tatsuya6502/items/bed3702517b36afbdbca)
-thread_local!(pub static SEQ: RefCell<u128> = {
+thread_local!(static SEQ: RefCell<u128> = {
     RefCell::new(1)
 });
 
+/// TOML table included in the log file. Do not validate.
 #[derive(Clone)]
 pub struct Table {
     /// Thread ID. However, Note that you are not limited to numbers.
@@ -220,7 +221,7 @@ impl Table {
     }
 }
 
-// Easy to use logging.
+/// Easy to use logging.
 pub struct Log {}
 impl Log {
     /// # Returns
@@ -713,7 +714,7 @@ impl Log {
     }
 }
 
-pub struct Pool {
+struct Pool {
     /// Number of threads not yet finished.
     thread_count: u32,
 }
@@ -734,7 +735,7 @@ impl Pool {
     }
 }
 
-/// Examples:
+/// Configuration.
 ///
 /// All: 'tic-tac-toe-2020-07-11.log.toml'
 /// Prefix: 'tic-tac-toe'

@@ -3,19 +3,63 @@
 This logger **for self-study** programming.  
 Not for production, but it to bridge the gap until your programming skills improve.  
 
-Interested:  
+Code:  
 
-* **Rotate** log by date.
+```rust
+//! The smallest example.
+
+use casual_logger::Log;
+
+fn main() {
+    Log::remove_old_logs();
+
+    Log::infoln("Hello, world!!");
+
+    Log::wait();
+}
+```
+
+Output:  
+
+`default-2020-07-14.log.toml` automatically generated.  
+
+```toml
+["Now=2020-07-14 19:46:30&Pid=19584&Thr=ThreadId(1)&Seq=1"]
+Info = "Hello, world!!\r\n"
+
+
+```
+
+## Abstract
+
+* **Rotate** log by date automatically.
 * **Delete** old log files. (semi-automatic)
-* Write the log as a **TOML table**.
-* There is **no configuration file**.
 
-Not interested:  
+### Interested
 
-* Only write to 1 file on working directory.
-* The file path **cannot** be set.
+* Write the log as a TOML table, it can be **easily parsed**.
+* **There is no** configuration file.
+* Log files can **only be placed** in the working directory. The file path **cannot** be set.
+* Only write to **1 file**.
 
-## (Suggest a solution) Are you in trouble with this?
+### Disclaim
+
+* It **differs** from the standard Rust log interface.
+* **Ignore performance** for ease of use and ease of explanation.
+* You can break the toml format. **Do not validate**.
+* Depending on the version of this program, the log writing order may be **unstable**. Check the serial "Seq" number.
+* If the log export fails, the **error is ignored** or print stderr, and it continues.
+* There is a waiting time of **1 second or more** before the logger ends.
+* **Don't forget** wait for logging to complete at **end of program**.
+
+### Tested environment
+
+* OS: `Windows 10`.
+* Editor: `Visual studio code`.
+
+## Introduction
+
+### (Suggest a solution) Are you in trouble with this?
 
 (Case-1)  
 I wanted to self-learn short programming with a logger, but setting up a logger is **difficult than that short programming**.  
@@ -27,22 +71,12 @@ Writing a log **parser** is tedious.
 ### This logger solves the problem in this way.
 
 (Case-1 solution)  
-All features are trial in **one copy and paste**. See "At second, Overall" view below.  
+All features are trial in **one copy and paste**. See "At first, Overall" view below.  
 
 (Case-2 solution)  
 Write the log as a **TOML table**. A human-readable format that can be analyzed by a computer.  
 
-## At first, Disclaim
-
-* It **differs** from the standard Rust log interface.
-* **Ignore performance** for ease of use and ease of explanation.
-* You can break the toml format. **Do not validate**.
-* Depending on the version of this program, the log writing order may be **unstable**. Check the serial "Seq" number.
-* If the log export fails, the **error is ignored** or print stderr, and it continues.
-* There is a waiting time of **1 second or more** before the logger ends.
-* **Don't forget** wait for logging to complete at **end of program**.
-
-## At second, Overall view
+## At first, Overall view
 
 Your code:  
 
@@ -419,7 +453,7 @@ casual_logger: 0 sec(s). Wait for 1 thread(s).
 
 It is designed to use `Log::fatal()` as the first argument for `panic!()`. It is the abnormal termination of the program. There is a waiting time.  
 
-## At third, Description
+## At second, Description
 
 Code:  
 
@@ -666,33 +700,10 @@ Code:
 If you do not wait,  
 the program will exit before writing all the logs.  
 
-## At fourth, minimal example
-
-Code:  
-
-```rust
-//! The smallest example.
-
-use casual_logger::Log;
-
-fn main() {
-    Log::remove_old_logs();
-
-    Log::infoln("Hello, world!!");
-
-    Log::wait();
-}
-```
-
 ## TODO
 
 * [ ] Dogfooding.
 * [ ] More minimal.
-
-## Tested environment
-
-* OS: `Windows 10`.
-* Editor: `Visual studio code`.
 
 ## Appendix
 
