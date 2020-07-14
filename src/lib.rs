@@ -224,6 +224,24 @@ impl Table {
 pub struct Log {}
 impl Log {
     /// Wait for logging to complete.
+    ///
+    /// See also: logger.timeout_secs, Logger.development.
+    pub fn wait() {
+        let (timeout_secs, development) = if let Ok(logger) = LOGGER.lock() {
+            (logger.timeout_secs, logger.development)
+        } else {
+            (0, false)
+        };
+
+        Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
+            // Do not call 'Log::xxxxx()' in this code block.
+            if development {
+                eprintln!("casual_logger: {} sec(s). {}", secs, message);
+            }
+        });
+    }
+    /// Wait for logging to complete.
+    #[deprecated(since = "0.3.2", note = "Please use the wait method instead")]
     pub fn wait_for_logging_to_complete<F>(timeout_secs: u64, count_down: F)
     where
         F: Fn(u64, String),
@@ -521,15 +539,8 @@ impl Log {
     pub fn fatal(message: &str) -> String {
         // Fatal runs at any level.
         Log::send(&Table::new(Level::Fatal, message, false));
-
-        let timeout_secs = if let Ok(logger) = LOGGER.lock() {
-            Logger::get_timeout_sec(&logger)
-        } else {
-            1
-        };
-        Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
-            eprintln!("casual_logger fatal: {} sec(s). {}", secs, message);
-        });
+        // Wait for logging to complete or to timeout.
+        Log::wait();
         message.to_string()
     }
     /// Fatal level. There is a trailing newline.
@@ -538,15 +549,8 @@ impl Log {
     pub fn fatalln(message: &str) -> String {
         // Fatal runs at any level.
         Log::send(&Table::new(Level::Fatal, message, true));
-
-        let timeout_secs = if let Ok(logger) = LOGGER.lock() {
-            Logger::get_timeout_sec(&logger)
-        } else {
-            1
-        };
-        Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
-            eprintln!("casual_logger fatalln: {} sec(s). {}", secs, message);
-        });
+        // Wait for logging to complete or to timeout.
+        Log::wait();
         // Append trailing newline.
         format!("{}{}", message, NEW_LINE).to_string()
     }
@@ -560,15 +564,8 @@ impl Log {
         table.message = message.to_string();
         table.message_trailing_newline = false;
         Log::send(table);
-
-        let timeout_secs = if let Ok(logger) = LOGGER.lock() {
-            Logger::get_timeout_sec(&logger)
-        } else {
-            1
-        };
-        Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
-            eprintln!("casual_logger fatal_t: {} sec(s). {}", secs, message);
-        });
+        // Wait for logging to complete or to timeout.
+        Log::wait();
         message.to_string()
     }
     /// Fatal level. There is a trailing newline.
@@ -580,15 +577,8 @@ impl Log {
         table.message = message.to_string();
         table.message_trailing_newline = true;
         Log::send(table);
-
-        let timeout_secs = if let Ok(logger) = LOGGER.lock() {
-            Logger::get_timeout_sec(&logger)
-        } else {
-            1
-        };
-        Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
-            eprintln!("casual_logger fatalln_t: {} sec(s). {}", secs, message);
-        });
+        // Wait for logging to complete or to timeout.
+        Log::wait();
         // Append trailing newline.
         format!("{}{}", message, NEW_LINE).to_string()
     }

@@ -245,11 +245,8 @@ tree.",
     Log::error("(2)Error on (1)Fatal. Skip!");
     Log::fatal("(1)Fatal on (1)Fatal.");
 
-    // Wait for logging to complete. Time out 30 seconds.
-    Log::wait_for_logging_to_complete(30, |secs, message| {
-        // Do not call 'Log::xxxxx()' in this code block.
-        println!("{} sec(s). {}", secs, message);
-    });
+    // Wait for logging to complete or to timeout.
+    Log::wait();
 }
 ```
 
@@ -670,19 +667,40 @@ tree.
 Code:  
 
 ```rust
-    // Wait for logging to complete. Time out 30 seconds.
-    Log::wait_for_logging_to_complete(30, |secs, message| {
-        // Do not call 'Log::xxxxx()' in this code block.
-        println!("{} sec(s). {}", secs, message);
-    });
+    // Wait for logging to complete or to timeout.
+    Log::wait();
 ```
 
 If you do not wait,  
 the program will exit before writing all the logs.  
 
+## At fourth, minimal example
+
+Code:  
+
+```rust
+//! The smallest example.
+
+use casual_logger::{Log, LOGGER};
+
+fn main() {
+    if let Ok(logger) = LOGGER.lock() {
+        logger.remove_old_logs();
+    } else {
+        // Do not delete old logs.
+    };
+
+    Log::infoln("Hello, world!!");
+
+    // Wait for logging to complete or to timeout.
+    Log::wait();
+}
+```
+
 ## TODO
 
 * [ ] Dogfooding.
+* [ ] More minimal.
 
 ## Tested environment
 

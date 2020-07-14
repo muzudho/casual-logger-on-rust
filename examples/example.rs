@@ -196,9 +196,6 @@ tree.",
     Log::error("(2)Error on (1)Fatal. Skip!");
     Log::fatal("(1)Fatal on (1)Fatal.");
 
-    // Wait for logging to complete. Time out 30 seconds.
-    Log::wait_for_logging_to_complete(30, |secs, message| {
-        // Do not call 'Log::xxxxx()' in this code block.
-        println!("{} sec(s). {}", secs, message);
-    });
+    // Wait for logging to complete or to timeout.
+    Log::wait();
 }
