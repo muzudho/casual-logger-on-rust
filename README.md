@@ -76,24 +76,24 @@ Your code:
 ```rust
 //! All features are described in one copy and paste.
 
-use casual_logger::{Level, Log, Table, LOGGER};
+use casual_logger::{Extension, Level, Log, Table, LOGGER};
 
 fn main() {
+    // Log file name.
+    //
+    // Example: 'tic-tac-toe-2020-07-11.log.toml'
+    // - Prefix: 'tic-tac-toe'
+    // - StartDate: '-2020-07-11' automatically.
+    // - Suffix: '.log' - To be safe, include a word that
+    //         clearly states that you can delete the file.
+    // - Extention: '.toml'
+    Log::set_file_name("tic-tac-toe");
+    // Log file extension.
+    // '.log.toml' or '.log'.
+    // If you don't like the .toml extension, change.
+    Log::set_file_ext(Extension::LogToml);
     if let Ok(mut logger) = LOGGER.lock() {
         // Do not call 'Log::xxxxx()' in this code block.
-        //
-        // Set file name.
-        //
-        // All: 'tic-tac-toe-2020-07-11.log.toml'
-        // Prefix: 'tic-tac-toe'
-        // StartDate: '-2020-07-11' automatically.
-        // Suffix: '.log' - To be safe, include a word that
-        //         clearly states that you can delete the file.
-        // Extention: '.toml'
-        //
-        // If you don't like the .toml extension, leave the
-        // suffix empty and the .log extension.
-        logger.set_file_name("tic-tac-toe", ".log", ".toml");
 
         // The higher this level, the more will be omitted.
         //
@@ -488,8 +488,11 @@ Set up, Code:
 
 ```rust
 fn main() {
+    // Prefix.
+    Log::set_file_name("tic-tac-toe");
+    // Extension.
+    Log::set_file_ext(Extension::LogToml);
     if let Ok(mut logger) = LOGGER.lock() {
-        logger.set_file_name("tic-tac-toe", ".log", ".toml");
         logger.level = Level::Trace;
     }
 

@@ -1,13 +1,15 @@
 //! Performance check
 
-use casual_logger::{Level, Log, LOGGER};
+use casual_logger::{Extension, Level, Log, LOGGER};
+use std::thread;
 use std::time::Instant;
 // use sys_info::mem_info;
 
 fn main() {
     let stopwatch = Instant::now();
+    Log::set_file_name("performance-check");
+    Log::set_file_ext(Extension::Log);
     if let Ok(mut logger) = LOGGER.lock() {
-        logger.set_file_name("performance-check", ".log", ".toml");
         logger.level = Level::Trace;
         logger.timeout_secs = 30;
         logger.development = true;
@@ -15,10 +17,34 @@ fn main() {
     }
     Log::remove_old_logs();
 
-    let size = 332_000;
-    for _i in 0..size {
-        Log::infoln("Hello, world!!");
+    let mut count = 0;
+    // Single thread test.
+    let size = 100_000;
+    for i in 0..size {
+        Log::infoln(&format!("Hello, world!! {}", i));
+        count += 1;
     }
+
+    // Multi thread test.
+    let size = 30_000;
+    thread::spawn(move || {
+        for i in 0..size {
+            Log::infoln(&format!("Good morning! {}", i));
+            count += 1;
+        }
+    });
+    thread::spawn(move || {
+        for i in 0..size {
+            Log::infoln(&format!("Good afternoon! {}", i));
+            count += 1;
+        }
+    });
+    thread::spawn(move || {
+        for i in 0..size {
+            Log::infoln(&format!("Good night! {}", i));
+            count += 1;
+        }
+    });
 
     /*
     // Fatal is Panic! Can be used as the first argument of.
@@ -32,7 +58,7 @@ fn main() {
     Log::wait();
     println!(
         "Performance: {} records, {} ms.",
-        size,
+        count,
         stopwatch.elapsed().as_millis(),
         /*
         if let Ok(mem) = mem_info() {

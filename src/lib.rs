@@ -226,6 +226,38 @@ impl Table {
 /// Easy to use logging.
 pub struct Log {}
 impl Log {
+    /// Log file name prefix.
+    ///
+    /// Example: 'tic-tac-toe-2020-07-11.log.toml'
+    /// - Prefix: 'tic-tac-toe'
+    /// - StartDate: '-2020-07-11' automatically.
+    /// - Suffix: '.log' - To be safe, include a word that
+    ///         clearly states that you can delete the file.
+    /// - Extention: '.toml'
+    pub fn set_file_name(prefix: &str) {
+        if let Ok(mut logger) = LOGGER.lock() {
+            logger.file_prefix = prefix.to_string();
+        }
+    }
+
+    /// Log file extension.
+    /// '.log.toml' or '.log'.
+    /// If you don't like the .toml extension, change.
+    pub fn set_file_ext(ext: Extension) {
+        if let Ok(mut logger) = LOGGER.lock() {
+            match ext {
+                Extension::LogToml => {
+                    logger.file_suffix = ".log".to_string();
+                    logger.file_extention = ".toml".to_string();
+                }
+                Extension::Log => {
+                    logger.file_suffix = "".to_string();
+                    logger.file_extention = ".log".to_string();
+                }
+            }
+        }
+    }
+
     /// # Returns
     ///
     /// Number of deleted log files.
@@ -650,34 +682,32 @@ impl Log {
 
     /// Write a some strings from the queue.
     fn flush() {
-        // Flush! (Outside the lock on the Queue.)
-        // Write to a log file.
-        // This is time consuming and should be done in a separate thread.
-        if let Ok(mut logger) = LOGGER.lock() {
-            if let Ok(mut queue) = QUEUE.lock() {
-                // By buffering, the number of file writes is reduced.
-                let mut str_buf = String::new();
-                let mut file_buf = BufWriter::new(logger.current_file());
-
-                loop {
-                    if let Some(table) = queue.pop_back() {
-                        str_buf.push_str(&Log::convert_table_to_string(&table));
-                    } else {
-                        break;
-                    }
-                }
-
-                // write_all method required to use 'use std::io::Write;'.
-                if let Err(_why) = file_buf.write_all(str_buf.as_bytes()) {
-                    // Nothing is output even if log writing fails.
-                    // Submitting a message to the competition can result in fouls.
-                    // panic!("couldn't write log. : {}",Error::description(&why)),
+        // By buffering, the number of file writes is reduced.
+        let mut str_buf = String::new();
+        if let Ok(mut queue) = QUEUE.lock() {
+            loop {
+                if let Some(table) = queue.pop_back() {
+                    str_buf.push_str(&Log::convert_table_to_string(&table));
+                } else {
+                    break;
                 }
             }
         }
 
-        if let Ok(mut last_flush_time) = LAST_FLUSH_TIME.lock() {
-            last_flush_time.reset();
+        // Flush! (Outside the lock on the Queue.)
+        // Write to a log file.
+        // This is time consuming and should be done in a separate thread.
+        if let Ok(mut logger) = LOGGER.lock() {
+            let mut file_buf = BufWriter::new(logger.current_file());
+            // write_all method required to use 'use std::io::Write;'.
+            if let Err(_why) = file_buf.write_all(str_buf.as_bytes()) {
+                // Nothing is output even if log writing fails.
+                // Submitting a message to the competition can result in fouls.
+                // panic!("couldn't write log. : {}",Error::description(&why)),
+            }
+            if let Ok(mut last_flush_time) = LAST_FLUSH_TIME.lock() {
+                last_flush_time.reset();
+            }
         }
     }
 
@@ -809,28 +839,6 @@ impl Logger {
         }
     }
     /// Check level.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use casual_logger::{Level, Logger};
-    /// use std::sync::Mutex;
-    ///
-    /// let mut logger = Logger::default();
-    /// logger.set_file_name("casual-log-test", ".log", ".toml");
-    /// if logger.enabled(Level::Trace) {
-    ///     assert_eq!(true, true);
-    /// } else {
-    ///     assert_eq!(true, false);
-    /// }
-    ///
-    /// logger.level = Level::Debug;
-    /// if logger.enabled(Level::Trace) {
-    ///     assert_eq!(true, false);
-    /// } else {
-    ///     assert_eq!(true, true);
-    /// }
-    /// ```
     pub fn enabled(&self, level: Level) -> bool {
         if level.number() <= self.level.number() {
             return true;
@@ -861,13 +869,15 @@ impl Logger {
     }
     /// Set name except StartDate.
     ///
-    /// Examples:
-    ///
-    /// All: 'tic-tac-toe-2020-07-11.log.toml'
-    /// Prefix: 'tic-tac-toe'
-    /// StartDate: '-2020-07-11'
-    /// Suffix: '.log'
-    /// Extention: '.toml'
+    /// Example: 'tic-tac-toe-2020-07-11.log.toml'
+    /// - Prefix: 'tic-tac-toe'
+    /// - StartDate: '-2020-07-11'
+    /// - Suffix: '.log'
+    /// - Extention: '.toml'
+    #[deprecated(
+        since = "0.3.6",
+        note = "Please use the casual_logger::Log::set_file_name() or casual_logger::Log::set_toml_ext() method instead"
+    )]
     #[allow(dead_code)]
     pub fn set_file_name(&mut self, prefix: &str, suffix: &str, extention: &str) {
         self.file_prefix = prefix.to_string();
@@ -1039,4 +1049,12 @@ impl LastFlushTime {
         // println!("elapsed={}", self.last_flush_time.elapsed().as_secs());
         1 <= self.last_flush_time.elapsed().as_secs()
     }
+}
+
+/// File extension.
+pub enum Extension {
+    /// *.log
+    Log,
+    /// *.log.toml
+    LogToml,
 }
