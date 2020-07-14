@@ -258,6 +258,13 @@ impl Log {
         }
     }
 
+    /// Log level.
+    pub fn set_level(level: Level) {
+        if let Ok(mut logger) = LOGGER.lock() {
+            logger.level = level;
+        }
+    }
+
     /// # Returns
     ///
     /// Number of deleted log files.
@@ -265,7 +272,7 @@ impl Log {
         let remove_num = if let Ok(logger) = LOGGER.lock() {
             // Do not call 'Log::xxxxx()' in this code block.
             let remove_num = logger.remove_old_logs();
-            if logger.development {
+            if logger.development && 0 < remove_num {
                 println!("casual_logger: Remove {} log file(s).", remove_num);
             }
             remove_num
@@ -798,6 +805,10 @@ pub struct Logger {
     /// Controll file.
     log_file: Option<LogFile>,
     /// Activation.
+    #[deprecated(
+        since = "0.3.7",
+        note = "Please use the casual_logger::Log::set_level() method instead"
+    )]
     pub level: Level,
     /// Timeout seconds when fatal.
     #[deprecated(

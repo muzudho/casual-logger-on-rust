@@ -16,15 +16,15 @@ fn main() {
     // '.log.toml' or '.log'.
     // If you don't like the .toml extension, change.
     Log::set_file_ext(Extension::LogToml);
+    // The higher this level, the more will be omitted.
+    //
+    // |<-- Low Level --------------------- High level -->|
+    // |<-- High priority --------------- Low priority -->|
+    // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+    Log::set_level(Level::Trace);
+
     if let Ok(mut logger) = LOGGER.lock() {
         // Do not call 'Log::xxxxx()' in this code block.
-
-        // The higher this level, the more will be omitted.
-        //
-        // |<-- Low Level --------------------- High level -->|
-        // |<-- High priority --------------- Low priority -->|
-        // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
-        logger.level = Level::Trace;
 
         // Wait for seconds logging to complete.
         // By default it's set to 30 seconds,
@@ -96,11 +96,9 @@ tree.",
             ),
     );
 
-    if let Ok(mut logger) = LOGGER.lock() {
-        // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
-        // |                                             *****|
-        logger.level = Level::Trace;
-    }
+    // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+    // |                                             *****|
+    Log::set_level(Level::Trace);
 
     Log::trace("(7)Trace on (7)Trace.");
     Log::debug("(6)Debug on (7)Trace.");
@@ -110,11 +108,9 @@ tree.",
     Log::error("(2)Error on (7)Trace.");
     Log::fatal("(1)Fatal on (7)Trace.");
 
-    if let Ok(mut logger) = LOGGER.lock() {
-        // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
-        // |                                      *****       |
-        logger.level = Level::Debug;
-    }
+    // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+    // |                                      *****       |
+    Log::set_level(Level::Debug);
 
     Log::trace("(7)Trace on (6)debug. Skip!");
     Log::debug("(6)Debug on (6)debug.");
@@ -124,11 +120,9 @@ tree.",
     Log::error("(2)Error on (6)debug.");
     Log::fatal("(1)Fatal on (6)debug.");
 
-    if let Ok(mut logger) = LOGGER.lock() {
-        // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
-        // |                               *****              |
-        logger.level = Level::Info;
-    }
+    // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+    // |                               *****              |
+    Log::set_level(Level::Info);
 
     Log::trace("(7)Trace on (5)Info. Skip!");
     Log::debug("(6)Debug on (5)Info. Skip!");
@@ -138,11 +132,9 @@ tree.",
     Log::error("(2)Error on (5)Info.");
     Log::fatal("(1)Fatal on (5)Info.");
 
-    if let Ok(mut logger) = LOGGER.lock() {
-        // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
-        // |                      ******                      |
-        logger.level = Level::Notice;
-    }
+    // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+    // |                      ******                      |
+    Log::set_level(Level::Notice);
 
     Log::trace("(7)Trace on (4)Notice. Skip!");
     Log::debug("(6)Debug on (4)Notice. Skip!");
@@ -152,11 +144,9 @@ tree.",
     Log::error("(2)Error on (4)Notice.");
     Log::fatal("(1)Fatal on (4)Notice.");
 
-    if let Ok(mut logger) = LOGGER.lock() {
-        // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
-        // |               ****                               |
-        logger.level = Level::Warn;
-    }
+    // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+    // |               ****                               |
+    Log::set_level(Level::Warn);
 
     Log::trace("(7)Trace on (3)Warn. Skip!");
     Log::debug("(6)Debug on (3)Warn. Skip!");
@@ -166,11 +156,9 @@ tree.",
     Log::error("(2)Error on (3)Warn.");
     Log::fatal("(1)Fatal on (3)Warn.");
 
-    if let Ok(mut logger) = LOGGER.lock() {
-        // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
-        // |       *****                                      |
-        logger.level = Level::Error;
-    }
+    // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+    // |       *****                                      |
+    Log::set_level(Level::Error);
 
     Log::trace("(7)Trace on (2)Error. Skip!");
     Log::debug("(6)Debug on (2)Error. Skip!");
@@ -180,11 +168,9 @@ tree.",
     Log::error("(2)Error on (2)Error.");
     Log::fatal("(1)Fatal on (2)Error.");
 
-    if let Ok(mut logger) = LOGGER.lock() {
-        // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
-        // |*****                                             |
-        logger.level = Level::Fatal;
-    }
+    // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
+    // |*****                                             |
+    Log::set_level(Level::Fatal);
 
     Log::trace("(7)Trace on (1)Fatal. Skip!");
     Log::debug("(6)Debug on (1)Fatal. Skip!");
