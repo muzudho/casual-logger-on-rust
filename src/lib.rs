@@ -635,22 +635,32 @@ impl Log {
 
     /// Write a some strings from the queue.
     fn flush() {
-        // By buffering, the number of file writes is reduced.
-        let mut toml = String::new();
-        if let Ok(mut queue) = QUEUE.lock() {
-            // However, it ends with 50 tables.
-            // TODO I want to automatically adjust how good it is.
-            let stopwatch = Instant::now();
-            while stopwatch.elapsed().as_secs() < 2 {
-                if let Some(table) = queue.pop_back() {
-                    toml.push_str(&Log::convert_table_to_string(&table));
-                } else {
-                    break;
+        // Flush! (Outside the lock on the Queue.)
+        // Write to a log file.
+        // This is time consuming and should be done in a separate thread.
+        if let Ok(mut logger) = LOGGER.lock() {
+            if let Ok(mut queue) = QUEUE.lock() {
+                // By buffering, the number of file writes is reduced.
+                let mut toml = String::new();
+
+                // However, it ends with 50 tables.
+                // TODO I want to automatically adjust how good it is.
+                let stopwatch = Instant::now();
+                while stopwatch.elapsed().as_secs() < 2 {
+                    if let Some(table) = queue.pop_back() {
+                        toml.push_str(&Log::convert_table_to_string(&table));
+                    } else {
+                        break;
+                    }
+                }
+                // write_all method required to use 'use std::io::Write;'.
+                if let Err(_why) = logger.current_file().write_all(toml.as_bytes()) {
+                    // Nothing is output even if log writing fails.
+                    // Submitting a message to the competition can result in fouls.
+                    // panic!("couldn't write log. : {}",Error::description(&why)),
                 }
             }
         }
-        // Flush! (Outside the lock on the Queue.)
-        Log::write(&toml);
 
         if let Ok(mut last_flush_time) = LAST_FLUSH_TIME.lock() {
             last_flush_time.reset();
@@ -699,18 +709,6 @@ impl Log {
         toml += "
 ";
         toml
-    }
-    /// Write to a log file.
-    /// This is time consuming and should be done in a separate thread.
-    fn write(toml: &str) {
-        if let Ok(mut logger) = LOGGER.lock() {
-            // write_all method required to use 'use std::io::Write;'.
-            if let Err(_why) = logger.current_file().write_all(toml.as_bytes()) {
-                // Nothing is output even if log writing fails.
-                // Submitting a message to the competition can result in fouls.
-                // panic!("couldn't write log. : {}",Error::description(&why)),
-            }
-        }
     }
 }
 
