@@ -20,3 +20,4 @@ categories = ["development-tools::debugging"]
 lazy_static = "1.4.0"
 chrono = "0.4"
 regex = "1"
+sys-info = "0.7.0"

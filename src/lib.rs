@@ -19,6 +19,7 @@
 extern crate lazy_static;
 extern crate chrono;
 extern crate regex;
+extern crate sys_info;
 
 use chrono::{Date, Duration, Local, TimeZone};
 use regex::Regex;
@@ -35,6 +36,7 @@ use std::process;
 use std::sync::Mutex;
 use std::thread;
 use std::time::Instant;
+use sys_info::mem_info;
 
 // For multi-platform. Windows, or not.
 #[cfg(windows)]
@@ -254,7 +256,7 @@ impl Log {
         Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
             // Do not call 'Log::xxxxx()' in this code block.
             if development {
-                eprintln!("casual_logger: {} sec(s). {}", secs, message);
+                eprintln!("casual_logger: {} sec(s). {}", secs, message,);
             }
         });
     }
@@ -287,7 +289,7 @@ impl Log {
             count_down(
                 elapsed_secs,
                 format!(
-                    "{}{}",
+                    "{}{}{}",
                     if let Some(thr_num_val) = thr_num {
                         if 0 < thr_num_val {
                             format!("Wait for {} thread(s). ", thr_num_val)
@@ -303,6 +305,14 @@ impl Log {
                         } else {
                             "".to_string()
                         }
+                    } else {
+                        "".to_string()
+                    },
+                    if let Ok(mem) = mem_info() {
+                        format!(
+                            "Mem=|Total {}|Avail {}|Buffers {}|Cached {}|Free {}|SwapFree {}|SwapTotal {}| ",
+                            mem.total, mem.avail, mem.buffers, mem.cached, mem.free, mem.swap_free, mem.swap_total
+                        )
                     } else {
                         "".to_string()
                     }
@@ -641,24 +651,24 @@ impl Log {
         if let Ok(mut logger) = LOGGER.lock() {
             if let Ok(mut queue) = QUEUE.lock() {
                 // By buffering, the number of file writes is reduced.
-                let mut toml = String::new();
+                let mut file_buf = BufWriter::new(logger.current_file());
 
                 // However, it ends with 50 tables.
                 // TODO I want to automatically adjust how good it is.
                 let stopwatch = Instant::now();
-                while stopwatch.elapsed().as_secs() < 2 {
+                while stopwatch.elapsed().as_secs() < 1 {
                     if let Some(table) = queue.pop_back() {
-                        toml.push_str(&Log::convert_table_to_string(&table));
+                        // write_all method required to use 'use std::io::Write;'.
+                        if let Err(_why) =
+                            file_buf.write(Log::convert_table_to_string(&table).as_bytes())
+                        {
+                            // Nothing is output even if log writing fails.
+                            // Submitting a message to the competition can result in fouls.
+                            // panic!("couldn't write log. : {}",Error::description(&why)),
+                        }
                     } else {
                         break;
                     }
-                }
-                let mut file_buf = BufWriter::new(logger.current_file());
-                // write_all method required to use 'use std::io::Write;'.
-                if let Err(_why) = file_buf.write(toml.as_bytes()) {
-                    // Nothing is output even if log writing fails.
-                    // Submitting a message to the competition can result in fouls.
-                    // panic!("couldn't write log. : {}",Error::description(&why)),
                 }
             }
         }
