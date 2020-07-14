@@ -228,7 +228,7 @@ impl Log {
     /// See also: logger.timeout_secs, Logger.development.
     pub fn wait() {
         let (timeout_secs, development) = if let Ok(logger) = LOGGER.lock() {
-            (logger.timeout_secs, logger.development)
+            (Logger::get_timeout_sec(&logger), logger.development)
         } else {
             (0, false)
         };
