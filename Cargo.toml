@@ -4,8 +4,8 @@ version = "0.3.7"
 authors = ["むずでょ <muzudho1@gmail.com>"]
 edition = "2018"
 description = """
-A logger used when practicing the example programs.
-Only write to file, rotate by date.
+This logger with **few settings** to repeat practice of many programming tutorials.  
+Not for product use.  
 """
 readme = "README.md"
 homepage = "https://github.com/muzudho/casual-logger-on-rust"

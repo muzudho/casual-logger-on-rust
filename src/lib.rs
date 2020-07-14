@@ -1,7 +1,5 @@
-//! This logger is intended to be easy to explain when teaching other example programs to friends.
-//! Not for you, for self-study of beginner friends.
-//! Of course you can use it.
-//! Not for production, but better than not logging.
+//! This logger with **few settings** to repeat practice of many programming tutorials.  
+//! Not for product use.  
 
 // Publish:
 //
@@ -48,11 +46,11 @@ const NEW_LINE: &'static str = "\n";
 #[cfg(not(windows))]
 const NEW_LINE_SEQUENCE: &'static str = "\\n";
 
-/// The higher this level, the more will be omitted.
+/// The higher this level, the more will be omitted.  
 ///
-/// |<-- Low Level ------------------------- High level -->|
-/// |<-- High priority ------------------- Low priority -->|
-/// | Fatal < Error < Warn < Notice < Info < Debug < Trace |
+/// |<-- Low Level ------------------------- High level -->|  
+/// |<-- High priority ------------------- Low priority -->|  
+/// | Fatal < Error < Warn < Notice < Info < Debug < Trace |  
 #[derive(Clone)]
 pub enum Level {
     /// If the program cannot continue.

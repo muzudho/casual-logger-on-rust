@@ -1,7 +1,8 @@
 # casual_logger
 
-This logger **for self-study** of programming.  
-Ease it to deal with a large number of **tutorials**. Not for product use.  
+
+This logger with **few settings** to repeat practice of many programming tutorials.  
+Not for product use.  
 
 Code:  
 
