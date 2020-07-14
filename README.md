@@ -1,12 +1,12 @@
 # casual_logger
 
 This logger **for self-study** programming.  
-Not for production, but it to bridge the gap until your programming skills improve.  
+Not for production. For example, it is suitable for tutorials.  
 
 Code:  
 
 ```rust
-//! The smallest example.
+//! You can copy and paste and use immediately.
 
 use casual_logger::Log;
 
@@ -32,49 +32,36 @@ Info = "Hello, world!!\r\n"
 
 ## Abstract
 
-* **Rotate** log by date automatically.
-* **Delete** old log files. (semi-automatic)
+### The concept used by beginners
 
-### Interested
-
-* Write the log as a TOML table, it can be **easily parsed**.
-* **There is no** configuration file.
-* Log files can **only be placed** in the working directory. The file path **cannot** be set.
-* Only write to **1 file**.
+* (1) Used in one example, throw away:
+  * **There is no** configuration file.
+  * **Rotate** log by date automatically.
+  * **Delete** old log files. (semi-automatic)
+  * Log files can **only be placed** in the working directory.
+  * Only write to **1 file**.
+* (2) Human readable log:
+  * TOML does not spoil it.
+* (3) Possibility as a tutorial
+  * **Short introduction**.
+  * Write the log as a TOML table, it can be **easily parsed**.
 
 ### Disclaim
 
-* It **differs** from the standard Rust log interface.
-* **Ignore performance** for ease of use and ease of explanation.
-* You can break the toml format. **Do not validate**.
-* Depending on the version of this program, the log writing order may be **unstable**. Check the serial "Seq" number.
-* If the log export fails, the **error is ignored** or print stderr, and it continues.
-* There is a waiting time of **1 second or more** before the logger ends.
-* **Don't forget** wait for logging to complete at **end of program**.
+* (1) In trade off for running performance:
+  * **Don't forget** wait for logging to complete at **end of program**.
+  * There is a waiting time of **1 second or more** before the logger ends.
+* (2) In trade off for ease of introduction:
+  * You can break the toml format. **Do not validate**.
+* (3) In trade off for intelligence suggestion by text editor:
+  * It **differs** from the standard Rust log interface.
+* (4) In trade off for not stopping running:
+  * If the log export fails, the **error is ignored**.
 
 ### Tested environment
 
 * OS: `Windows 10`.
 * Editor: `Visual studio code`.
-
-## Introduction
-
-### (Suggest a solution) Are you in trouble with this?
-
-(Case-1)  
-I wanted to self-learn short programming with a logger, but setting up a logger is **difficult than that short programming**.  
-For example, For beginners who want to write a tic-tac-toe program now, setting up a logger is a hassle.  
-
-(Case-2)  
-Writing a log **parser** is tedious.  
-
-### This logger solves the problem in this way.
-
-(Case-1 solution)  
-All features are trial in **one copy and paste**. See "At first, Overall" view below.  
-
-(Case-2 solution)  
-Write the log as a **TOML table**. A human-readable format that can be analyzed by a computer.  
 
 ## At first, Overall view
 
