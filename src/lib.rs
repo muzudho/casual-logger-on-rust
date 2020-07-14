@@ -19,7 +19,7 @@
 extern crate lazy_static;
 extern crate chrono;
 extern crate regex;
-extern crate sys_info;
+// extern crate sys_info;
 
 use chrono::{Date, Duration, Local, TimeZone};
 use regex::Regex;
@@ -36,7 +36,7 @@ use std::process;
 use std::sync::Mutex;
 use std::thread;
 use std::time::Instant;
-use sys_info::mem_info;
+// use sys_info::mem_info;
 
 // For multi-platform. Windows, or not.
 #[cfg(windows)]
@@ -289,7 +289,7 @@ impl Log {
             count_down(
                 elapsed_secs,
                 format!(
-                    "{}{}{}",
+                    "{}{}",
                     if let Some(thr_num_val) = thr_num {
                         if 0 < thr_num_val {
                             format!("Wait for {} thread(s). ", thr_num_val)
@@ -308,6 +308,7 @@ impl Log {
                     } else {
                         "".to_string()
                     },
+                    /*
                     if let Ok(mem) = mem_info() {
                         format!(
                             "Mem=|Total {}|Avail {}|Buffers {}|Cached {}|Free {}|SwapFree {}|SwapTotal {}| ",
@@ -316,6 +317,7 @@ impl Log {
                     } else {
                         "".to_string()
                     }
+                    */
                 )
                 .trim_end()
                 .to_string(),
@@ -651,24 +653,22 @@ impl Log {
         if let Ok(mut logger) = LOGGER.lock() {
             if let Ok(mut queue) = QUEUE.lock() {
                 // By buffering, the number of file writes is reduced.
+                let mut str_buf = String::new();
                 let mut file_buf = BufWriter::new(logger.current_file());
 
-                // However, it ends with 50 tables.
-                // TODO I want to automatically adjust how good it is.
-                let stopwatch = Instant::now();
-                while stopwatch.elapsed().as_secs() < 1 {
+                loop {
                     if let Some(table) = queue.pop_back() {
-                        // write_all method required to use 'use std::io::Write;'.
-                        if let Err(_why) =
-                            file_buf.write(Log::convert_table_to_string(&table).as_bytes())
-                        {
-                            // Nothing is output even if log writing fails.
-                            // Submitting a message to the competition can result in fouls.
-                            // panic!("couldn't write log. : {}",Error::description(&why)),
-                        }
+                        str_buf.push_str(&Log::convert_table_to_string(&table));
                     } else {
                         break;
                     }
+                }
+
+                // write_all method required to use 'use std::io::Write;'.
+                if let Err(_why) = file_buf.write_all(str_buf.as_bytes()) {
+                    // Nothing is output even if log writing fails.
+                    // Submitting a message to the competition can result in fouls.
+                    // panic!("couldn't write log. : {}",Error::description(&why)),
                 }
             }
         }

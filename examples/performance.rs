@@ -2,7 +2,7 @@
 
 use casual_logger::{Level, Log, LOGGER};
 use std::time::Instant;
-use sys_info::mem_info;
+// use sys_info::mem_info;
 
 fn main() {
     let stopwatch = Instant::now();
@@ -31,9 +31,10 @@ fn main() {
     // Wait for logging to complete or to timeout.
     Log::wait();
     println!(
-        "Performance: {} records, {} ms. {}",
+        "Performance: {} records, {} ms.",
         size,
         stopwatch.elapsed().as_millis(),
+        /*
         if let Ok(mem) = mem_info() {
             format!(
                 "Mem=|Total {}|Avail {}|Buffers {}|Cached {}|Free {}|SwapFree {}|SwapTotal {}|",
@@ -48,5 +49,6 @@ fn main() {
         } else {
             "".to_string()
         }
+        */
     )
 }
