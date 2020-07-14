@@ -1,8 +1,7 @@
 # casual_logger
 
 This logger **for self-study** of programming.  
-Ease it to deal with a large number of **tutorials**.  
-Not for production. 
+Ease it to deal with a large number of **tutorials**. Not for product use.  
 
 Code:  
 
@@ -55,7 +54,7 @@ The concept used by beginners.
 ### Disclaim
 
 * (1) In trade off for running performance:
-  * **Don't forget** wait for logging to complete at **end of program**.
+  * **Don't forget wait** for logging to complete at **end of program**.
   * There is a waiting time of **1 second or more** before the logger ends.
 * (2) In trade off for ease of introduction:
   * You can break the toml format. **Do not validate**.
@@ -451,14 +450,14 @@ It is designed to use `Log::fatal()` as the first argument for `panic!()`. It is
 Code:  
 
 ```rust
-use casual_logger::{Level, Log, Table, LOGGER};
+use casual_logger::{Extension, Level, Log, Table, LOGGER};
 ```
 
 At the timing of the first writing, a file with a  
 time stamp in its name is automatically generated.  
 For example: `./tic-tac-toe-2020-07-12.log.toml`  
 
-Description:  
+### File name
 
 | Part          | Name      | Description       | Default   |
 | ------------- | --------- | ----------------- | --------- |
@@ -483,6 +482,14 @@ clearly states that you can delete the file.
 
 If you don't like the .toml **extension**, leave  
 the suffix empty and the .log extension.  
+
+Extension:  
+
+| Enum      | String      | Description                  | Default |
+| --------- | ----------- | ---------------------------- | ------- |
+| `Log`     | `.log`      | For logs that are too large  |         |
+|           |             | to be colored in the editor. |         |
+| `LogToml` | `.log.toml` | Toml format.                 | Default |
 
 Set up, Code:  
 
