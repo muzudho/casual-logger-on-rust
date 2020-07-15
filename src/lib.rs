@@ -144,13 +144,13 @@ thread_local!(static SEQ: RefCell<u128> = {
 struct TableHeader {
     /// Thread ID. However, Note that you are not limited to numbers.
     thread_id: String,
-    seq: u128,
+    pub seq: u128,
 }
 impl TableHeader {
-    fn new(thread_id: &str, seq: u128) -> Self {
+    fn new(thread_id: &str) -> Self {
         TableHeader {
             thread_id: thread_id.to_string(),
-            seq: seq,
+            seq: 0,
         }
     }
 }
@@ -701,32 +701,39 @@ impl Log {
     }
 
     fn reserve(table: &Table) {
-        SEQ.with(move |seq| {
-            let header = TableHeader::new(&format!("{:?}", thread::current().id()), *seq.borrow());
+        // Out side of SEQ.with().
+        let table_clone = table.clone();
+        let mut header = TableHeader::new(&format!("{:?}", thread::current().id()));
 
-            if let Ok(reseve_target) = RESERVE_TARGET.lock() {
-                if reseve_target.is_t() {
-                    if let Ok(mut queue) = QUEUE_T.lock() {
-                        queue.push_front((header, table.clone()));
-                    }
-                } else {
-                    if let Ok(mut queue) = QUEUE_F.lock() {
-                        queue.push_front((header, table.clone()));
-                    }
-                }
-            }
-
-            if let Ok(mut signal) = SIGNAL_CAN_FLUSH.lock() {
-                if signal.can_flush() {
-                    signal.set_can_flush(false);
-                    thread::spawn(move || {
-                        Log::flush();
-                    });
-                }
-            }
-
+        header.seq = SEQ.with(move |seq| {
+            let old = *seq.borrow();
             *seq.borrow_mut() += 1;
+            old
         });
+
+        if let Ok(reseve_target) = RESERVE_TARGET.lock() {
+            if reseve_target.is_t() {
+                if let Ok(mut queue) = QUEUE_T.lock() {
+                    queue.push_front((header, table_clone));
+                }
+            } else {
+                if let Ok(mut queue) = QUEUE_F.lock() {
+                    queue.push_front((header, table_clone));
+                }
+            }
+        } else {
+            // TODO Error.
+            return;
+        }
+
+        if let Ok(mut signal) = SIGNAL_CAN_FLUSH.lock() {
+            if signal.can_flush() {
+                signal.set_can_flush(false);
+                thread::spawn(move || {
+                    Log::flush();
+                });
+            }
+        }
     }
 
     /// Write a some strings from the queue.
