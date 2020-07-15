@@ -128,8 +128,10 @@ lazy_static! {
     pub static ref LOGGER: Mutex<Logger> = Mutex::new(Logger::default());
     /// Wait for logging to complete.
     static ref POOL: Mutex<Pool> = Mutex::new(Pool::default());
-    /// Wait for logging to complete.
-    static ref QUEUE: Mutex<VecDeque<Table>> = Mutex::new(VecDeque::<Table>::new());
+    /// Table buffer.
+    static ref QUEUE_T: Mutex<VecDeque<Table>> = Mutex::new(VecDeque::<Table>::new());
+    static ref QUEUE_F: Mutex<VecDeque<Table>> = Mutex::new(VecDeque::<Table>::new());
+    static ref RESERVE_TARGET: Mutex<ReserveTarget> = Mutex::new(ReserveTarget::default());
     /// Erapsed time.
     static ref LAST_FLUSH_TIME: Mutex<LastFlushTime> = Mutex::new(LastFlushTime::default());
 }
@@ -348,12 +350,24 @@ impl Log {
                 let thr_num_val = pool.get_thread_count();
                 thr_num = Some(thr_num_val);
                 if thr_num_val < 1 {
-                    if let Ok(queue) = QUEUE.lock() {
-                        if queue.is_empty() {
-                            // count_down(elapsed_secs, "Completed.".to_string());
-                            break;
+                    if let Ok(reserve_target) = RESERVE_TARGET.lock() {
+                        if reserve_target.is_t() {
+                            if let Ok(queue) = QUEUE_T.lock() {
+                                if queue.is_empty() {
+                                    // count_down(elapsed_secs, "Completed.".to_string());
+                                    break;
+                                }
+                                queue_len = Some(queue.len());
+                            }
+                        } else {
+                            if let Ok(queue) = QUEUE_F.lock() {
+                                if queue.is_empty() {
+                                    // count_down(elapsed_secs, "Completed.".to_string());
+                                    break;
+                                }
+                                queue_len = Some(queue.len());
+                            }
                         }
-                        queue_len = Some(queue.len());
                     }
 
                     // Out of QUEUE.lock().
@@ -416,7 +430,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn trace(message: &str) {
         if Log::enabled(Level::Trace) {
-            Log::send(&Table::new(Level::Trace, message, false));
+            Log::reserve(&Table::new(Level::Trace, message, false));
         }
     }
 
@@ -424,7 +438,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn traceln(message: &str) {
         if Log::enabled(Level::Trace) {
-            Log::send(&Table::new(Level::Trace, message, true));
+            Log::reserve(&Table::new(Level::Trace, message, true));
         }
     }
 
@@ -435,7 +449,7 @@ impl Log {
             table.level = Level::Trace;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::send(table);
+            Log::reserve(table);
         }
     }
 
@@ -446,7 +460,7 @@ impl Log {
             table.level = Level::Trace;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::send(table);
+            Log::reserve(table);
         }
     }
 
@@ -454,7 +468,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn debug(message: &str) {
         if Log::enabled(Level::Debug) {
-            Log::send(&Table::new(Level::Debug, message, false));
+            Log::reserve(&Table::new(Level::Debug, message, false));
         }
     }
 
@@ -462,7 +476,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn debugln(message: &str) {
         if Log::enabled(Level::Debug) {
-            Log::send(&Table::new(Level::Debug, message, true));
+            Log::reserve(&Table::new(Level::Debug, message, true));
         }
     }
 
@@ -473,7 +487,7 @@ impl Log {
             table.level = Level::Debug;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::send(table);
+            Log::reserve(table);
         }
     }
 
@@ -484,7 +498,7 @@ impl Log {
             table.level = Level::Debug;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::send(table);
+            Log::reserve(table);
         }
     }
 
@@ -492,7 +506,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn info(message: &str) {
         if Log::enabled(Level::Info) {
-            Log::send(&Table::new(Level::Info, message, false));
+            Log::reserve(&Table::new(Level::Info, message, false));
         }
     }
 
@@ -500,7 +514,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn infoln(message: &str) {
         if Log::enabled(Level::Info) {
-            Log::send(&Table::new(Level::Info, message, true));
+            Log::reserve(&Table::new(Level::Info, message, true));
         }
     }
 
@@ -511,7 +525,7 @@ impl Log {
             table.level = Level::Info;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::send(table);
+            Log::reserve(table);
         }
     }
 
@@ -522,14 +536,14 @@ impl Log {
             table.level = Level::Info;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::send(table);
+            Log::reserve(table);
         }
     }
     /// Notice level. No trailing newline.
     #[allow(dead_code)]
     pub fn notice(message: &str) {
         if Log::enabled(Level::Notice) {
-            Log::send(&Table::new(Level::Notice, message, false));
+            Log::reserve(&Table::new(Level::Notice, message, false));
         }
     }
 
@@ -537,7 +551,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn noticeln(message: &str) {
         if Log::enabled(Level::Notice) {
-            Log::send(&Table::new(Level::Notice, message, true));
+            Log::reserve(&Table::new(Level::Notice, message, true));
         }
     }
     /// Notice level. No trailing newline. Use table.
@@ -547,7 +561,7 @@ impl Log {
             table.level = Level::Notice;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::send(table);
+            Log::reserve(table);
         }
     }
 
@@ -558,7 +572,7 @@ impl Log {
             table.level = Level::Notice;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::send(table);
+            Log::reserve(table);
         }
     }
 
@@ -566,7 +580,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn warn(message: &str) {
         if Log::enabled(Level::Warn) {
-            Log::send(&Table::new(Level::Warn, message, false));
+            Log::reserve(&Table::new(Level::Warn, message, false));
         }
     }
 
@@ -574,7 +588,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn warnln(message: &str) {
         if Log::enabled(Level::Warn) {
-            Log::send(&Table::new(Level::Warn, message, true));
+            Log::reserve(&Table::new(Level::Warn, message, true));
         }
     }
 
@@ -585,7 +599,7 @@ impl Log {
             table.level = Level::Warn;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::send(table);
+            Log::reserve(table);
         }
     }
 
@@ -596,7 +610,7 @@ impl Log {
             table.level = Level::Warn;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::send(table);
+            Log::reserve(table);
         }
     }
 
@@ -604,7 +618,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn error(message: &str) {
         if Log::enabled(Level::Error) {
-            Log::send(&Table::new(Level::Error, message, false));
+            Log::reserve(&Table::new(Level::Error, message, false));
         }
     }
 
@@ -612,7 +626,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn errorln(message: &str) {
         if Log::enabled(Level::Error) {
-            Log::send(&Table::new(Level::Error, message, true));
+            Log::reserve(&Table::new(Level::Error, message, true));
         }
     }
 
@@ -623,7 +637,7 @@ impl Log {
             table.level = Level::Error;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::send(table);
+            Log::reserve(table);
         }
     }
 
@@ -634,7 +648,7 @@ impl Log {
             table.level = Level::Error;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::send(table);
+            Log::reserve(table);
         }
     }
     /// Fatal level. No trailing newline.
@@ -642,7 +656,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn fatal(message: &str) -> String {
         // Fatal runs at any level.
-        Log::send(&Table::new(Level::Fatal, message, false));
+        Log::reserve(&Table::new(Level::Fatal, message, false));
         // Wait for logging to complete or to timeout.
         Log::wait();
         message.to_string()
@@ -652,7 +666,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn fatalln(message: &str) -> String {
         // Fatal runs at any level.
-        Log::send(&Table::new(Level::Fatal, message, true));
+        Log::reserve(&Table::new(Level::Fatal, message, true));
         // Wait for logging to complete or to timeout.
         Log::wait();
         // Append trailing newline.
@@ -667,7 +681,7 @@ impl Log {
         table.level = Level::Fatal;
         table.message = message.to_string();
         table.message_trailing_newline = false;
-        Log::send(table);
+        Log::reserve(table);
         // Wait for logging to complete or to timeout.
         Log::wait();
         message.to_string()
@@ -680,22 +694,30 @@ impl Log {
         table.level = Level::Fatal;
         table.message = message.to_string();
         table.message_trailing_newline = true;
-        Log::send(table);
+        Log::reserve(table);
         // Wait for logging to complete or to timeout.
         Log::wait();
         // Append trailing newline.
         format!("{}{}", message, NEW_LINE).to_string()
     }
 
-    fn send(table: &Table) {
+    fn reserve(table: &Table) {
         let mut table_clone = table.clone();
         table_clone.thread_id = format!("{:?}", thread::current().id());
 
         SEQ.with(move |seq| {
             table_clone.seq = seq.borrow().clone();
 
-            if let Ok(mut queue) = QUEUE.lock() {
-                queue.push_front(table_clone);
+            if let Ok(reseve_target) = RESERVE_TARGET.lock() {
+                if reseve_target.is_t() {
+                    if let Ok(mut queue) = QUEUE_T.lock() {
+                        queue.push_front(table_clone);
+                    }
+                } else {
+                    if let Ok(mut queue) = QUEUE_F.lock() {
+                        queue.push_front(table_clone);
+                    }
+                }
             }
 
             let can_flush = if let Ok(last_flush_time) = LAST_FLUSH_TIME.lock() {
@@ -723,16 +745,42 @@ impl Log {
     fn flush() {
         // By buffering, the number of file writes is reduced.
         let mut str_buf = String::new();
-        if let Ok(mut queue) = QUEUE.lock() {
-            loop {
-                if let Some(table) = queue.pop_back() {
-                    str_buf.push_str(&Log::convert_table_to_string(&table));
-                } else {
-                    break;
+
+        // Switch.
+        let flush_target = if let Ok(mut reserve_target) = RESERVE_TARGET.lock() {
+            let old = reserve_target.is_t();
+            reserve_target.switch();
+            old
+        } else {
+            // TODO Error.
+            return;
+        };
+
+        if flush_target {
+            if let Ok(mut queue) = QUEUE_T.lock() {
+                loop {
+                    if let Some(table) = queue.pop_back() {
+                        str_buf.push_str(&Log::convert_table_to_string(&table));
+                    } else {
+                        break;
+                    }
                 }
+            } else {
+                // TODO Error.
+            }
+        } else {
+            if let Ok(mut queue) = QUEUE_F.lock() {
+                loop {
+                    if let Some(table) = queue.pop_back() {
+                        str_buf.push_str(&Log::convert_table_to_string(&table));
+                    } else {
+                        break;
+                    }
+                }
+            } else {
+                // TODO Error.
             }
         }
-
         // Flush! (Outside the lock on the Queue.)
         // Write to a log file.
         // This is time consuming and should be done in a separate thread.
@@ -1112,4 +1160,37 @@ pub enum Extension {
     Log,
     /// *.log.toml
     LogToml,
+}
+
+/// The queue number is a Boolean, not a number.
+#[derive(Clone, Copy)]
+pub struct ReserveTarget {
+    target: bool,
+    // TODO switching_time: Option<Instant>,
+}
+impl Default for ReserveTarget {
+    fn default() -> Self {
+        ReserveTarget {
+            target: false,
+            // TODO switching_time: None,
+        }
+    }
+}
+impl ReserveTarget {
+    fn is_t(self) -> bool {
+        self.target
+    }
+    /* TODO
+    fn can_switch(&self) -> bool {
+        if let Some(switching_time) = self.switching_time {
+            1 <= switching_time.elapsed().as_secs()
+        } else {
+            true
+        }
+    }
+    */
+    fn switch(&mut self) {
+        self.target = !self.target;
+        // TODO self.switching_time = Some(Instant::now());
+    }
 }
