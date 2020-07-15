@@ -14,14 +14,6 @@ fn main() {
     Log::set_development(true);
     Log::remove_old_logs();
 
-    let mut count_0 = 0;
-    // Single thread test.
-    let size = 300_000;
-    for i in 0..size {
-        Log::infoln(&format!("Hello, world!! {}", i + 1));
-        count_0 += 1;
-    }
-
     // Multi thread test.
     let size = 100_000;
     let (sender1, receiver1) = mpsc::channel();
@@ -60,6 +52,18 @@ fn main() {
         }
     });
 
+    let mut count_0 = 0;
+    // Single thread test.
+    let size = 300_000;
+    for i in 0..size {
+        Log::infoln(&format!("Hello, world!! {}", i + 1));
+        count_0 += 1;
+    }
+
+    // Wait for logging to complete or to timeout.
+    Log::wait();
+
+    // Block.
     let count_1 = if let Ok(count_1) = receiver1.recv() {
         count_1
     } else {
@@ -84,8 +88,6 @@ fn main() {
     )));
     */
 
-    // Wait for logging to complete or to timeout.
-    Log::wait();
     println!(
         "Performance: |{}|{}|{}|{}| records, {} ms.",
         count_0,

@@ -141,13 +141,13 @@ thread_local!(static SEQ: RefCell<u128> = {
     RefCell::new(1)
 });
 
-pub struct TableHeader {
+struct TableHeader {
     /// Thread ID. However, Note that you are not limited to numbers.
     thread_id: String,
     seq: u128,
 }
 impl TableHeader {
-    pub fn new(thread_id: &str, seq: u128) -> Self {
+    fn new(thread_id: &str, seq: u128) -> Self {
         TableHeader {
             thread_id: thread_id.to_string(),
             seq: seq,
@@ -181,6 +181,7 @@ impl Table {
             message_trailing_newline: trailing_newline,
         }
     }
+    #[deprecated(since = "0.4.1", note = "This is private method")]
     pub fn format_str_value(value: &str) -> String {
         // Escape the trailing newline at last.
         let mut body = if value[value.len() - NEW_LINE.len()..] == *NEW_LINE {
@@ -335,6 +336,33 @@ impl Log {
             }
         });
     }
+
+    fn print_message(queue_len: Option<usize>) -> String {
+        format!(
+            "{}",
+            if let Some(queue_len_val) = queue_len {
+                if 0 < queue_len_val {
+                    format!("{} table(s) left. ", queue_len_val)
+                } else {
+                    "".to_string()
+                }
+            } else {
+                "".to_string()
+            },
+            /*
+            if let Ok(mem) = mem_info() {
+                format!(
+                    "Mem=|Total {}|Avail {}|Buffers {}|Cached {}|Free {}|SwapFree {}|SwapTotal {}| ",
+                    mem.total, mem.avail, mem.buffers, mem.cached, mem.free, mem.swap_free, mem.swap_total
+                )
+            } else {
+                "".to_string()
+            }
+            */
+        )
+        .trim_end()
+        .to_string()
+    }
     /// Wait for logging to complete.
     #[deprecated(
         since = "0.3.2",
@@ -352,7 +380,7 @@ impl Log {
                 if reserve_target.is_t() {
                     if let Ok(queue) = QUEUE_T.lock() {
                         if queue.is_empty() {
-                            // count_down(elapsed_secs, "Completed.".to_string());
+                            // Completed.
                             break;
                         }
                         queue_len = Some(queue.len());
@@ -360,7 +388,7 @@ impl Log {
                 } else {
                     if let Ok(queue) = QUEUE_F.lock() {
                         if queue.is_empty() {
-                            // count_down(elapsed_secs, "Completed.".to_string());
+                            // Completed.
                             break;
                         }
                         queue_len = Some(queue.len());
@@ -379,33 +407,7 @@ impl Log {
                 // TODO Error.
             }
             if elapsed_milli_secs % 1000 == 0 {
-                count_down(
-                    elapsed_milli_secs / 1000,
-                    format!(
-                        "{}",
-                        if let Some(queue_len_val) = queue_len {
-                            if 0 < queue_len_val {
-                                format!("{} table(s) left. ", queue_len_val)
-                            } else {
-                                "".to_string()
-                            }
-                        } else {
-                            "".to_string()
-                        },
-                        /*
-                        if let Ok(mem) = mem_info() {
-                            format!(
-                                "Mem=|Total {}|Avail {}|Buffers {}|Cached {}|Free {}|SwapFree {}|SwapTotal {}| ",
-                                mem.total, mem.avail, mem.buffers, mem.cached, mem.free, mem.swap_free, mem.swap_total
-                            )
-                        } else {
-                            "".to_string()
-                        }
-                        */
-                    )
-                    .trim_end()
-                    .to_string(),
-                );
+                count_down(elapsed_milli_secs / 1000, Log::print_message(queue_len));
             }
 
             thread::sleep(std::time::Duration::from_millis(20));
