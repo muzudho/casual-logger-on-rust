@@ -132,8 +132,7 @@ lazy_static! {
     static ref QUEUE_T: Mutex<VecDeque<Table>> = Mutex::new(VecDeque::<Table>::new());
     static ref QUEUE_F: Mutex<VecDeque<Table>> = Mutex::new(VecDeque::<Table>::new());
     static ref RESERVE_TARGET: Mutex<ReserveTarget> = Mutex::new(ReserveTarget::default());
-    /// Erapsed time.
-    static ref LAST_FLUSH_TIME: Mutex<LastFlushTime> = Mutex::new(LastFlushTime::default());
+    static ref SIGNAL_CAN_FLUSH: Mutex<SignalCanFlush> = Mutex::new(SignalCanFlush::default());
 }
 // Use the line number in the log.
 //
@@ -720,23 +719,21 @@ impl Log {
                 }
             }
 
-            let can_flush = if let Ok(last_flush_time) = LAST_FLUSH_TIME.lock() {
-                last_flush_time.can_flush()
-            } else {
-                false
-            };
-
-            if can_flush {
-                if let Ok(mut pool) = POOL.lock() {
-                    pool.increase_thread_count();
-                }
-                thread::spawn(move || {
-                    Log::flush();
+            if let Ok(mut signal) = SIGNAL_CAN_FLUSH.lock() {
+                if signal.can_flush() {
+                    signal.set_can_flush(false);
                     if let Ok(mut pool) = POOL.lock() {
-                        pool.decrease_thread_count();
+                        pool.increase_thread_count();
                     }
-                });
+                    thread::spawn(move || {
+                        Log::flush();
+                        if let Ok(mut pool) = POOL.lock() {
+                            pool.decrease_thread_count();
+                        }
+                    });
+                }
             }
+
             *seq.borrow_mut() += 1;
         });
     }
@@ -792,8 +789,8 @@ impl Log {
                 // Submitting a message to the competition can result in fouls.
                 // panic!("couldn't write log. : {}",Error::description(&why)),
             }
-            if let Ok(mut last_flush_time) = LAST_FLUSH_TIME.lock() {
-                last_flush_time.reset();
+            if let Ok(mut signal) = SIGNAL_CAN_FLUSH.lock() {
+                signal.set_can_flush(true);
             }
         }
     }
@@ -1132,28 +1129,6 @@ impl LogFile {
     }
 }
 
-struct LastFlushTime {
-    pub last_flush_time: Instant,
-}
-impl Default for LastFlushTime {
-    fn default() -> Self {
-        LastFlushTime {
-            last_flush_time: Instant::now(),
-        }
-    }
-}
-impl LastFlushTime {
-    fn reset(&mut self) {
-        if 1 <= self.last_flush_time.elapsed().as_secs() {
-            self.last_flush_time = Instant::now();
-        }
-    }
-    fn can_flush(&self) -> bool {
-        // println!("elapsed={}", self.last_flush_time.elapsed().as_secs());
-        1 <= self.last_flush_time.elapsed().as_secs()
-    }
-}
-
 /// File extension.
 pub enum Extension {
     /// *.log
@@ -1166,31 +1141,34 @@ pub enum Extension {
 #[derive(Clone, Copy)]
 pub struct ReserveTarget {
     target: bool,
-    // TODO switching_time: Option<Instant>,
 }
 impl Default for ReserveTarget {
     fn default() -> Self {
-        ReserveTarget {
-            target: false,
-            // TODO switching_time: None,
-        }
+        ReserveTarget { target: false }
     }
 }
 impl ReserveTarget {
     fn is_t(self) -> bool {
         self.target
     }
-    /* TODO
-    fn can_switch(&self) -> bool {
-        if let Some(switching_time) = self.switching_time {
-            1 <= switching_time.elapsed().as_secs()
-        } else {
-            true
-        }
-    }
-    */
     fn switch(&mut self) {
         self.target = !self.target;
-        // TODO self.switching_time = Some(Instant::now());
+    }
+}
+
+struct SignalCanFlush {
+    can_flush: bool,
+}
+impl Default for SignalCanFlush {
+    fn default() -> Self {
+        SignalCanFlush { can_flush: true }
+    }
+}
+impl SignalCanFlush {
+    pub fn can_flush(&self) -> bool {
+        self.can_flush
+    }
+    pub fn set_can_flush(&mut self, val: bool) {
+        self.can_flush = val;
     }
 }
