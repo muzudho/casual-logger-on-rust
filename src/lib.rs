@@ -125,8 +125,6 @@ lazy_static! {
     )]
     /// Logger grobal variable.
     pub static ref LOGGER: Mutex<Logger> = Mutex::new(Logger::default());
-    /// Wait for logging to complete.
-    static ref POOL: Mutex<Pool> = Mutex::new(Pool::default());
     /// Table buffer.
     static ref QUEUE_T: Mutex<VecDeque<(TableHeader,Table)>> = Mutex::new(VecDeque::<(TableHeader,Table)>::new());
     static ref QUEUE_F: Mutex<VecDeque<(TableHeader,Table)>> = Mutex::new(VecDeque::<(TableHeader,Table)>::new());
@@ -349,58 +347,42 @@ impl Log {
         let mut elapsed_milli_secs = 0;
         let mut empty_que_count = 0;
         while empty_que_count < 2 && elapsed_milli_secs < timeout_secs * 1000 {
-            let mut thr_num = None;
             let mut queue_len = None;
-            if let Ok(pool) = POOL.lock() {
-                let thr_num_val = pool.get_thread_count();
-                thr_num = Some(thr_num_val);
-                if thr_num_val < 1 {
-                    if let Ok(reserve_target) = RESERVE_TARGET.lock() {
-                        if reserve_target.is_t() {
-                            if let Ok(queue) = QUEUE_T.lock() {
-                                if queue.is_empty() {
-                                    // count_down(elapsed_secs, "Completed.".to_string());
-                                    break;
-                                }
-                                queue_len = Some(queue.len());
-                            }
-                        } else {
-                            if let Ok(queue) = QUEUE_F.lock() {
-                                if queue.is_empty() {
-                                    // count_down(elapsed_secs, "Completed.".to_string());
-                                    break;
-                                }
-                                queue_len = Some(queue.len());
-                            }
+            if let Ok(reserve_target) = RESERVE_TARGET.lock() {
+                if reserve_target.is_t() {
+                    if let Ok(queue) = QUEUE_T.lock() {
+                        if queue.is_empty() {
+                            // count_down(elapsed_secs, "Completed.".to_string());
+                            break;
                         }
+                        queue_len = Some(queue.len());
                     }
-
-                    // Out of QUEUE.lock().
-                    if let Some(completed) = Log::flush() {
-                        if completed {
-                            empty_que_count = 0;
-                        } else {
-                            empty_que_count += 1;
+                } else {
+                    if let Ok(queue) = QUEUE_F.lock() {
+                        if queue.is_empty() {
+                            // count_down(elapsed_secs, "Completed.".to_string());
+                            break;
                         }
-                    } else {
-                        // TODO Error.
+                        queue_len = Some(queue.len());
                     }
                 }
+            }
+
+            // Out of QUEUE.lock().
+            if let Some(completed) = Log::flush() {
+                if completed {
+                    empty_que_count = 0;
+                } else {
+                    empty_que_count += 1;
+                }
+            } else {
+                // TODO Error.
             }
             if elapsed_milli_secs % 1000 == 0 {
                 count_down(
                     elapsed_milli_secs / 1000,
                     format!(
-                        "{}{}",
-                        if let Some(thr_num_val) = thr_num {
-                            if 0 < thr_num_val {
-                                format!("Wait for {} thread(s). ", thr_num_val)
-                            } else {
-                                "".to_string()
-                            }
-                        } else {
-                            "".to_string()
-                        },
+                        "{}",
                         if let Some(queue_len_val) = queue_len {
                             if 0 < queue_len_val {
                                 format!("{} table(s) left. ", queue_len_val)
@@ -717,19 +699,17 @@ impl Log {
     }
 
     fn reserve(table: &Table) {
-        let table_clone = table.clone();
-
         SEQ.with(move |seq| {
             let header = TableHeader::new(&format!("{:?}", thread::current().id()), *seq.borrow());
 
             if let Ok(reseve_target) = RESERVE_TARGET.lock() {
                 if reseve_target.is_t() {
                     if let Ok(mut queue) = QUEUE_T.lock() {
-                        queue.push_front((header, table_clone));
+                        queue.push_front((header, table.clone()));
                     }
                 } else {
                     if let Ok(mut queue) = QUEUE_F.lock() {
-                        queue.push_front((header, table_clone));
+                        queue.push_front((header, table.clone()));
                     }
                 }
             }
@@ -737,14 +717,8 @@ impl Log {
             if let Ok(mut signal) = SIGNAL_CAN_FLUSH.lock() {
                 if signal.can_flush() {
                     signal.set_can_flush(false);
-                    if let Ok(mut pool) = POOL.lock() {
-                        pool.increase_thread_count();
-                    }
                     thread::spawn(move || {
                         Log::flush();
-                        if let Ok(mut pool) = POOL.lock() {
-                            pool.decrease_thread_count();
-                        }
                     });
                 }
             }
@@ -870,27 +844,6 @@ impl Log {
         toml += "
 ";
         toml
-    }
-}
-
-struct Pool {
-    /// Number of threads not yet finished.
-    thread_count: u32,
-}
-impl Default for Pool {
-    fn default() -> Self {
-        Pool { thread_count: 0 }
-    }
-}
-impl Pool {
-    fn increase_thread_count(&mut self) {
-        self.thread_count += 1;
-    }
-    fn decrease_thread_count(&mut self) {
-        self.thread_count -= 1;
-    }
-    pub fn get_thread_count(&self) -> u32 {
-        self.thread_count
     }
 }
 
