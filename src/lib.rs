@@ -128,8 +128,8 @@ lazy_static! {
     /// Wait for logging to complete.
     static ref POOL: Mutex<Pool> = Mutex::new(Pool::default());
     /// Table buffer.
-    static ref QUEUE_T: Mutex<VecDeque<Table>> = Mutex::new(VecDeque::<Table>::new());
-    static ref QUEUE_F: Mutex<VecDeque<Table>> = Mutex::new(VecDeque::<Table>::new());
+    static ref QUEUE_T: Mutex<VecDeque<(TableHeader,Table)>> = Mutex::new(VecDeque::<(TableHeader,Table)>::new());
+    static ref QUEUE_F: Mutex<VecDeque<(TableHeader,Table)>> = Mutex::new(VecDeque::<(TableHeader,Table)>::new());
     static ref RESERVE_TARGET: Mutex<ReserveTarget> = Mutex::new(ReserveTarget::default());
     static ref SIGNAL_CAN_FLUSH: Mutex<SignalCanFlush> = Mutex::new(SignalCanFlush::default());
 }
@@ -143,12 +143,22 @@ thread_local!(static SEQ: RefCell<u128> = {
     RefCell::new(1)
 });
 
-/// TOML table included in the log file. Do not validate.
-#[derive(Clone)]
-pub struct Table {
+pub struct TableHeader {
     /// Thread ID. However, Note that you are not limited to numbers.
     thread_id: String,
     seq: u128,
+}
+impl TableHeader {
+    pub fn new(thread_id: &str, seq: u128) -> Self {
+        TableHeader {
+            thread_id: thread_id.to_string(),
+            seq: seq,
+        }
+    }
+}
+/// TOML table included in the log file. Do not validate.
+#[derive(Clone)]
+pub struct Table {
     level: Level,
     message: String,
     message_trailing_newline: bool,
@@ -157,8 +167,6 @@ pub struct Table {
 impl Default for Table {
     fn default() -> Self {
         Table {
-            thread_id: "".to_string(),
-            seq: 0,
             sorted_map: BTreeMap::new(),
             level: Level::Trace,
             message: "".to_string(),
@@ -169,8 +177,6 @@ impl Default for Table {
 impl Table {
     fn new(level: Level, message: &str, trailing_newline: bool) -> Self {
         Table {
-            thread_id: "".to_string(),
-            seq: 0,
             sorted_map: BTreeMap::new(),
             level: level,
             message: message.to_string(),
@@ -711,20 +717,19 @@ impl Log {
     }
 
     fn reserve(table: &Table) {
-        let mut table_clone = table.clone();
-        table_clone.thread_id = format!("{:?}", thread::current().id());
+        let table_clone = table.clone();
 
         SEQ.with(move |seq| {
-            table_clone.seq = seq.borrow().clone();
+            let header = TableHeader::new(&format!("{:?}", thread::current().id()), *seq.borrow());
 
             if let Ok(reseve_target) = RESERVE_TARGET.lock() {
                 if reseve_target.is_t() {
                     if let Ok(mut queue) = QUEUE_T.lock() {
-                        queue.push_front(table_clone);
+                        queue.push_front((header, table_clone));
                     }
                 } else {
                     if let Ok(mut queue) = QUEUE_F.lock() {
-                        queue.push_front(table_clone);
+                        queue.push_front((header, table_clone));
                     }
                 }
             }
@@ -773,8 +778,11 @@ impl Log {
         if flush_target {
             if let Ok(mut queue) = QUEUE_T.lock() {
                 loop {
-                    if let Some(table) = queue.pop_back() {
-                        str_buf.push_str(&Log::convert_table_to_string(&table));
+                    if let Some(table_tuple) = queue.pop_back() {
+                        str_buf.push_str(&Log::convert_table_to_string(
+                            &table_tuple.0,
+                            &table_tuple.1,
+                        ));
                         count += 1;
                     } else {
                         break;
@@ -786,8 +794,11 @@ impl Log {
         } else {
             if let Ok(mut queue) = QUEUE_F.lock() {
                 loop {
-                    if let Some(table) = queue.pop_back() {
-                        str_buf.push_str(&Log::convert_table_to_string(&table));
+                    if let Some(table_tuple) = queue.pop_back() {
+                        str_buf.push_str(&Log::convert_table_to_string(
+                            &table_tuple.0,
+                            &table_tuple.1,
+                        ));
                         count += 1;
                     } else {
                         break;
@@ -817,7 +828,7 @@ impl Log {
         Some(0 < count)
     }
 
-    fn convert_table_to_string(table: &Table) -> String {
+    fn convert_table_to_string(header: &TableHeader, table: &Table) -> String {
         let message = if table.message_trailing_newline {
             // There is a trailing newline.
             format!("{}{}", table.message, NEW_LINE)
@@ -837,9 +848,9 @@ impl Log {
             // Process ID.
             process::id(),
             // Thread ID. However, Note that you are not limited to numbers.
-            table.thread_id,
+            header.thread_id,
             // Line number. This is to avoid duplication.
-            table.seq,
+            header.seq,
         );
         toml += &format!(
             "{} = {}
