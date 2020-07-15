@@ -1,6 +1,6 @@
 //! Performance check
 
-use casual_logger::{Extension, Log, LOGGER};
+use casual_logger::{Extension, Log};
 use std::thread;
 use std::time::Instant;
 // use sys_info::mem_info;
@@ -10,9 +10,7 @@ fn main() {
     Log::set_file_name("performance-check");
     Log::set_file_ext(Extension::Log);
     Log::set_retention_days(2);
-    if let Ok(mut logger) = LOGGER.lock() {
-        logger.development = true;
-    }
+    Log::set_development(true);
     Log::remove_old_logs();
 
     let mut count = 0;

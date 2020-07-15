@@ -1,6 +1,6 @@
 [package]
 name = "casual_logger"
-version = "0.3.9"
+version = "0.3.10"
 authors = ["むずでょ <muzudho1@gmail.com>"]
 edition = "2018"
 description = """
@@ -8,8 +8,7 @@ This logger with **few settings** to repeat practice of many programming tutoria
 Not for product use.  
 """
 readme = "README.md"
-homepage = "https://github.com/muzudho/casual-logger-on-rust"
-repositiory = "https://github.com/muzudho/casual-logger-on-rust"
+repository = "https://github.com/muzudho/casual-logger-on-rust"
 license = "MIT"
 keywords = ["logger", "log", "logging"]
 categories = ["development-tools::debugging"]

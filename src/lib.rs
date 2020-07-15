@@ -120,6 +120,10 @@ impl fmt::Display for Level {
 // * References
 //      * [How can I use mutable lazy_static?](https://users.rust-lang.org/t/how-can-i-use-mutable-lazy-static/3751/3)
 lazy_static! {
+    #[deprecated(
+        since = "0.3.10",
+        note = "Please use the casual_logger::Log::xxxx() methods instead"
+    )]
     /// Logger grobal variable.
     pub static ref LOGGER: Mutex<Logger> = Mutex::new(Logger::default());
     /// Wait for logging to complete.
@@ -224,23 +228,23 @@ impl Table {
 /// Easy to use logging.
 pub struct Log {}
 impl Log {
-    /// Log file name prefix.
+    /// Log file name prefix.  
     ///
-    /// Example: 'tic-tac-toe-2020-07-11.log.toml'
-    /// - Prefix: 'tic-tac-toe'
-    /// - StartDate: '-2020-07-11' automatically.
-    /// - Suffix: '.log' - To be safe, include a word that
-    ///         clearly states that you can delete the file.
-    /// - Extention: '.toml'
+    /// Example: 'tic-tac-toe-2020-07-11.log.toml'  
+    /// - Prefix: 'tic-tac-toe'  
+    /// - StartDate: '-2020-07-11' automatically.  
+    /// - Suffix: '.log' - To be safe, include a word that  
+    ///         clearly states that you can delete the file.  
+    /// - Extention: '.toml'  
     pub fn set_file_name(prefix: &str) {
         if let Ok(mut logger) = LOGGER.lock() {
             logger.file_prefix = prefix.to_string();
         }
     }
 
-    /// Log file extension.
-    /// '.log.toml' or '.log'.
-    /// If you don't like the .toml extension, change.
+    /// Log file extension.  
+    /// '.log.toml' or '.log'.  
+    /// If you don't like the .toml extension, change.  
     pub fn set_file_ext(ext: Extension) {
         if let Ok(mut logger) = LOGGER.lock() {
             match ext {
@@ -256,24 +260,40 @@ impl Log {
         }
     }
 
-    /// Log level.
+    /// Logs with lower priority than this level will not  
+    /// be written.  
+    ///
+    /// |<-- Low Level --------------------- High level -->|  
+    /// |<-- High priority --------------- Low priority -->|  
+    /// |Fatal< Error < Warn < Notice < Info < Debug <Trace|  
     pub fn set_level(level: Level) {
         if let Ok(mut logger) = LOGGER.lock() {
             logger.level = level;
         }
     }
 
-    /// File retention days.
+    /// You probably don't need to set this. Default: 7.  
+    /// Check the StartDate in the file name and delete it if it is old.  
     pub fn set_retention_days(days: u32) {
         if let Ok(mut logger) = LOGGER.lock() {
             logger.retention_days = days as i64;
         }
     }
 
-    /// Timeout seconds.
+    /// You probably don't need to set this. Default: 30.  
+    /// Wait for seconds logging to complete.  
     pub fn set_timeout_secs(secs: u64) {
         if let Ok(mut logger) = LOGGER.lock() {
             logger.timeout_secs = secs;
+        }
+    }
+
+    /// You probably don't need to set this. Default: false.  
+    /// Set to true to allow Casual_logger to  
+    /// output information to stdout and stderr.  
+    pub fn set_development(during_development: bool) {
+        if let Ok(mut logger) = LOGGER.lock() {
+            logger.development = during_development;
         }
     }
 
@@ -296,7 +316,7 @@ impl Log {
     }
     /// Wait for logging to complete.
     ///
-    /// See also: logger.timeout_secs, Logger.development.
+    /// See also: Log::set_timeout_secs(), Log::set_development().
     pub fn wait() {
         let (timeout_secs, development) = if let Ok(logger) = LOGGER.lock() {
             (Logger::get_timeout_sec(&logger), logger.development)
@@ -839,6 +859,10 @@ pub struct Logger {
     )]
     pub timeout_secs: u64,
     /// Set to true to allow Casual_logger to output information to stdout and stderr.
+    #[deprecated(
+        since = "0.3.10",
+        note = "Please use the casual_logger::Log::set_development() method instead"
+    )]
     pub development: bool,
 }
 impl Default for Logger {

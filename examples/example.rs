@@ -1,6 +1,6 @@
 //! All features are described in one copy and paste.
 
-use casual_logger::{Extension, Level, Log, Table, LOGGER};
+use casual_logger::{Extension, Level, Log, Table};
 
 fn main() {
     // Example of Log file name:
@@ -24,7 +24,8 @@ fn main() {
     // clearly states that you can delete the file.
     // If you don't like the .toml extension, change.
     Log::set_file_ext(Extension::LogToml);
-    // The higher this level, the more will be omitted.
+    // Logs with lower priority than this level will not
+    // be written.
     //
     // |<-- Low Level --------------------- High level -->|
     // |<-- High priority --------------- Low priority -->|
@@ -40,15 +41,12 @@ fn main() {
     // so you probably don't need to set it.
     Log::set_timeout_secs(30);
 
-    if let Ok(mut logger) = LOGGER.lock() {
-        // Do not call 'Log::xxxxx()' in this code block.
+    // Set to true to allow Casual_logger to
+    // output information to stdout and stderr.
+    // By default it's set to false,
+    // so you probably don't need to set it.
+    Log::set_development(true);
 
-        // Set to true to allow Casual_logger to
-        // output information to stdout and stderr.
-        // By default it's set to false,
-        // so you probably don't need to set it.
-        logger.development = true;
-    }
     // Remove old log files. This is determined by the
     // StartDate in the filename.
     Log::remove_old_logs();
