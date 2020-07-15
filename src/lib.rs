@@ -126,8 +126,8 @@ lazy_static! {
     /// Logger grobal variable.
     pub static ref LOGGER: Mutex<Logger> = Mutex::new(Logger::default());
     /// Table buffer.
-    static ref QUEUE_T: Mutex<VecDeque<(TableHeader,Table)>> = Mutex::new(VecDeque::<(TableHeader,Table)>::new());
-    static ref QUEUE_F: Mutex<VecDeque<(TableHeader,Table)>> = Mutex::new(VecDeque::<(TableHeader,Table)>::new());
+    static ref QUEUE_T: Mutex<VecDeque<(InternalTable)>> = Mutex::new(VecDeque::<(InternalTable)>::new());
+    static ref QUEUE_F: Mutex<VecDeque<(InternalTable)>> = Mutex::new(VecDeque::<(InternalTable)>::new());
     static ref RESERVE_TARGET: Mutex<ReserveTarget> = Mutex::new(ReserveTarget::default());
     static ref SIGNAL_CAN_FLUSH: Mutex<SignalCanFlush> = Mutex::new(SignalCanFlush::default());
 }
@@ -141,16 +141,20 @@ thread_local!(static SEQ: RefCell<u128> = {
     RefCell::new(1)
 });
 
-struct TableHeader {
-    /// Thread ID. However, Note that you are not limited to numbers.
+struct InternalTable {
+    /// Automatic. Thread ID. However, Note that you are not limited to numbers.
     thread_id: String,
-    pub seq: u128,
+    /// Automatic.
+    seq: u128,
+    /// Clone.
+    table: Table,
 }
-impl TableHeader {
-    fn new(thread_id: &str) -> Self {
-        TableHeader {
+impl InternalTable {
+    fn new(thread_id: &str, seq: u128, table: &Table) -> Self {
+        InternalTable {
             thread_id: thread_id.to_string(),
-            seq: 0,
+            seq: seq,
+            table: table.clone(),
         }
     }
 }
@@ -701,24 +705,24 @@ impl Log {
     }
 
     fn reserve(table: &Table) {
-        // Out side of SEQ.with().
-        let table_clone = table.clone();
-        let mut header = TableHeader::new(&format!("{:?}", thread::current().id()));
-
-        header.seq = SEQ.with(move |seq| {
+        let seq = SEQ.with(move |seq| {
             let old = *seq.borrow();
             *seq.borrow_mut() += 1;
             old
         });
 
+        // Out side of SEQ.with().
+        let internal_table =
+            InternalTable::new(&format!("{:?}", thread::current().id()), seq, &table);
+
         if let Ok(reseve_target) = RESERVE_TARGET.lock() {
             if reseve_target.is_t() {
                 if let Ok(mut queue) = QUEUE_T.lock() {
-                    queue.push_front((header, table_clone));
+                    queue.push_front(internal_table);
                 }
             } else {
                 if let Ok(mut queue) = QUEUE_F.lock() {
-                    queue.push_front((header, table_clone));
+                    queue.push_front(internal_table);
                 }
             }
         } else {
@@ -761,11 +765,8 @@ impl Log {
         if flush_target {
             if let Ok(mut queue) = QUEUE_T.lock() {
                 loop {
-                    if let Some(table_tuple) = queue.pop_back() {
-                        str_buf.push_str(&Log::convert_table_to_string(
-                            &table_tuple.0,
-                            &table_tuple.1,
-                        ));
+                    if let Some(internal_table) = queue.pop_back() {
+                        str_buf.push_str(&Log::convert_table_to_string(&internal_table));
                         count += 1;
                     } else {
                         break;
@@ -777,11 +778,8 @@ impl Log {
         } else {
             if let Ok(mut queue) = QUEUE_F.lock() {
                 loop {
-                    if let Some(table_tuple) = queue.pop_back() {
-                        str_buf.push_str(&Log::convert_table_to_string(
-                            &table_tuple.0,
-                            &table_tuple.1,
-                        ));
+                    if let Some(internal_table) = queue.pop_back() {
+                        str_buf.push_str(&Log::convert_table_to_string(&internal_table));
                         count += 1;
                     } else {
                         break;
@@ -811,12 +809,12 @@ impl Log {
         Some(0 < count)
     }
 
-    fn convert_table_to_string(header: &TableHeader, table: &Table) -> String {
-        let message = if table.message_trailing_newline {
+    fn convert_table_to_string(wrapper: &InternalTable) -> String {
+        let message = if wrapper.table.message_trailing_newline {
             // There is a trailing newline.
-            format!("{}{}", table.message, NEW_LINE)
+            format!("{}{}", wrapper.table.message, NEW_LINE)
         } else {
-            table.message.to_string()
+            wrapper.table.message.to_string()
         };
         // Write as TOML.
         // Table name.
@@ -831,18 +829,18 @@ impl Log {
             // Process ID.
             process::id(),
             // Thread ID. However, Note that you are not limited to numbers.
-            header.thread_id,
+            wrapper.thread_id,
             // Line number. This is to avoid duplication.
-            header.seq,
+            wrapper.seq,
         );
         toml += &format!(
             "{} = {}
 ",
-            table.level,
+            wrapper.table.level,
             Table::format_str_value(&message).to_string()
         )
         .to_string();
-        for (k, v) in &table.sorted_map {
+        for (k, v) in &wrapper.table.sorted_map {
             toml += &format!(
                 "{} = {}
 ",
