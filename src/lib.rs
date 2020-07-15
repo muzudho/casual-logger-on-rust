@@ -892,6 +892,10 @@ impl Pool {
 /// Extention: '.toml'
 ///
 /// If you don't like the .toml extension, leave the suffix empty and the .log extension.
+#[deprecated(
+    since = "0.4.0",
+    note = "Please use the casual_logger::Log::xxxx() methods instead"
+)]
 pub struct Logger {
     /// For example, the short name of your application.
     file_prefix: String,
@@ -1161,7 +1165,7 @@ pub enum Extension {
 
 /// The queue number is a Boolean, not a number.
 #[derive(Clone, Copy)]
-pub struct ReserveTarget {
+struct ReserveTarget {
     target: bool,
 }
 impl Default for ReserveTarget {

@@ -270,58 +270,58 @@ tree.",
 Output `./tic-tac-toe-2020-07-15.log.toml` auto generated:  
 
 ```toml
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=1"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=1"]
 Info = """
 Hello, world!!
 こんにちわ、世界！！\r\n
 """
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=2"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=2"]
 Info = "x is 100.\r\n"
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=3"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=3"]
 Trace = "( 1)TRACE"
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=4"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=4"]
 Trace = "( 2)trace-line\r\n"
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=5"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=5"]
 Debug = "( 3)DEBUG"
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=6"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=6"]
 Debug = "( 4)debug-line\r\n"
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=7"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=7"]
 Info = "( 5)INFO"
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=8"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=8"]
 Info = "( 6)info-line\r\n"
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=9"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=9"]
 Notice = "( 7)NOTICE"
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=10"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=10"]
 Notice = "( 8)notice-line\r\n"
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=11"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=11"]
 Warn = "( 9)WARN"
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=12"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=12"]
 Warn = "(10)warn-line\r\n"
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=13"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=13"]
 Error = "(11)ERROR"
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=14"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=14"]
 Error = "(12)error-line\r\n"
 
-["Now=2020-07-15 19:17:59&Pid=3252&Thr=ThreadId(1)&Seq=15"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=15"]
 Fatal = "(13)FATAL"
 
-["Now=2020-07-15 19:18:00&Pid=3252&Thr=ThreadId(1)&Seq=16"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=16"]
 Fatal = "(14)fatal-line\r\n"
 
-["Now=2020-07-15 19:18:01&Pid=3252&Thr=ThreadId(1)&Seq=17"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=17"]
 Info = """
 The sky is from top to bottom!!
 上から下まで空です！！\r\n
@@ -334,88 +334,88 @@ a tall
 tree.
 """
 
-["Now=2020-07-15 19:18:01&Pid=3252&Thr=ThreadId(1)&Seq=18"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=18"]
 Trace = "(7)Trace on (7)Trace."
 
-["Now=2020-07-15 19:18:01&Pid=3252&Thr=ThreadId(1)&Seq=19"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=19"]
 Debug = "(6)Debug on (7)Trace."
 
-["Now=2020-07-15 19:18:01&Pid=3252&Thr=ThreadId(1)&Seq=20"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=20"]
 Info = "(5)Info on (7)Trace."
 
-["Now=2020-07-15 19:18:01&Pid=3252&Thr=ThreadId(1)&Seq=21"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=21"]
 Notice = "(4)Notice on (7)Trace."
 
-["Now=2020-07-15 19:18:01&Pid=3252&Thr=ThreadId(1)&Seq=22"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=22"]
 Warn = "(3)Warn on (7)Trace."
 
-["Now=2020-07-15 19:18:01&Pid=3252&Thr=ThreadId(1)&Seq=23"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=23"]
 Error = "(2)Error on (7)Trace."
 
-["Now=2020-07-15 19:18:01&Pid=3252&Thr=ThreadId(1)&Seq=24"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=24"]
 Fatal = "(1)Fatal on (7)Trace."
 
-["Now=2020-07-15 19:18:02&Pid=3252&Thr=ThreadId(1)&Seq=25"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=25"]
 Debug = "(6)Debug on (6)debug."
 
-["Now=2020-07-15 19:18:02&Pid=3252&Thr=ThreadId(1)&Seq=26"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=26"]
 Info = "(5)Info on (6)debug."
 
-["Now=2020-07-15 19:18:02&Pid=3252&Thr=ThreadId(1)&Seq=27"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=27"]
 Notice = "(4)Notice on (6)debug."
 
-["Now=2020-07-15 19:18:02&Pid=3252&Thr=ThreadId(1)&Seq=28"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=28"]
 Warn = "(3)Warn on (6)debug."
 
-["Now=2020-07-15 19:18:02&Pid=3252&Thr=ThreadId(1)&Seq=29"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=29"]
 Error = "(2)Error on (6)debug."
 
-["Now=2020-07-15 19:18:02&Pid=3252&Thr=ThreadId(1)&Seq=30"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=30"]
 Fatal = "(1)Fatal on (6)debug."
 
-["Now=2020-07-15 19:18:03&Pid=3252&Thr=ThreadId(1)&Seq=31"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=31"]
 Info = "(5)Info on (5)Info."
 
-["Now=2020-07-15 19:18:03&Pid=3252&Thr=ThreadId(1)&Seq=32"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=32"]
 Notice = "(4)Notice on (5)Info."
 
-["Now=2020-07-15 19:18:03&Pid=3252&Thr=ThreadId(1)&Seq=33"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=33"]
 Warn = "(3)Warn on (5)Info."
 
-["Now=2020-07-15 19:18:03&Pid=3252&Thr=ThreadId(1)&Seq=34"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=34"]
 Error = "(2)Error on (5)Info."
 
-["Now=2020-07-15 19:18:03&Pid=3252&Thr=ThreadId(1)&Seq=35"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=35"]
 Fatal = "(1)Fatal on (5)Info."
 
-["Now=2020-07-15 19:18:04&Pid=3252&Thr=ThreadId(1)&Seq=36"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=36"]
 Notice = "(4)Notice on (4)Notice."
 
-["Now=2020-07-15 19:18:04&Pid=3252&Thr=ThreadId(1)&Seq=37"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=37"]
 Warn = "(3)Warn on (4)Notice."
 
-["Now=2020-07-15 19:18:04&Pid=3252&Thr=ThreadId(1)&Seq=38"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=38"]
 Error = "(2)Error on (4)Notice."
 
-["Now=2020-07-15 19:18:04&Pid=3252&Thr=ThreadId(1)&Seq=39"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=39"]
 Fatal = "(1)Fatal on (4)Notice."
 
-["Now=2020-07-15 19:18:05&Pid=3252&Thr=ThreadId(1)&Seq=40"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=40"]
 Warn = "(3)Warn on (3)Warn."
 
-["Now=2020-07-15 19:18:05&Pid=3252&Thr=ThreadId(1)&Seq=41"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=41"]
 Error = "(2)Error on (3)Warn."
 
-["Now=2020-07-15 19:18:05&Pid=3252&Thr=ThreadId(1)&Seq=42"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=42"]
 Fatal = "(1)Fatal on (3)Warn."
 
-["Now=2020-07-15 19:18:06&Pid=3252&Thr=ThreadId(1)&Seq=43"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=43"]
 Error = "(2)Error on (2)Error."
 
-["Now=2020-07-15 19:18:06&Pid=3252&Thr=ThreadId(1)&Seq=44"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=44"]
 Fatal = "(1)Fatal on (2)Error."
 
-["Now=2020-07-15 19:18:07&Pid=3252&Thr=ThreadId(1)&Seq=45"]
+["Now=2020-07-15 22:26:27&Pid=18476&Thr=ThreadId(1)&Seq=45"]
 Fatal = "(1)Fatal on (1)Fatal."
 
 
@@ -424,14 +424,14 @@ Fatal = "(1)Fatal on (1)Fatal."
 Output to terminal:  
 
 ```plain
-casual_logger: 0 sec(s). 15 table(s) left.
 casual_logger: 0 sec(s). Wait for 1 thread(s).
-casual_logger: 0 sec(s). Wait for 5 thread(s).
-casual_logger: 0 sec(s). Wait for 6 thread(s).
-casual_logger: 0 sec(s). Wait for 3 thread(s).
-casual_logger: 0 sec(s). Wait for 4 thread(s).
-casual_logger: 0 sec(s). Wait for 3 thread(s).
-casual_logger: 0 sec(s). Wait for 2 thread(s).
+casual_logger: 0 sec(s). Wait for 1 thread(s).
+casual_logger: 0 sec(s). Wait for 1 thread(s).
+casual_logger: 0 sec(s). Wait for 1 thread(s).
+casual_logger: 0 sec(s). Wait for 1 thread(s).
+casual_logger: 0 sec(s). Wait for 1 thread(s).
+casual_logger: 0 sec(s). Wait for 1 thread(s).
+casual_logger: 0 sec(s). Wait for 1 thread(s).
 casual_logger: 0 sec(s). Wait for 1 thread(s).
 ```
 
@@ -706,6 +706,7 @@ the program will exit before writing all the logs.
 
 * [ ] Dogfooding.
 * [ ] More minimal.
+* [ ] Error handling check.
 
 ## Appendix
 
