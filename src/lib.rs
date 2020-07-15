@@ -33,7 +33,6 @@ use std::path::Path;
 use std::process;
 use std::sync::Mutex;
 use std::thread;
-use std::time::Instant;
 // use sys_info::mem_info;
 
 // For multi-platform. Windows, or not.
@@ -341,8 +340,9 @@ impl Log {
     where
         F: Fn(u64, String),
     {
-        let mut elapsed_secs = 0;
-        while elapsed_secs < timeout_secs {
+        let mut elapsed_milli_secs = 0;
+        let mut empty_que_count = 0;
+        while empty_que_count < 2 && elapsed_milli_secs < timeout_secs * 1000 {
             let mut thr_num = None;
             let mut queue_len = None;
             if let Ok(pool) = POOL.lock() {
@@ -370,48 +370,58 @@ impl Log {
                     }
 
                     // Out of QUEUE.lock().
-                    Log::flush();
+                    if let Some(completed) = Log::flush() {
+                        if completed {
+                            empty_que_count = 0;
+                        } else {
+                            empty_que_count += 1;
+                        }
+                    } else {
+                        // TODO Error.
+                    }
                 }
             }
-            count_down(
-                elapsed_secs,
-                format!(
-                    "{}{}",
-                    if let Some(thr_num_val) = thr_num {
-                        if 0 < thr_num_val {
-                            format!("Wait for {} thread(s). ", thr_num_val)
+            if elapsed_milli_secs % 1000 == 0 {
+                count_down(
+                    elapsed_milli_secs / 1000,
+                    format!(
+                        "{}{}",
+                        if let Some(thr_num_val) = thr_num {
+                            if 0 < thr_num_val {
+                                format!("Wait for {} thread(s). ", thr_num_val)
+                            } else {
+                                "".to_string()
+                            }
+                        } else {
+                            "".to_string()
+                        },
+                        if let Some(queue_len_val) = queue_len {
+                            if 0 < queue_len_val {
+                                format!("{} table(s) left. ", queue_len_val)
+                            } else {
+                                "".to_string()
+                            }
+                        } else {
+                            "".to_string()
+                        },
+                        /*
+                        if let Ok(mem) = mem_info() {
+                            format!(
+                                "Mem=|Total {}|Avail {}|Buffers {}|Cached {}|Free {}|SwapFree {}|SwapTotal {}| ",
+                                mem.total, mem.avail, mem.buffers, mem.cached, mem.free, mem.swap_free, mem.swap_total
+                            )
                         } else {
                             "".to_string()
                         }
-                    } else {
-                        "".to_string()
-                    },
-                    if let Some(queue_len_val) = queue_len {
-                        if 0 < queue_len_val {
-                            format!("{} table(s) left. ", queue_len_val)
-                        } else {
-                            "".to_string()
-                        }
-                    } else {
-                        "".to_string()
-                    },
-                    /*
-                    if let Ok(mem) = mem_info() {
-                        format!(
-                            "Mem=|Total {}|Avail {}|Buffers {}|Cached {}|Free {}|SwapFree {}|SwapTotal {}| ",
-                            mem.total, mem.avail, mem.buffers, mem.cached, mem.free, mem.swap_free, mem.swap_total
-                        )
-                    } else {
-                        "".to_string()
-                    }
-                    */
-                )
-                .trim_end()
-                .to_string(),
-            );
+                        */
+                    )
+                    .trim_end()
+                    .to_string(),
+                );
+            }
 
-            thread::sleep(std::time::Duration::from_secs(1));
-            elapsed_secs += 1;
+            thread::sleep(std::time::Duration::from_millis(20));
+            elapsed_milli_secs += 20;
         }
     }
 
@@ -739,7 +749,13 @@ impl Log {
     }
 
     /// Write a some strings from the queue.
-    fn flush() {
+    ///
+    /// # Returns
+    ///
+    /// Some(true) - Complete.
+    /// Some(false) - Not work.
+    /// None - Error.
+    fn flush() -> Option<bool> {
         // By buffering, the number of file writes is reduced.
         let mut str_buf = String::new();
 
@@ -750,14 +766,16 @@ impl Log {
             old
         } else {
             // TODO Error.
-            return;
+            return None;
         };
 
+        let mut count = 0;
         if flush_target {
             if let Ok(mut queue) = QUEUE_T.lock() {
                 loop {
                     if let Some(table) = queue.pop_back() {
                         str_buf.push_str(&Log::convert_table_to_string(&table));
+                        count += 1;
                     } else {
                         break;
                     }
@@ -770,6 +788,7 @@ impl Log {
                 loop {
                     if let Some(table) = queue.pop_back() {
                         str_buf.push_str(&Log::convert_table_to_string(&table));
+                        count += 1;
                     } else {
                         break;
                     }
@@ -788,11 +807,14 @@ impl Log {
                 // Nothing is output even if log writing fails.
                 // Submitting a message to the competition can result in fouls.
                 // panic!("couldn't write log. : {}",Error::description(&why)),
+                return None;
             }
             if let Ok(mut signal) = SIGNAL_CAN_FLUSH.lock() {
                 signal.set_can_flush(true);
             }
         }
+
+        Some(0 < count)
     }
 
     fn convert_table_to_string(table: &Table) -> String {
