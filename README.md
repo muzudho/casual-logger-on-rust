@@ -53,9 +53,9 @@ The concept used by beginners.
 
 ### Disclaim
 
-* (1) In trade off for running performance:
+* (1) In trade off for processing speed:
   * **Don't forget wait** for logging to complete at **end of program**.
-  * There is a waiting time of **1 second or more** before the logger ends.
+  * There is a waiting time of **20 milli second or more** before the logger ends.
 * (2) In trade off for ease of introduction:
   * You can break the toml format. **Do not validate**.
 * (3) In trade off for intelligence suggestion by text editor:
@@ -706,6 +706,7 @@ the program will exit before writing all the logs.
 
 * [ ] Dogfooding.
 * [ ] More minimal.
+* [ ] Remove deprecated features.
 * [ ] Error handling check.
 
 ## Appendix
