@@ -3,17 +3,25 @@
 use casual_logger::{Extension, Level, Log, Table, LOGGER};
 
 fn main() {
-    // Log file name.
+    // Example of Log file name:
     //
-    // Example: 'tic-tac-toe-2020-07-11.log.toml'
-    // - Prefix: 'tic-tac-toe'
-    // - StartDate: '-2020-07-11' automatically.
-    // - Suffix: '.log' - To be safe, include a word that
-    //         clearly states that you can delete the file.
-    // - Extention: '.toml'
+    //      'tic-tac-toe-2020-07-11.log.toml'
+    //       -----------
+    //       Prefix     -----------
+    //                  StartDate  ----
+    //                             Suffix
+    //                                 -----
+    //                                 Extention
+    //
+    // - StartDate is automatically added.
+    //
+    // Set the prefix with 'set_file_name' method.
     Log::set_file_name("tic-tac-toe");
     // Log file extension.
+    //
     // '.log.toml' or '.log'.
+    // '.log' for safety, include a word that
+    // clearly states that you can delete the file.
     // If you don't like the .toml extension, change.
     Log::set_file_ext(Extension::LogToml);
     // The higher this level, the more will be omitted.
@@ -22,6 +30,10 @@ fn main() {
     // |<-- High priority --------------- Low priority -->|
     // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
     Log::set_level(Level::Trace);
+
+    // Remove old log files. This is determined by the
+    // StartDate in the filename.
+    Log::set_retention_days(2);
 
     if let Ok(mut logger) = LOGGER.lock() {
         // Do not call 'Log::xxxxx()' in this code block.
@@ -35,10 +47,6 @@ fn main() {
         // By default it's set to false,
         // so you probably don't need to set it.
         logger.development = true;
-
-        // Remove old log files. This is determined by the
-        // StartDate in the filename.
-        logger.retention_days = 2;
     }
     // Remove old log files. This is determined by the
     // StartDate in the filename.

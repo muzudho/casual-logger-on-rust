@@ -263,6 +263,13 @@ impl Log {
         }
     }
 
+    /// File retention days.
+    pub fn set_retention_days(days: u32) {
+        if let Ok(mut logger) = LOGGER.lock() {
+            logger.retention_days = days as i64;
+        }
+    }
+
     /// # Returns
     ///
     /// Number of deleted log files.
@@ -799,6 +806,10 @@ pub struct Logger {
     /// If you don't like the .toml extension, leave the suffix empty and the .log extension.
     file_extention: String,
     /// File retention days. Delete the file after day from StartDate.
+    #[deprecated(
+        since = "0.3.8",
+        note = "Please use the casual_logger::Log::set_retention_days() method instead"
+    )]
     pub retention_days: i64,
     /// Controll file.
     log_file: Option<LogFile>,

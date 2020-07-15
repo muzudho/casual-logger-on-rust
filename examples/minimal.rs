@@ -1,4 +1,4 @@
-//! The smallest example.
+//! You can copy and paste and use immediately.
 
 use casual_logger::Log;
 

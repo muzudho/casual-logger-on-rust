@@ -9,10 +9,10 @@ fn main() {
     let stopwatch = Instant::now();
     Log::set_file_name("performance-check");
     Log::set_file_ext(Extension::Log);
+    Log::set_retention_days(2);
     if let Ok(mut logger) = LOGGER.lock() {
         logger.timeout_secs = 30;
         logger.development = true;
-        logger.retention_days = 2;
     }
     Log::remove_old_logs();
 
