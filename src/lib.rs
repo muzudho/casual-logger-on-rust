@@ -822,6 +822,7 @@ impl Log {
             // Table name to keep for ordering.
             // For example, you can parse it easily by writing the table name like a GET query.
             "[\"Now={}&Pid={}&Thr={}&Seq={}\"]
+{} = {}
 ",
             // If you use ISO8601, It's "%Y-%m-%dT%H:%M:%S%z". However, it does not set the date format.
             // Make it easier to read.
@@ -832,24 +833,21 @@ impl Log {
             wrapper.thread_id,
             // Line number. This is to avoid duplication.
             wrapper.seq,
-        );
-        toml += &format!(
-            "{} = {}
-",
             wrapper.table.level,
-            Table::format_str_value(&message).to_string()
+            Table::format_str_value(&message)
         )
         .to_string();
         for (k, v) in &wrapper.table.sorted_map {
-            toml += &format!(
+            toml.push_str(&format!(
                 "{} = {}
 ",
                 k, v
-            )
-            .to_string();
+            ));
         }
-        toml += "
-";
+        toml.push_str(
+            "
+",
+        );
         toml
     }
 }
