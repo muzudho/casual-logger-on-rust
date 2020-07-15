@@ -35,13 +35,14 @@ fn main() {
     // StartDate in the filename.
     Log::set_retention_days(2);
 
+    // Wait for seconds logging to complete.
+    // By default it's set to 30 seconds,
+    // so you probably don't need to set it.
+    Log::set_timeout_secs(30);
+
     if let Ok(mut logger) = LOGGER.lock() {
         // Do not call 'Log::xxxxx()' in this code block.
 
-        // Wait for seconds logging to complete.
-        // By default it's set to 30 seconds,
-        // so you probably don't need to set it.
-        logger.timeout_secs = 30;
         // Set to true to allow Casual_logger to
         // output information to stdout and stderr.
         // By default it's set to false,

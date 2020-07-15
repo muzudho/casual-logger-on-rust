@@ -11,7 +11,6 @@ fn main() {
     Log::set_file_ext(Extension::Log);
     Log::set_retention_days(2);
     if let Ok(mut logger) = LOGGER.lock() {
-        logger.timeout_secs = 30;
         logger.development = true;
     }
     Log::remove_old_logs();

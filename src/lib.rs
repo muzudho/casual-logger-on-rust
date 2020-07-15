@@ -270,6 +270,13 @@ impl Log {
         }
     }
 
+    /// Timeout seconds.
+    pub fn set_timeout_secs(secs: u64) {
+        if let Ok(mut logger) = LOGGER.lock() {
+            logger.timeout_secs = secs;
+        }
+    }
+
     /// # Returns
     ///
     /// Number of deleted log files.
@@ -822,10 +829,14 @@ pub struct Logger {
     /// Timeout seconds when fatal.
     #[deprecated(
         since = "0.3.2",
-        note = "Please use the logger.timeout_secs property instead"
+        note = "Please use the casual_logger::Log::set_timeout_secs() method instead"
     )]
     pub fatal_timeout_secs: u64,
     /// Timeout seconds.
+    #[deprecated(
+        since = "0.3.9",
+        note = "Please use the casual_logger::Log::set_timeout_secs() method instead"
+    )]
     pub timeout_secs: u64,
     /// Set to true to allow Casual_logger to output information to stdout and stderr.
     pub development: bool,
