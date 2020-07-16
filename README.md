@@ -21,9 +21,7 @@ fn main() {
 }
 ```
 
-Output:  
-
-`default-2020-07-16.log.toml` automatically generated.  
+Output `default-2020-07-16.log.toml` automatically generated:  
 
 ```toml
 ["Now=2020-07-16 21:19:46&Pid=8452&Thr=ThreadId(1)&Seq=1"]
@@ -66,9 +64,7 @@ fn main() {
 }
 ```
 
-Output:  
-
-`lesson1-2020-07-16.log.toml` automatically generated.  
+Output `lesson1-2020-07-16.log.toml` automatically generated:  
 
 ```toml
 ["Now=2020-07-16 21:13:22&Pid=14488&Thr=ThreadId(1)&Seq=1"]
