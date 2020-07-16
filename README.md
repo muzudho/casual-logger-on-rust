@@ -164,26 +164,8 @@ fn main() {
     // Fatal is Panic! Can be used as the first argument of.
     // panic!(Log::fatal(&format!("Invalid number=|{}|", 99)));
 
-    // Suffix '_t'. TOML say a table. So-called map.
-    Log::infoln_t(
-        "The sky is from top to bottom!!
-上から下まで空です！！",
-        Table::default()
-            .str(
-                // Do not include spaces in your key.
-                "ABird",
-                "fly in the sky.",
-            )
-            // Not enclose this value in quotation marks.
-            .literal("NumberOfSwimmingFish", "2")
-            .str(
-                "ThreeMonkeys",
-                "climb
-a tall
-tree.",
-            ),
-    );
-
+    // Note: It's usually weird to change the level twice in
+    // a program.
     // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
     // |                                             *****|
     Log::set_level(Level::Trace);
@@ -268,6 +250,38 @@ tree.",
     Log::error("(2)Error on (1)Fatal. Skip!");
     Log::fatal("(1)Fatal on (1)Fatal.");
 
+    // Suffix '_t'. TOML say a table. So-called map.
+    Log::set_level(Level::Info);
+    Log::info_t(
+        "The sky is from top to bottom!!
+上から下まで空です！！",
+        Table::default()
+            .str(
+                // Do not include spaces in your key.
+                "ABird",
+                "fly in the sky.",
+            )
+            .str(
+                // The wrong key will be changed
+                // automatically.
+                "Blue bird",
+                "fly in the sky.",
+            )
+            // Not enclose this value in quotation marks.
+            .literal("NumberOfSwimmingFish", "2")
+            .str(
+                "ThreeMonkeys",
+                "climb
+a tall
+tree.",
+            )
+            .str(
+                // Dotted key not supported yet.
+                "W.I.P",
+                "I'm thinking of another way.",
+            ),
+    );
+
     // Wait for logging to complete or to timeout.
     Log::wait();
 }
@@ -276,62 +290,148 @@ tree.",
 Output `./tic-tac-toe-2020-07-16.log.toml` auto generated:  
 
 ```toml
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=1"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=1"]
 Info = """
 Hello, world!!
 こんにちわ、世界！！\r\n
 """
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=2"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=2"]
 Info = "x is 100.\r\n"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=3"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=3"]
 Trace = "( 1)TRACE"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=4"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=4"]
 Trace = "( 2)trace-line\r\n"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=5"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=5"]
 Debug = "( 3)DEBUG"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=6"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=6"]
 Debug = "( 4)debug-line\r\n"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=7"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=7"]
 Info = "( 5)INFO"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=8"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=8"]
 Info = "( 6)info-line\r\n"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=9"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=9"]
 Notice = "( 7)NOTICE"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=10"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=10"]
 Notice = "( 8)notice-line\r\n"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=11"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=11"]
 Warn = "( 9)WARN"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=12"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=12"]
 Warn = "(10)warn-line\r\n"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=13"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=13"]
 Error = "(11)ERROR"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=14"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=14"]
 Error = "(12)error-line\r\n"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=15"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=15"]
 Fatal = "(13)FATAL"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=16"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=16"]
 Fatal = "(14)fatal-line\r\n"
 
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=17"]
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=17"]
+Trace = "(7)Trace on (7)Trace."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=18"]
+Debug = "(6)Debug on (7)Trace."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=19"]
+Info = "(5)Info on (7)Trace."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=20"]
+Notice = "(4)Notice on (7)Trace."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=21"]
+Warn = "(3)Warn on (7)Trace."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=22"]
+Error = "(2)Error on (7)Trace."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=23"]
+Fatal = "(1)Fatal on (7)Trace."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=24"]
+Debug = "(6)Debug on (6)debug."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=25"]
+Info = "(5)Info on (6)debug."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=26"]
+Notice = "(4)Notice on (6)debug."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=27"]
+Warn = "(3)Warn on (6)debug."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=28"]
+Error = "(2)Error on (6)debug."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=29"]
+Fatal = "(1)Fatal on (6)debug."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=30"]
+Info = "(5)Info on (5)Info."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=31"]
+Notice = "(4)Notice on (5)Info."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=32"]
+Warn = "(3)Warn on (5)Info."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=33"]
+Error = "(2)Error on (5)Info."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=34"]
+Fatal = "(1)Fatal on (5)Info."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=35"]
+Notice = "(4)Notice on (4)Notice."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=36"]
+Warn = "(3)Warn on (4)Notice."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=37"]
+Error = "(2)Error on (4)Notice."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=38"]
+Fatal = "(1)Fatal on (4)Notice."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=39"]
+Warn = "(3)Warn on (3)Warn."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=40"]
+Error = "(2)Error on (3)Warn."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=41"]
+Fatal = "(1)Fatal on (3)Warn."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=42"]
+Error = "(2)Error on (2)Error."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=43"]
+Fatal = "(1)Fatal on (2)Error."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=44"]
+Fatal = "(1)Fatal on (1)Fatal."
+
+["Now=2020-07-16 20:51:20&Pid=12684&Thr=ThreadId(1)&Seq=45"]
 Info = """
 The sky is from top to bottom!!
-上から下まで空です！！\r\n
+上から下まで空です！！
 """
+"Blue bird" = "fly in the sky."
+"W.I.P" = "I'm thinking of another way."
 ABird = "fly in the sky."
 NumberOfSwimmingFish = 2
 ThreeMonkeys = """
@@ -339,90 +439,6 @@ climb
 a tall
 tree.
 """
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=18"]
-Trace = "(7)Trace on (7)Trace."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=19"]
-Debug = "(6)Debug on (7)Trace."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=20"]
-Info = "(5)Info on (7)Trace."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=21"]
-Notice = "(4)Notice on (7)Trace."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=22"]
-Warn = "(3)Warn on (7)Trace."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=23"]
-Error = "(2)Error on (7)Trace."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=24"]
-Fatal = "(1)Fatal on (7)Trace."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=25"]
-Debug = "(6)Debug on (6)debug."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=26"]
-Info = "(5)Info on (6)debug."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=27"]
-Notice = "(4)Notice on (6)debug."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=28"]
-Warn = "(3)Warn on (6)debug."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=29"]
-Error = "(2)Error on (6)debug."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=30"]
-Fatal = "(1)Fatal on (6)debug."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=31"]
-Info = "(5)Info on (5)Info."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=32"]
-Notice = "(4)Notice on (5)Info."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=33"]
-Warn = "(3)Warn on (5)Info."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=34"]
-Error = "(2)Error on (5)Info."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=35"]
-Fatal = "(1)Fatal on (5)Info."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=36"]
-Notice = "(4)Notice on (4)Notice."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=37"]
-Warn = "(3)Warn on (4)Notice."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=38"]
-Error = "(2)Error on (4)Notice."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=39"]
-Fatal = "(1)Fatal on (4)Notice."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=40"]
-Warn = "(3)Warn on (3)Warn."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=41"]
-Error = "(2)Error on (3)Warn."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=42"]
-Fatal = "(1)Fatal on (3)Warn."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=43"]
-Error = "(2)Error on (2)Error."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=44"]
-Fatal = "(1)Fatal on (2)Error."
-
-["Now=2020-07-16 18:56:33&Pid=9028&Thr=ThreadId(1)&Seq=45"]
-Fatal = "(1)Fatal on (1)Fatal."
 
 
 ```
@@ -432,12 +448,13 @@ Output to terminal:
 ```plain
 casual_logger: 0 sec(s). 15 table(s) left.
 casual_logger: 0 sec(s). 1 table(s) left.
-casual_logger: 0 sec(s). 8 table(s) left.
+casual_logger: 0 sec(s). 7 table(s) left.
 casual_logger: 0 sec(s). 6 table(s) left.
 casual_logger: 0 sec(s). 5 table(s) left.
 casual_logger: 0 sec(s). 4 table(s) left.
 casual_logger: 0 sec(s). 3 table(s) left.
 casual_logger: 0 sec(s). 2 table(s) left.
+casual_logger: 0 sec(s). 1 table(s) left.
 casual_logger: 0 sec(s). 1 table(s) left.
 ```
 

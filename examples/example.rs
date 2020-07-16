@@ -64,7 +64,6 @@ fn main() {
         Log::infoln(&format!("x is {}.", x));
     }
 
-    /*
     // The level is implicitly confirmed.
     Log::trace("( 1)TRACE");
     Log::traceln("( 2)trace-line");
@@ -84,6 +83,8 @@ fn main() {
     // Fatal is Panic! Can be used as the first argument of.
     // panic!(Log::fatal(&format!("Invalid number=|{}|", 99)));
 
+    // Note: It's usually weird to change the level twice in
+    // a program.
     // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
     // |                                             *****|
     Log::set_level(Level::Trace);
@@ -155,7 +156,6 @@ fn main() {
     Log::warn("(3)Warn on (2)Error. Skip!");
     Log::error("(2)Error on (2)Error.");
     Log::fatal("(1)Fatal on (2)Error.");
-    */
 
     // |Fatal< Error < Warn < Notice < Info < Debug <Trace|
     // |*****                                             |
@@ -170,6 +170,7 @@ fn main() {
     Log::fatal("(1)Fatal on (1)Fatal.");
 
     // Suffix '_t'. TOML say a table. So-called map.
+    Log::set_level(Level::Info);
     Log::info_t(
         "The sky is from top to bottom!!
 上から下まで空です！！",
@@ -179,14 +180,12 @@ fn main() {
                 "ABird",
                 "fly in the sky.",
             )
-            /*
             .str(
                 // The wrong key will be changed
                 // automatically.
                 "Blue bird",
                 "fly in the sky.",
             )
-            */
             // Not enclose this value in quotation marks.
             .literal("NumberOfSwimmingFish", "2")
             .str(
@@ -194,13 +193,12 @@ fn main() {
                 "climb
 a tall
 tree.",
-            ), /*
-               .str(
-                   // Dotted key not supported yet.
-                   "W.I.P",
-                   "I'm thinking of another way.",
-               )
-               */
+            )
+            .str(
+                // Dotted key not supported yet.
+                "W.I.P",
+                "I'm thinking of another way.",
+            ),
     );
 
     // Wait for logging to complete or to timeout.

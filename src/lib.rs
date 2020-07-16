@@ -141,6 +141,8 @@ lazy_static! {
     /// Without dot.
     static ref RE_TOML_KEY: Mutex<Regex> = Mutex::new(Regex::new(r"^[A-Za-z0-9_-]+$").unwrap());
     static ref RE_WHITE_SPACE: Mutex<Regex> = Mutex::new(Regex::new(r"\s").unwrap());
+    // Wait for logging to complete.
+    //static ref PARTICIPANTING_THREADS_COUNTER: Mutex<ParticipatingThreadsCounter> = Mutex::new(ParticipatingThreadsCounter::default());
 }
 // Use the line number in the log.
 //
@@ -492,6 +494,8 @@ impl Log {
     {
         let mut elapsed_milli_secs = 0;
         let mut empty_que_count = 0;
+        // let mut participating_threads_count = 0;
+        // || 0 < participating_threads_count
         while empty_que_count < 2 && elapsed_milli_secs < timeout_secs * 1000 {
             let mut queue_len = None;
             if let Ok(reserve_target) = RESERVE_TARGET.lock() {
@@ -517,17 +521,29 @@ impl Log {
             // Out of QUEUE.lock().
             if let Some(completed) = Log::flush() {
                 if completed {
+                    // Reset.
                     empty_que_count = 0;
                 } else {
                     empty_que_count += 1;
                 }
             } else {
                 // TODO Error.
+                // Reset.
+                empty_que_count = 0;
             }
             if elapsed_milli_secs % 1000 == 0 {
                 count_down(elapsed_milli_secs / 1000, Log::print_message(queue_len));
             }
 
+            /*
+            participating_threads_count =
+                if let Ok(participating_threads_counter) = PARTICIPANTING_THREADS_COUNTER.lock() {
+                    participating_threads_counter.get_thread_count()
+                } else {
+                    // Error
+                    0
+                };
+            */
             thread::sleep(std::time::Duration::from_millis(20));
             elapsed_milli_secs += 20;
         }
@@ -819,6 +835,12 @@ impl Log {
     }
 
     fn reserve(table: &Table) {
+        /*
+        if let Ok(mut participating_threads_counter) = PARTICIPANTING_THREADS_COUNTER.lock() {
+            participating_threads_counter.increase_thread_count();
+        }
+        */
+
         let seq = SEQ.with(move |seq| {
             let old = *seq.borrow();
             *seq.borrow_mut() += 1;
@@ -840,9 +862,15 @@ impl Log {
                 }
             }
         } else {
-            // TODO Error.
+            // TODO Error
             return;
         }
+
+        /*
+        if let Ok(mut participating_threads_counter) = PARTICIPANTING_THREADS_COUNTER.lock() {
+            participating_threads_counter.decrease_thread_count();
+        }
+        */
 
         if let Ok(mut signal) = SIGNAL_CAN_FLUSH.lock() {
             if signal.can_flush() {
@@ -1281,3 +1309,26 @@ impl SignalCanFlush {
         self.can_flush = val;
     }
 }
+
+/*
+struct ParticipatingThreadsCounter {
+    /// Number of threads not yet finished.
+    thread_count: u32,
+}
+impl Default for ParticipatingThreadsCounter {
+    fn default() -> Self {
+        ParticipatingThreadsCounter { thread_count: 0 }
+    }
+}
+impl ParticipatingThreadsCounter {
+    fn increase_thread_count(&mut self) {
+        self.thread_count += 1;
+    }
+    fn decrease_thread_count(&mut self) {
+        self.thread_count -= 1;
+    }
+    pub fn get_thread_count(&self) -> u32 {
+        self.thread_count
+    }
+}
+*/
