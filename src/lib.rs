@@ -213,8 +213,9 @@ impl Table {
         converted
     }
     */
-    /// Escape the double quotation.
+    /// Escape string.
     fn escape(text: &str) -> String {
+        // Escape the double quotation.
         text.replace("\"", "\\\"")
     }
     #[deprecated(since = "0.4.1", note = "This is private method")]
@@ -301,14 +302,15 @@ impl Table {
     /// Correct the key automatically.
     fn correct_key(key: &str) -> String {
         // Check
-        let re = Regex::new(r"^[A-Za-z0-9_-]+$").unwrap();
+        let re = Regex::new(r"^[A-Za-z0-9_-]+$").unwrap(); // TODO
         if re.is_match(key) {
             // Ok.
             return key.to_string();
         }
 
         // TODO Auto correct
-        Table::escape(key)
+        let sp = Regex::new(r"\s").unwrap(); // TODO
+        format!("\"{}\"", Table::escape(&sp.replace_all(key, " ")))
     }
     /// Insert string value.
     pub fn str<'a>(&'a mut self, key: &'a str, value: &'a str) -> &'a mut Self {

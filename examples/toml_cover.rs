@@ -38,7 +38,7 @@ fn main() {
             .str("Dotted.Key", "Correct."),
     );
 
-    // Illegal keys.
+    // Illegal keys. Auto correct check.
     Log::info_t(
         "Illegal key test",
         Table::default()
