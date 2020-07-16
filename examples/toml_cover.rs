@@ -29,7 +29,26 @@ fn main() {
 ",
             )
             .str("DoubleQuotation", "\"quoted\"")
-            .str("NewLine", "\r\n"),
+            .str("NewLine", "\r\n")
+            .str(" Middle ", "Ignored space at left and right.")
+            .str(
+                "Apple . Banana",
+                "Space quoted dot. I don't recommend it, but it's okay.",
+            )
+            .str("Dotted.Key", "Correct."),
+    );
+
+    // Illegal keys.
+    Log::info_t(
+        "Illegal key test",
+        Table::default()
+            .str("キー", "Japanese.")
+            .str("House key", "Space.")
+            .str(
+                "Bicycle
+key",
+                "Contains newline.",
+            ),
     );
 
     Log::wait();

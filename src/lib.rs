@@ -213,6 +213,10 @@ impl Table {
         converted
     }
     */
+    /// Escape the double quotation.
+    fn escape(text: &str) -> String {
+        text.replace("\"", "\\\"")
+    }
     #[deprecated(since = "0.4.1", note = "This is private method")]
     pub fn format_str_value(value: &str) -> String {
         // let value = Table::convert_multi_byte_string(slice);
@@ -280,8 +284,7 @@ impl Table {
             value.to_string()
         };
         */
-        // Escape the double quotation.
-        body = body.replace("\"", "\\\"");
+        body = Table::escape(&body);
         if 1 < value.lines().count() {
             // Multi-line string.
             format!(
@@ -295,11 +298,23 @@ impl Table {
             format!("\"{}\"", body)
         }
     }
+    /// Correct the key automatically.
+    fn correct_key(key: &str) -> String {
+        // Check
+        let re = Regex::new(r"^[A-Za-z0-9_-]+$").unwrap();
+        if re.is_match(key) {
+            // Ok.
+            return key.to_string();
+        }
+
+        // TODO Auto correct
+        Table::escape(key)
+    }
     /// Insert string value.
     pub fn str<'a>(&'a mut self, key: &'a str, value: &'a str) -> &'a mut Self {
         self.sorted_map.insert(
             // Log detail level.
-            key.to_string(),
+            Table::correct_key(key),
             // Message.
             Table::format_str_value(value).to_string(),
         );
@@ -310,7 +325,7 @@ impl Table {
     pub fn literal<'a>(&'a mut self, key: &'a str, value: &'a str) -> &'a mut Self {
         self.sorted_map.insert(
             // Log detail level.
-            key.to_string(),
+            Table::correct_key(key),
             // Message.
             value.to_string(),
         );
