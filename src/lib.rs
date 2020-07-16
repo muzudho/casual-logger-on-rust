@@ -40,10 +40,18 @@ use std::thread;
 const NEW_LINE: &'static str = "\r\n";
 #[cfg(windows)]
 const NEW_LINE_SEQUENCE: &'static str = "\\r\\n";
+#[cfg(windows)]
+const NEW_LINE_CHARS: &'static [char; 2] = &['\r', '\n'];
+#[cfg(windows)]
+const NEW_LINE_ESCAPED_CHARS: &'static [char; 4] = &['\\', 'r', '\\', 'n'];
 #[cfg(not(windows))]
 const NEW_LINE: &'static str = "\n";
 #[cfg(not(windows))]
 const NEW_LINE_SEQUENCE: &'static str = "\\n";
+#[cfg(not(windows))]
+const NEW_LINE_CHARS: &'static [char; 1] = &['\n'];
+#[cfg(not(windows))]
+const NEW_LINE_ESCAPED_CHARS: &'static [char; 2] = &['\\', 'n'];
 
 /// The higher this level, the more will be omitted.  
 ///
@@ -185,9 +193,85 @@ impl Table {
             message_trailing_newline: trailing_newline,
         }
     }
+    /*
+    pub fn convert_multi_byte_string(value: &str) -> String {
+        let bytes: &[u8] = value.as_bytes();
+        // convert bytes => str
+        // let res = bytes.iter().map(|&s| s as char).collect::<String>();
+        let converted: String = if let Ok(converted) = String::from_utf8(bytes.to_vec()) {
+            converted
+        } else {
+            value.to_string()
+        };
+        println!(
+            "Value=|{}|{}| Converted=|{}|{}|",
+            value,
+            value.len(),
+            converted,
+            converted.len()
+        );
+        converted
+    }
+    */
     #[deprecated(since = "0.4.1", note = "This is private method")]
     pub fn format_str_value(value: &str) -> String {
+        // let value = Table::convert_multi_byte_string(slice);
         // Escape the trailing newline at last.
+        let mut ch_vec: Vec<char> = value.chars().collect();
+        let mut body = if NEW_LINE_CHARS.len() == 2 && 1 < ch_vec.len() {
+            if ch_vec[ch_vec.len() - 2] == NEW_LINE_CHARS[0]
+                && ch_vec[ch_vec.len() - 1] == NEW_LINE_CHARS[1]
+            {
+                // TODO For windows.
+                //*
+                format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE)
+            // */
+            /*
+                // Remove new line code.
+                ch_vec.pop();
+                ch_vec.pop();
+                // Append escaped new line.
+                ch_vec.push(NEW_LINE_ESCAPED_CHARS[0]);
+                ch_vec.push(NEW_LINE_ESCAPED_CHARS[1]);
+                ch_vec.push(NEW_LINE_ESCAPED_CHARS[2]);
+                ch_vec.push(NEW_LINE_ESCAPED_CHARS[3]);
+                // From vector to string.
+                ch_vec.iter().map(|&s| s as char).collect::<String>()
+            // */
+            /*
+            value.to_string()
+            // */
+            } else {
+                // Don't.
+                value.to_string()
+            }
+        } else if NEW_LINE_CHARS.len() == 1 && 0 < ch_vec.len() {
+            if ch_vec[ch_vec.len() - 1] == NEW_LINE_CHARS[0] {
+                // TODO For linux OS.
+                //*
+                format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE)
+            // */
+            /*
+                // Remove new line code.
+                ch_vec.pop();
+                // Append escaped new line.
+                ch_vec.push(NEW_LINE_ESCAPED_CHARS[0]);
+                ch_vec.push(NEW_LINE_ESCAPED_CHARS[1]);
+                // From vector to string.
+                ch_vec.iter().map(|&s| s as char).collect::<String>()
+            // */
+            /*
+            value.to_string()
+            // */
+            } else {
+                // Don't.
+                value.to_string()
+            }
+        } else {
+            // No trailing new line.
+            value.to_string()
+        };
+        /*
         let mut body = if value[value.len() - NEW_LINE.len()..] == *NEW_LINE {
             // Do.
             format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE)
@@ -195,6 +279,7 @@ impl Table {
             // Don't.
             value.to_string()
         };
+        */
         // Escape the double quotation.
         body = body.replace("\"", "\\\"");
         if 1 < value.lines().count() {
@@ -837,11 +922,11 @@ impl Log {
             Table::format_str_value(&message)
         )
         .to_string();
-        for (k, v) in &wrapper.table.sorted_map {
+        for (k, formatted_v) in &wrapper.table.sorted_map {
             toml.push_str(&format!(
                 "{} = {}
 ",
-                k, v
+                k, formatted_v
             ));
         }
         toml.push_str(
