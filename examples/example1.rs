@@ -5,10 +5,7 @@ use casual_logger::Log;
 fn main() {
     Log::remove_old_logs();
 
-    Log::info(
-        "Hello, world!!
-こんにちわ、世界！！",
-    );
+    Log::info("Hello, world!!");
 
     Log::wait();
 }

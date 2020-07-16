@@ -4,7 +4,7 @@
 // Publish:
 //
 // (1) `cargo test`
-// (2) `cargo run --example example`
+// (2) `cargo run --example overall`
 // (3) Open auto-generated log file. I check it.
 // (4) Remove the log file.
 // (5) Version up on Cargo.toml.

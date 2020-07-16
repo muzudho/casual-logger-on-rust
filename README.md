@@ -3,6 +3,8 @@
 This logger with **few settings** to repeat practice of many programming tutorials.  
 Not for product use.  
 
+## Example 1
+
 Code:  
 
 ```rust
@@ -13,10 +15,7 @@ use casual_logger::Log;
 fn main() {
     Log::remove_old_logs();
 
-    Log::info(
-        "Hello, world!!
-こんにちわ、世界！！",
-    );
+    Log::info("Hello, world!!");
 
     Log::wait();
 }
@@ -27,11 +26,61 @@ Output:
 `default-2020-07-16.log.toml` automatically generated.  
 
 ```toml
-["Now=2020-07-16 18:56:04&Pid=8384&Thr=ThreadId(1)&Seq=1"]
-Info = """
-Hello, world!!
+["Now=2020-07-16 21:19:46&Pid=8452&Thr=ThreadId(1)&Seq=1"]
+Info = "Hello, world!!"
+
+
+```
+
+## Example 2
+
+Code:  
+
+```rust
+//! You can copy and paste and use immediately.
+
+use casual_logger::{Level, Log, Table};
+
+fn main() {
+    Log::set_file_name("lesson1");
+    Log::set_retention_days(2);
+    Log::set_level(Level::Info);
+    Log::remove_old_logs();
+
+    Log::info_t(
+        "Result",
+        Table::default()
+            .str("Rank", "A")
+            .str("Area", "Mountain")
+            .str("Weather", "Rain")
+            // Do not validate value. Unsafe.
+            .literal("Point", "[ 800, 300, 500 ]")
+            .str(
+                "Message",
+                "Hell, world!!
+こんにちわ、世界！！",
+            ),
+    );
+
+    Log::wait();
+}
+```
+
+Output:  
+
+`lesson1-2020-07-16.log.toml` automatically generated.  
+
+```toml
+["Now=2020-07-16 21:13:22&Pid=14488&Thr=ThreadId(1)&Seq=1"]
+Info = "Result"
+Area = "Mountain"
+Message = """
+Hell, world!!
 こんにちわ、世界！！
 """
+Point = [ 800, 300, 500 ]
+Rank = "A"
+Weather = "Rain"
 
 
 ```
