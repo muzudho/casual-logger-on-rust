@@ -138,6 +138,9 @@ lazy_static! {
     static ref QUEUE_F: Mutex<VecDeque<(InternalTable)>> = Mutex::new(VecDeque::<(InternalTable)>::new());
     static ref RESERVE_TARGET: Mutex<ReserveTarget> = Mutex::new(ReserveTarget::default());
     static ref SIGNAL_CAN_FLUSH: Mutex<SignalCanFlush> = Mutex::new(SignalCanFlush::default());
+    /// Without dot.
+    static ref RE_TOML_KEY: Mutex<Regex> = Mutex::new(Regex::new(r"^[A-Za-z0-9_-]+$").unwrap());
+    static ref RE_WHITE_SPACE: Mutex<Regex> = Mutex::new(Regex::new(r"\s").unwrap());
 }
 // Use the line number in the log.
 //
@@ -302,15 +305,24 @@ impl Table {
     /// Correct the key automatically.
     fn correct_key(key: &str) -> String {
         // Check
-        let re = Regex::new(r"^[A-Za-z0-9_-]+$").unwrap(); // TODO
-        if re.is_match(key) {
-            // Ok.
-            return key.to_string();
+        // TODO Dotted key support is difficult.
+        if let Ok(re_toml_key) = RE_TOML_KEY.lock() {
+            if re_toml_key.is_match(key) {
+                // Ok.
+                return key.to_string();
+            }
         }
 
         // TODO Auto correct
-        let sp = Regex::new(r"\s").unwrap(); // TODO
-        format!("\"{}\"", Table::escape(&sp.replace_all(key, " ")))
+        if let Ok(re_white_space) = RE_WHITE_SPACE.lock() {
+            format!(
+                "\"{}\"",
+                Table::escape(&re_white_space.replace_all(key, " "))
+            )
+        } else {
+            // TODO Error
+            key.to_string()
+        }
     }
     /// Insert string value.
     pub fn str<'a>(&'a mut self, key: &'a str, value: &'a str) -> &'a mut Self {

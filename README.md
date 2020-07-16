@@ -711,10 +711,11 @@ the program will exit before writing all the logs.
 ## TODO
 
 * [ ] Dogfooding.
-* [ ] Japanese(Multi-byte string) support.
+* [x] Japanese(Multi-byte string) support.
 * [ ] More minimal.
 * [ ] Remove deprecated features.
 * [ ] Error handling check.
+* [ ] Dotted key support (is difficult).
 
 ## Appendix
 
