@@ -13,9 +13,9 @@ use casual_logger::Log;
 fn main() {
     Log::remove_old_logs();
 
-    Log::infoln(
+    Log::info(
         "Hello, world!!
-おはよう、世界！！",
+こんにちわ、世界！！",
     );
 
     Log::wait();
