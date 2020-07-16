@@ -786,7 +786,7 @@ the program will exit before writing all the logs.
 Code: main.rs  
 
 ```rust
-use casual_logger::Log;
+use casual_logger::{Level, Log};
 
 pub trait LogExt {
     fn println(s: &str);
@@ -794,7 +794,9 @@ pub trait LogExt {
 impl LogExt for Log {
     /// Info level logging and add print to stdout.
     fn println(s: &str) {
-        println!("{}", s);
+        if Log::enabled(Level::Info) {
+            println!("{}", s);
+        }
         Log::infoln(s);
     }
 }
