@@ -1,12 +1,12 @@
 //! Toml cover check.
 //! [TOML v1.0.0-rc.1](https://toml.io/en/v1.0.0-rc.1)
 
-use casual_logger::{Log, Table};
+use casual_logger::{Log, Opt, Table};
 
 fn main() {
     Log::set_file_name("toml-cover");
     Log::set_retention_days(2);
-    Log::set_development(true);
+    Log::set_opt(Opt::Development);
     Log::remove_old_logs();
 
     // String.

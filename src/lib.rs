@@ -455,9 +455,9 @@ impl Log {
         };
         remove_num
     }
-    /// Wait for logging to complete.
+    /// Wait for logging to complete.  
     ///
-    /// See also: Log::set_timeout_secs(), Log::set_development().
+    /// See also: Log::set_timeout_secs(), Log::set_opt().  
     pub fn wait() {
         let (timeout_secs, opt) = if let Ok(logger) = LOGGER.lock() {
             (
@@ -1065,7 +1065,7 @@ pub struct Logger {
     /// Set to true to allow Casual_logger to output information to stdout and stderr.
     #[deprecated(
         since = "0.3.10",
-        note = "Please use the casual_logger::Log::set_development() method instead"
+        note = "Please use the casual_logger::Log::set_opt(Opt::Development) method instead"
     )]
     pub development: bool,
     /// Optimization.

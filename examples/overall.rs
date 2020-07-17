@@ -1,6 +1,6 @@
 //! All features are described in one copy and paste.
 
-use casual_logger::{Extension, Level, Log, Table};
+use casual_logger::{Extension, Level, Log, Opt, Table};
 
 fn main() {
     // Example of Log file name:
@@ -41,11 +41,17 @@ fn main() {
     // so you probably don't need to set it.
     Log::set_timeout_secs(30);
 
-    // Set to true to allow Casual_logger to
-    // output information to stdout and stderr.
-    // By default it's set to false,
-    // so you probably don't need to set it.
-    Log::set_development(true);
+    // Opt::Development
+    // Displays the work running in the background to
+    // standard output.
+    //
+    // Opt::BeginnersSupport
+    // Corrects TOML format errors automatically.
+    // Default. so you probably don't need to set it.
+    //
+    // Opt::Release
+    // It limits functions and improves execution speed.
+    Log::set_opt(Opt::Development);
 
     // Remove old log files. This is determined by the
     // StartDate in the filename.

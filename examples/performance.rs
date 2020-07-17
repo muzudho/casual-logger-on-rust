@@ -1,6 +1,6 @@
 //! Performance check
 
-use casual_logger::{Extension, Log};
+use casual_logger::{Extension, Log, Opt};
 use std::sync::mpsc;
 use std::thread;
 use std::time::Instant;
@@ -11,7 +11,7 @@ fn main() {
     Log::set_file_name("performance-check");
     Log::set_file_ext(Extension::Log);
     Log::set_retention_days(2);
-    Log::set_development(true);
+    Log::set_opt(Opt::Release);
     Log::remove_old_logs();
 
     // Multi thread test.
