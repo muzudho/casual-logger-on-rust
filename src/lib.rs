@@ -416,9 +416,20 @@ impl Log {
     /// You probably don't need to set this. Default: false.  
     /// Set to true to allow Casual_logger to  
     /// output information to stdout and stderr.  
+    #[deprecated(
+        since = "0.4.7",
+        note = "Please use the casual_logger::Log::set_opt(Opt::Development) method instead"
+    )]
     pub fn set_development(during_development: bool) {
         if let Ok(mut logger) = LOGGER.lock() {
             logger.development = during_development;
+        }
+    }
+
+    /// Optimization.
+    pub fn set_opt(optimization: Opt) {
+        if let Ok(mut logger) = LOGGER.lock() {
+            logger.optimization = optimization;
         }
     }
 
@@ -429,8 +440,13 @@ impl Log {
         let remove_num = if let Ok(logger) = LOGGER.lock() {
             // Do not call 'Log::xxxxx()' in this code block.
             let remove_num = logger.remove_old_logs();
-            if logger.development && 0 < remove_num {
-                println!("casual_logger: Remove {} log file(s).", remove_num);
+            match Logger::get_optimization(&logger) {
+                Opt::Development => {
+                    if 0 < remove_num {
+                        println!("casual_logger: Remove {} log file(s).", remove_num);
+                    }
+                }
+                _ => {}
             }
             remove_num
         } else {
@@ -443,16 +459,22 @@ impl Log {
     ///
     /// See also: Log::set_timeout_secs(), Log::set_development().
     pub fn wait() {
-        let (timeout_secs, development) = if let Ok(logger) = LOGGER.lock() {
-            (Logger::get_timeout_sec(&logger), logger.development)
+        let (timeout_secs, opt) = if let Ok(logger) = LOGGER.lock() {
+            (
+                Logger::get_timeout_sec(&logger),
+                Logger::get_optimization(&logger),
+            )
         } else {
-            (0, false)
+            (0, Opt::BeginnersSupport)
         };
 
         Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
             // Do not call 'Log::xxxxx()' in this code block.
-            if development {
-                eprintln!("casual_logger: {} sec(s). {}", secs, message,);
+            match opt {
+                Opt::Development => {
+                    eprintln!("casual_logger: {} sec(s). {}", secs, message,);
+                }
+                _ => {}
             }
         });
     }
@@ -1046,6 +1068,8 @@ pub struct Logger {
         note = "Please use the casual_logger::Log::set_development() method instead"
     )]
     pub development: bool,
+    /// Optimization.
+    pub optimization: Opt,
 }
 impl Default for Logger {
     fn default() -> Self {
@@ -1062,6 +1086,7 @@ impl Default for Logger {
             fatal_timeout_secs: 30,
             timeout_secs: 30,
             development: false,
+            optimization: Opt::BeginnersSupport,
         }
     }
 }
@@ -1075,6 +1100,15 @@ impl Logger {
             logger.timeout_secs
         }
     }
+
+    fn get_optimization(logger: &Logger) -> Opt {
+        if logger.development == true {
+            Opt::Development
+        } else {
+            logger.optimization
+        }
+    }
+
     /// Check level.
     pub fn enabled(&self, level: Level) -> bool {
         if level.number() <= self.level.number() {
@@ -1332,3 +1366,14 @@ impl ParticipatingThreadsCounter {
     }
 }
 */
+
+/// Optimization.
+#[derive(Clone, Copy)]
+pub enum Opt {
+    /// Displays the work running in the background to standard output.
+    Development,
+    /// Corrects TOML format errors automatically.
+    BeginnersSupport,
+    /// It limits functions and improves execution speed.
+    Release,
+}
