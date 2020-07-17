@@ -50,7 +50,10 @@ fn main() {
     // Default. so you probably don't need to set it.
     //
     // Opt::Release
-    // It limits functions and improves execution speed.
+    // Disables beginner support to improve execution
+    // speed.
+    // Beginner support may be faster if there are
+    // formatting errors.
     Log::set_opt(Opt::Development);
 
     // Remove old log files. This is determined by the

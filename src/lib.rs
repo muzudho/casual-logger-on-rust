@@ -143,6 +143,8 @@ lazy_static! {
     static ref RE_WHITE_SPACE: Mutex<Regex> = Mutex::new(Regex::new(r"\s").unwrap());
     // Wait for logging to complete.
     //static ref PARTICIPANTING_THREADS_COUNTER: Mutex<ParticipatingThreadsCounter> = Mutex::new(ParticipatingThreadsCounter::default());
+    /// Optimization.
+    static ref OPT_STATE: Mutex<OptState> = Mutex::new(OptState::default());
 }
 // Use the line number in the log.
 //
@@ -306,6 +308,15 @@ impl Table {
     }
     /// Correct the key automatically.
     fn correct_key(key: &str) -> String {
+        if let Ok(logger) = LOGGER.lock() {
+            match Logger::get_optimization(&logger) {
+                Opt::Release => {
+                    return key.to_string();
+                }
+                _ => {}
+            }
+        };
+
         // Check
         // TODO Dotted key support is difficult.
         if let Ok(re_toml_key) = RE_TOML_KEY.lock() {
@@ -428,8 +439,8 @@ impl Log {
 
     /// Optimization.
     pub fn set_opt(optimization: Opt) {
-        if let Ok(mut logger) = LOGGER.lock() {
-            logger.optimization = optimization;
+        if let Ok(mut opt_state) = OPT_STATE.lock() {
+            opt_state.set(optimization);
         }
     }
 
@@ -465,6 +476,7 @@ impl Log {
                 Logger::get_optimization(&logger),
             )
         } else {
+            // Error
             (0, Opt::BeginnersSupport)
         };
 
@@ -1068,8 +1080,6 @@ pub struct Logger {
         note = "Please use the casual_logger::Log::set_opt(Opt::Development) method instead"
     )]
     pub development: bool,
-    /// Optimization.
-    pub optimization: Opt,
 }
 impl Default for Logger {
     fn default() -> Self {
@@ -1086,7 +1096,6 @@ impl Default for Logger {
             fatal_timeout_secs: 30,
             timeout_secs: 30,
             development: false,
-            optimization: Opt::BeginnersSupport,
         }
     }
 }
@@ -1105,7 +1114,12 @@ impl Logger {
         if logger.development == true {
             Opt::Development
         } else {
-            logger.optimization
+            if let Ok(opt_state) = OPT_STATE.lock() {
+                opt_state.get()
+            } else {
+                // Error
+                Opt::BeginnersSupport
+            }
         }
     }
 
@@ -1376,4 +1390,25 @@ pub enum Opt {
     BeginnersSupport,
     /// It limits functions and improves execution speed.
     Release,
+}
+
+/// Optimization.
+struct OptState {
+    /// Optimization.
+    opt: Opt,
+}
+impl Default for OptState {
+    fn default() -> Self {
+        OptState {
+            opt: Opt::BeginnersSupport,
+        }
+    }
+}
+impl OptState {
+    fn get(&self) -> Opt {
+        self.opt
+    }
+    fn set(&mut self, val: Opt) {
+        self.opt = val;
+    }
 }
