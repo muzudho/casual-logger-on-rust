@@ -22,6 +22,19 @@ fn main() {
 ３行目",
             )
             .str(
+                "MultiLineContainsTripleSingleQuotation",
+                "１行目
+'''２行目'''
+３行目",
+            )
+            .str(
+                "MultiLineContainsTripleSingleQuotationLn",
+                "１行目
+'''２行目'''
+３行目
+",
+            )
+            .str(
                 "MultiLinePlainLn",
                 "１行目
 ２行目

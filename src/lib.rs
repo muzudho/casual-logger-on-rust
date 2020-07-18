@@ -19,6 +19,9 @@ extern crate chrono;
 extern crate regex;
 // extern crate sys_info;
 
+mod parser;
+
+use crate::parser::Parser;
 use chrono::{Date, Duration, Local, TimeZone};
 use regex::Regex;
 use std::cell::RefCell;
@@ -39,17 +42,9 @@ use std::thread;
 #[cfg(windows)]
 const NEW_LINE: &'static str = "\r\n";
 #[cfg(windows)]
-const NEW_LINE_SEQUENCE: &'static str = "\\r\\n";
-#[cfg(windows)]
-const NEW_LINE_CHARS: &'static [char; 2] = &['\r', '\n'];
-#[cfg(windows)]
 const NEW_LINE_ESCAPED_CHARS: &'static [char; 4] = &['\\', 'r', '\\', 'n'];
 #[cfg(not(windows))]
 const NEW_LINE: &'static str = "\n";
-#[cfg(not(windows))]
-const NEW_LINE_SEQUENCE: &'static str = "\\n";
-#[cfg(not(windows))]
-const NEW_LINE_CHARS: &'static [char; 1] = &['\n'];
 #[cfg(not(windows))]
 const NEW_LINE_ESCAPED_CHARS: &'static [char; 2] = &['\\', 'n'];
 
@@ -220,91 +215,9 @@ impl Table {
         converted
     }
     */
-    /// Escape string.
-    fn escape(text: &str) -> String {
-        // Escape the double quotation.
-        text.replace("\"", "\\\"")
-    }
     #[deprecated(since = "0.4.1", note = "This is private method")]
     pub fn format_str_value(value: &str) -> String {
-        // let value = Table::convert_multi_byte_string(slice);
-        // Escape the trailing newline at last.
-        let mut ch_vec: Vec<char> = value.chars().collect();
-        let mut body = if NEW_LINE_CHARS.len() == 2 && 1 < ch_vec.len() {
-            if ch_vec[ch_vec.len() - 2] == NEW_LINE_CHARS[0]
-                && ch_vec[ch_vec.len() - 1] == NEW_LINE_CHARS[1]
-            {
-                // TODO For windows.
-                //*
-                format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE)
-            // */
-            /*
-                // Remove new line code.
-                ch_vec.pop();
-                ch_vec.pop();
-                // Append escaped new line.
-                ch_vec.push(NEW_LINE_ESCAPED_CHARS[0]);
-                ch_vec.push(NEW_LINE_ESCAPED_CHARS[1]);
-                ch_vec.push(NEW_LINE_ESCAPED_CHARS[2]);
-                ch_vec.push(NEW_LINE_ESCAPED_CHARS[3]);
-                // From vector to string.
-                ch_vec.iter().map(|&s| s as char).collect::<String>()
-            // */
-            /*
-            value.to_string()
-            // */
-            } else {
-                // Don't.
-                value.to_string()
-            }
-        } else if NEW_LINE_CHARS.len() == 1 && 0 < ch_vec.len() {
-            if ch_vec[ch_vec.len() - 1] == NEW_LINE_CHARS[0] {
-                // TODO For linux OS.
-                //*
-                format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE)
-            // */
-            /*
-                // Remove new line code.
-                ch_vec.pop();
-                // Append escaped new line.
-                ch_vec.push(NEW_LINE_ESCAPED_CHARS[0]);
-                ch_vec.push(NEW_LINE_ESCAPED_CHARS[1]);
-                // From vector to string.
-                ch_vec.iter().map(|&s| s as char).collect::<String>()
-            // */
-            /*
-            value.to_string()
-            // */
-            } else {
-                // Don't.
-                value.to_string()
-            }
-        } else {
-            // No trailing new line.
-            value.to_string()
-        };
-        /*
-        let mut body = if value[value.len() - NEW_LINE.len()..] == *NEW_LINE {
-            // Do.
-            format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE)
-        } else {
-            // Don't.
-            value.to_string()
-        };
-        */
-        body = Table::escape(&body);
-        if 1 < value.lines().count() {
-            // Multi-line string.
-            format!(
-                "\"\"\"
-{}
-\"\"\"",
-                body
-            )
-        } else {
-            // One liner.
-            format!("\"{}\"", body)
-        }
+        Parser::format_str_value(value)
     }
     /// Correct the key automatically.
     fn correct_key(key: &str) -> String {
@@ -330,7 +243,7 @@ impl Table {
         if let Ok(re_white_space) = RE_WHITE_SPACE.lock() {
             format!(
                 "\"{}\"",
-                Table::escape(&re_white_space.replace_all(key, " "))
+                Parser::escape(&re_white_space.replace_all(key, " "))
             )
         } else {
             // TODO Error
