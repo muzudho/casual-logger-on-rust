@@ -96,18 +96,18 @@ impl Parser {
         // D) You must use one-line ['''].
         // E) You must use ['].
         // F) Use ["].
-        body = Parser::escape(&body);
         if 1 < value.lines().count() {
             // Multi-line string.
-            if let Ok(re) = RE_TRIPLE_SINGLE_QUOTE.lock() {
-                if re.is_match(value) {
-                    return format!(
-                        "\"\"\"
+            // if let Ok(re) = RE_TRIPLE_SINGLE_QUOTE.lock() {
+            // if re.is_match(value) {
+            if value.contains("'''") {
+                body = Parser::escape(&body);
+                return format!(
+                    "\"\"\"
 {}
 \"\"\"",
-                        body
-                    );
-                }
+                    body
+                );
             }
             format!(
                 "'''
@@ -117,7 +117,12 @@ impl Parser {
             )
         } else {
             // One liner.
-            format!("\"{}\"", body)
+            if value.contains("'") {
+                body = Parser::escape(&body);
+                return format!("\"{}\"", body);
+            }
+
+            format!("'{}'", body)
         }
     }
 
