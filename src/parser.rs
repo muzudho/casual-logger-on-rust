@@ -21,18 +21,20 @@ lazy_static! {
 /// Escape control characters.
 pub struct Parser {}
 impl Parser {
-    #[deprecated(since = "0.4.1", note = "This is private method")]
-    pub fn format_str_value(value: &str) -> String {
-        // let value = Table::convert_multi_byte_string(slice);
-        // Escape the trailing newline at last.
+    /// Escape trailing newline.
+    ///
+    /// # Returns
+    ///
+    /// Escaped string or None.
+    fn escape_trailing_newline(value: &str) -> Option<String> {
         let ch_vec: Vec<char> = value.chars().collect();
-        let mut body = if NEW_LINE_CHARS.len() == 2 && 1 < ch_vec.len() {
+        if NEW_LINE_CHARS.len() == 2 && 1 < ch_vec.len() {
             if ch_vec[ch_vec.len() - 2] == NEW_LINE_CHARS[0]
                 && ch_vec[ch_vec.len() - 1] == NEW_LINE_CHARS[1]
             {
                 // TODO For windows.
                 //*
-                format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE)
+                Some(format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE).to_string())
             // */
             /*
                 // Remove new line code.
@@ -51,13 +53,13 @@ impl Parser {
             // */
             } else {
                 // Don't.
-                value.to_string()
+                None
             }
         } else if NEW_LINE_CHARS.len() == 1 && 0 < ch_vec.len() {
             if ch_vec[ch_vec.len() - 1] == NEW_LINE_CHARS[0] {
                 // TODO For linux OS.
                 //*
-                format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE)
+                Some(format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE).to_string())
             // */
             /*
                 // Remove new line code.
@@ -73,12 +75,12 @@ impl Parser {
             // */
             } else {
                 // Don't.
-                value.to_string()
+                None
             }
         } else {
             // No trailing new line.
-            value.to_string()
-        };
+            None
+        }
         /*
         let mut body = if value[value.len() - NEW_LINE.len()..] == *NEW_LINE {
             // Do.
@@ -88,6 +90,11 @@ impl Parser {
             value.to_string()
         };
         */
+    }
+
+    #[deprecated(since = "0.4.1", note = "This is private method")]
+    pub fn format_str_value(value: &str) -> String {
+        // let value = Table::convert_multi_byte_string(slice);
         // Divide by A, B, C, E or F.
         // A) You must use multi-line ["""].
         //  * Multi-line string.
@@ -101,28 +108,37 @@ impl Parser {
             // if let Ok(re) = RE_TRIPLE_SINGLE_QUOTE.lock() {
             // if re.is_match(value) {
             if value.contains("'''") {
-                body = Parser::escape(&body);
+                let escaped_string = if let Some(escaped_trailing_newline_string) =
+                    Parser::escape_trailing_newline(value)
+                {
+                    Parser::escape(&escaped_trailing_newline_string)
+                } else {
+                    Parser::escape(value)
+                };
                 return format!(
                     "\"\"\"
 {}
 \"\"\"",
-                    body
+                    escaped_string
                 );
             }
             format!(
                 "'''
 {}
 '''",
-                body
+                value
             )
         } else {
             // One liner.
+            let escaped_trailng_newline_string = Parser::escape_trailing_newline(value);
+            if let Some(escaped_trailng_newline_string) = escaped_trailng_newline_string {
+                return format!("\"{}\"", Parser::escape(&escaped_trailng_newline_string));
+            }
             if value.contains("'") {
-                body = Parser::escape(&body);
-                return format!("\"{}\"", body);
+                return format!("\"{}\"", Parser::escape(value));
             }
 
-            format!("'{}'", body)
+            format!("'{}'", value)
         }
     }
 
