@@ -243,7 +243,7 @@ impl Table {
         if let Ok(re_white_space) = RE_WHITE_SPACE.lock() {
             format!(
                 "\"{}\"",
-                Parser::escape(&re_white_space.replace_all(key, " "))
+                Parser::escape_double_quotation(&re_white_space.replace_all(key, " "))
             )
         } else {
             // TODO Error

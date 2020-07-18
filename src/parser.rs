@@ -21,6 +21,72 @@ lazy_static! {
 /// Escape control characters.
 pub struct Parser {}
 impl Parser {
+    /// Escape double quotation.
+    pub fn escape_double_quotation(text: &str) -> String {
+        text.replace("\"", "\\\"")
+    }
+
+    /// Escape back slash.
+    fn escape_back_slash(text: &str) -> String {
+        text.replace("\\", "\\\\")
+    }
+
+    #[deprecated(since = "0.4.1", note = "This is private method")]
+    pub fn format_str_value(value: &str) -> String {
+        // let value = Table::convert_multi_byte_string(slice);
+        // Divide by A, B, C, E or F.
+        // A) You must use multi-line ["""].
+        //  * Multi-line string.
+        // B) You must use one-line ["""].
+        // C) You must use multi-line ['''].
+        // D) You must use one-line ['''].
+        // E) You must use ['].
+        // F) Use ["].
+        if 1 < value.lines().count() {
+            // Multi-line string.
+            // if let Ok(re) = RE_TRIPLE_SINGLE_QUOTE.lock() {
+            // if re.is_match(value) {
+            if value.contains("'''") {
+                let escaped_string = if let Some(escaped_trailing_newline_string) =
+                    Parser::escape_trailing_newline(value)
+                {
+                    Parser::escape_double_quotation(&escaped_trailing_newline_string)
+                } else {
+                    Parser::escape_double_quotation(value)
+                };
+                return format!(
+                    "\"\"\"
+{}
+\"\"\"",
+                    escaped_string
+                );
+            }
+            format!(
+                "'''
+{}
+'''",
+                value
+            )
+        } else {
+            // One liner.
+            let escaped_trailng_newline_string = Parser::escape_trailing_newline(value);
+            if let Some(escaped_trailng_newline_string) = escaped_trailng_newline_string {
+                return format!(
+                    "\"{}\"",
+                    Parser::escape_double_quotation(&escaped_trailng_newline_string)
+                );
+            }
+            if value.contains("'") {
+                return format!(
+                    "\"{}\"",
+                    Parser::escape_double_quotation(&Parser::escape_back_slash(value))
+                );
+            }
+
+            format!("'{}'", value)
+        }
+    }
+
     /// Escape trailing newline.
     ///
     /// # Returns
@@ -90,61 +156,5 @@ impl Parser {
             value.to_string()
         };
         */
-    }
-
-    #[deprecated(since = "0.4.1", note = "This is private method")]
-    pub fn format_str_value(value: &str) -> String {
-        // let value = Table::convert_multi_byte_string(slice);
-        // Divide by A, B, C, E or F.
-        // A) You must use multi-line ["""].
-        //  * Multi-line string.
-        // B) You must use one-line ["""].
-        // C) You must use multi-line ['''].
-        // D) You must use one-line ['''].
-        // E) You must use ['].
-        // F) Use ["].
-        if 1 < value.lines().count() {
-            // Multi-line string.
-            // if let Ok(re) = RE_TRIPLE_SINGLE_QUOTE.lock() {
-            // if re.is_match(value) {
-            if value.contains("'''") {
-                let escaped_string = if let Some(escaped_trailing_newline_string) =
-                    Parser::escape_trailing_newline(value)
-                {
-                    Parser::escape(&escaped_trailing_newline_string)
-                } else {
-                    Parser::escape(value)
-                };
-                return format!(
-                    "\"\"\"
-{}
-\"\"\"",
-                    escaped_string
-                );
-            }
-            format!(
-                "'''
-{}
-'''",
-                value
-            )
-        } else {
-            // One liner.
-            let escaped_trailng_newline_string = Parser::escape_trailing_newline(value);
-            if let Some(escaped_trailng_newline_string) = escaped_trailng_newline_string {
-                return format!("\"{}\"", Parser::escape(&escaped_trailng_newline_string));
-            }
-            if value.contains("'") {
-                return format!("\"{}\"", Parser::escape(value));
-            }
-
-            format!("'{}'", value)
-        }
-    }
-
-    /// Escape string.
-    pub fn escape(text: &str) -> String {
-        // Escape the double quotation.
-        text.replace("\"", "\\\"")
     }
 }

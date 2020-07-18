@@ -13,6 +13,10 @@ fn main() {
     Log::infoln_t(
         "String test",
         Table::default()
+            .str("FilePathOnWindows", "C:\\User\\Muzudho")
+            .str("FilePathOnWindowsInDSQ", "''C:\\User\\Muzudho''")
+            .str("FilePathOnLinuxOS", "/etc/nginx/conf.d")
+            .str("FilePathOnLinuxOSInDSQ", "''/etc/nginx/conf.d''")
             .str("SinglePlain", "末尾改行なし")
             .str("SinglePlainLn", "末尾改行あり\r\n")
             .str(
