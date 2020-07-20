@@ -805,7 +805,7 @@ the program will exit before writing all the logs.
 * [ ] Remove deprecated features.
 * [ ] Error handling check.
 * [ ] Dotted key support (is difficult).
-* [ ] Add '_important()' method.
+* [x] Add '_important()' method.
 
 ## Appendix
 
