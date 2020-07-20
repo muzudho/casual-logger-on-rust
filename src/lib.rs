@@ -398,7 +398,29 @@ impl Log {
     /// Check the StartDate in the file name and delete it if it is old.  
     pub fn set_retention_days(days: u32) {
         if let Ok(mut logger) = LOGGER.lock() {
-            logger.retention_days = days as i64;
+            if !logger.retention_days_important {
+                logger.retention_days = days as i64;
+            }
+        }
+    }
+
+    /// The file retention days cannot be changed later.  
+    /// ファイル保持日数は後で変更できません。  
+    ///
+    /// See also: `Log::set_retention_days()`.  
+    pub fn set_retention_days_important(retention_days: u32) {
+        Log::set_retention_days(retention_days);
+        if let Ok(mut logger) = LOGGER.lock() {
+            logger.retention_days_important = true;
+        }
+    }
+
+    /// The file retention days.  
+    /// ファイル保持日数。  
+    pub fn get_retention_days() -> Result<u32, String> {
+        match LOGGER.lock() {
+            Ok(logger) => Ok(logger.retention_days as u32),
+            Err(e) => Err(e.to_string()),
         }
     }
 
@@ -1052,14 +1074,6 @@ pub struct Logger {
     file_suffix: String,
     /// If you don't like the .toml extension, leave the suffix empty and the .log extension.
     file_extension: String,
-    /// File retention days. Delete the file after day from StartDate.
-    #[deprecated(
-        since = "0.3.8",
-        note = "Please use the casual_logger::Log::set_retention_days() method instead"
-    )]
-    pub retention_days: i64,
-    /// Controll file.
-    log_file: Option<LogFile>,
     /// The level cannot be changed later.  
     /// レベルは後で変更できません。  
     level_important: bool,
@@ -1069,6 +1083,17 @@ pub struct Logger {
         note = "Please use the casual_logger::Log::set_level() method instead"
     )]
     pub level: Level,
+    /// The file retention days cannot be changed later.  
+    /// ファイル保持日数は後で変更できません。  
+    retention_days_important: bool,
+    /// File retention days. Delete the file after day from StartDate.
+    #[deprecated(
+        since = "0.3.8",
+        note = "Please use the casual_logger::Log::set_retention_days() method instead"
+    )]
+    pub retention_days: i64,
+    /// Controll file.
+    log_file: Option<LogFile>,
     /// Timeout seconds when fatal.
     #[deprecated(
         since = "0.3.2",
@@ -1099,13 +1124,14 @@ impl Default for Logger {
             file_ext_important: false,
             file_suffix: suffix.to_string(),
             file_extension: extension.to_string(),
-            retention_days: 7,
-            log_file: None,
             level_important: false,
             level: Level::Trace,
-            fatal_timeout_secs: 30,
+            retention_days_important: false,
+            retention_days: 7,
             timeout_secs: 30,
+            fatal_timeout_secs: 30,
             development: false,
+            log_file: None,
         }
     }
 }

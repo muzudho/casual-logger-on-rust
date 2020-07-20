@@ -18,6 +18,14 @@ fn main() {
     Log::set_level(Level::Error);
     Log::debug(&format!("level=|{}|", Log::get_level().unwrap()));
 
+    // File retention days.
+    Log::set_retention_days_important(3);
+    Log::set_retention_days(17);
+    Log::debug(&format!(
+        "retention_days=|{}|",
+        Log::get_retention_days().unwrap()
+    ));
+
     // Finish.
     Log::remove_old_logs();
     Log::flush();
