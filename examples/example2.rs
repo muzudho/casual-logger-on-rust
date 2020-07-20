@@ -3,7 +3,8 @@
 use casual_logger::{Level, Log, Table};
 
 fn main() {
-    Log::set_file_name("lesson1");
+    Log::set_file_name_important("lesson1");
+    Log::set_file_name("mischief1");
     Log::set_retention_days(2);
     Log::set_level(Level::Info);
     Log::remove_old_logs();

@@ -4,26 +4,42 @@ use casual_logger::{Extension, Level, Log, Opt, Table};
 
 fn main() {
     // Example of Log file name:
+    // ログ・ファイル名の例:
     //
     //      'tic-tac-toe-2020-07-11.log.toml'
     //       -----------
     //       Prefix     -----------
-    //                  StartDate  ----
-    //                             Suffix
+    //       接頭辞     StartDate  ----
+    //                  開始日     Suffix
+    //                             接尾辞
     //                                 -----
     //                                 Extention
+    //                                 拡張子
     //
     // - StartDate is automatically added.
+    //   開始日は自動で付きます。
     //
     // Set the prefix with 'set_file_name' method.
+    // 接頭辞を付けてください。
     Log::set_file_name("tic-tac-toe");
-    // Log file extension.
+    //
+    // Important cannot be changed later.
+    // 末尾に '_important' を付ければ後の変更を
+    // 無効にできます。
+    // Log::set_file_name_important("tic-tac-toe");
+    //
+    // Log file extension:
+    // 拡張子:
     //
     // '.log.toml' or '.log'.
     // '.log' for safety, include a word that
     // clearly states that you can delete the file.
     // If you don't like the .toml extension, change.
+    // '.log.toml' か '.log' かを選べます。
+    // 消してもよいファイルであることを明示するため、
+    // ファイル名に '.log' は必ず含めます。
     Log::set_file_ext(Extension::LogToml);
+    //
     // Logs with lower priority than this level will not
     // be written.
     //

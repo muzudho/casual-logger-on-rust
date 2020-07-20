@@ -289,7 +289,20 @@ impl Log {
     /// - Extention: '.toml'  
     pub fn set_file_name(prefix: &str) {
         if let Ok(mut logger) = LOGGER.lock() {
-            logger.file_prefix = prefix.to_string();
+            if !logger.file_name_important {
+                logger.file_prefix = prefix.to_string();
+            }
+        }
+    }
+
+    /// The file name cannot be changed later.  
+    /// ファイル名は後で変更できません。  
+    ///
+    /// See also: `Log::set_file_name()`.  
+    pub fn set_file_name_important(prefix: &str) {
+        Log::set_file_name(prefix);
+        if let Ok(mut logger) = LOGGER.lock() {
+            logger.file_name_important = true;
         }
     }
 
@@ -955,20 +968,23 @@ impl Log {
     }
 }
 
-/// Configuration.
+/// Configuration.  
 ///
-/// All: 'tic-tac-toe-2020-07-11.log.toml'
-/// Prefix: 'tic-tac-toe'
-/// StartDate: '-2020-07-11'
-/// Suffix: '.log'
-/// Extention: '.toml'
+/// All: 'tic-tac-toe-2020-07-11.log.toml'  
+/// Prefix: 'tic-tac-toe'  
+/// StartDate: '-2020-07-11'  
+/// Suffix: '.log'  
+/// Extention: '.toml'  
 ///
-/// If you don't like the .toml extension, leave the suffix empty and the .log extension.
+/// If you don't like the .toml extension, leave the suffix empty and the .log extension.  
 #[deprecated(
     since = "0.4.0",
     note = "Please use the casual_logger::Log::xxxx() methods instead"
 )]
 pub struct Logger {
+    /// The file name cannot be changed later.  
+    /// ファイル名は後で変更できません。  
+    file_name_important: bool,
     /// For example, the short name of your application.
     file_prefix: String,
     /// For example, '.log'. To be safe, include a word that clearly states that you can delete the file.
@@ -1014,6 +1030,7 @@ impl Default for Logger {
         let suffix = ".log";
         let extention = ".toml";
         Logger {
+            file_name_important: false,
             file_prefix: prefix.to_string(),
             file_suffix: suffix.to_string(),
             file_extention: extention.to_string(),
@@ -1050,7 +1067,7 @@ impl Logger {
         }
     }
 
-    /// Check level.
+    /// Check level.  
     pub fn enabled(&self, level: Level) -> bool {
         if level.number() <= self.level.number() {
             return true;
@@ -1058,45 +1075,47 @@ impl Logger {
         false
     }
 
-    /// Example:
+    /// Example:  
     ///
-    /// If 'tic-tac-toe-2020-07-11.log.toml', This is 'tic-tac-toe'.
+    /// If 'tic-tac-toe-2020-07-11.log.toml', This is 'tic-tac-toe'.  
     #[allow(dead_code)]
     pub fn get_file_prefix(&self) -> &str {
         &self.file_prefix
     }
-    /// Example:
+    /// Example:  
     ///
-    /// If 'tic-tac-toe-2020-07-11.log.toml', This is '.log'.
+    /// If 'tic-tac-toe-2020-07-11.log.toml', This is '.log'.  
     #[allow(dead_code)]
     pub fn get_file_suffix(&self) -> &str {
         &self.file_suffix
     }
-    /// Example:
+    /// Example:  
     ///
-    /// If 'tic-tac-toe-2020-07-11.log.toml', This is '.toml'.
+    /// If 'tic-tac-toe-2020-07-11.log.toml', This is '.toml'.  
     #[allow(dead_code)]
     pub fn get_file_extention(&self) -> &str {
         &self.file_extention
     }
-    /// Set name except StartDate.
+    /// Set name except StartDate.  
     ///
-    /// Example: 'tic-tac-toe-2020-07-11.log.toml'
-    /// - Prefix: 'tic-tac-toe'
-    /// - StartDate: '-2020-07-11'
-    /// - Suffix: '.log'
-    /// - Extention: '.toml'
+    /// Example: 'tic-tac-toe-2020-07-11.log.toml'  
+    /// - Prefix: 'tic-tac-toe'  
+    /// - StartDate: '-2020-07-11'  
+    /// - Suffix: '.log'  
+    /// - Extention: '.toml'  
     #[deprecated(
         since = "0.3.6",
         note = "Please use the casual_logger::Log::set_file_name() or casual_logger::Log::set_toml_ext() method instead"
     )]
     #[allow(dead_code)]
     pub fn set_file_name(&mut self, prefix: &str, suffix: &str, extention: &str) {
-        self.file_prefix = prefix.to_string();
-        self.file_suffix = suffix.to_string();
-        self.file_extention = extention.to_string();
+        if !self.file_name_important {
+            self.file_prefix = prefix.to_string();
+            self.file_suffix = suffix.to_string();
+            self.file_extention = extention.to_string();
+        }
     }
-    /// Create new file, or get exists file.
+    /// Create new file, or get exists file.  
     fn new_today_file(
         file_prefix: &str,
         file_suffix: &str,
