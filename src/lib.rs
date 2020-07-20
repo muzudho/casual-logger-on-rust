@@ -462,15 +462,41 @@ impl Log {
         note = "Please use the casual_logger::Log::set_opt(Opt::Development) method instead"
     )]
     pub fn set_development(during_development: bool) {
-        if let Ok(mut logger) = LOGGER.lock() {
-            logger.development = during_development;
+        if let Ok(opt_state) = OPT_STATE.lock() {
+            if !opt_state.opt_important {
+                if let Ok(mut logger) = LOGGER.lock() {
+                    logger.development = during_development;
+                }
+            }
         }
     }
 
     /// Optimization.
     pub fn set_opt(optimization: Opt) {
         if let Ok(mut opt_state) = OPT_STATE.lock() {
-            opt_state.set(optimization);
+            if !opt_state.opt_important {
+                opt_state.set(optimization);
+            }
+        }
+    }
+
+    /// The optimization cannot be changed later.  
+    /// 最適化は後で変更できません。  
+    ///
+    /// See also: `Log::set_opt()`.  
+    pub fn set_opt_important(optimization: Opt) {
+        Log::set_opt(optimization);
+        if let Ok(mut opt_state) = OPT_STATE.lock() {
+            opt_state.opt_important = true;
+        }
+    }
+
+    /// Optimization.  
+    /// 最適化。  
+    pub fn get_opt() -> Result<Opt, String> {
+        match OPT_STATE.lock() {
+            Ok(opt_state) => Ok(opt_state.opt),
+            Err(e) => Err(e.to_string()),
         }
     }
 
@@ -1453,7 +1479,7 @@ impl ParticipatingThreadsCounter {
 */
 
 /// Optimization.
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum Opt {
     /// Displays the work running in the background to standard output.
     Development,
@@ -1465,12 +1491,16 @@ pub enum Opt {
 
 /// Optimization.
 struct OptState {
+    /// The optimization cannot be changed later.  
+    /// 最適化は後で変更できません。  
+    opt_important: bool,
     /// Optimization.
     opt: Opt,
 }
 impl Default for OptState {
     fn default() -> Self {
         OptState {
+            opt_important: false,
             opt: Opt::BeginnersSupport,
         }
     }

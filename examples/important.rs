@@ -1,6 +1,6 @@
 //! Test important.
 
-use casual_logger::{Extension, Level, Log};
+use casual_logger::{Extension, Level, Log, Opt};
 
 fn main() {
     // File name.
@@ -33,6 +33,11 @@ fn main() {
         "timeout_secs=|{}|",
         Log::get_timeout_secs().unwrap()
     ));
+
+    // TODO Optimize.
+    Log::set_opt_important(Opt::Release);
+    Log::set_opt(Opt::Development);
+    Log::debug(&format!("opt=|{:?}|", Log::get_opt().unwrap()));
 
     // Finish.
     Log::remove_old_logs();
