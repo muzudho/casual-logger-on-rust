@@ -5,6 +5,9 @@ Not for product use.
 
 ## Example 1
 
+Minimal case.  
+最小の例。  
+
 Code:  
 
 ```rust
@@ -33,6 +36,90 @@ Info = 'Hello, world!!'
 
 ## Example 2
 
+Using TOML for log file is not bad except for production use.  
+It's painful to spend 1.5 times as much time searching the tree in the game,  
+but what you really want is to fix a bug.  
+It is easy to add information to TOML and it is easy to see.  
+ログ・ファイルにTOMLを使用することは、本番環境での使用を除いて悪くありません。  
+ゲームの木探索時間が1.5倍になるのは辛いですが、  
+本当に欲しいのは、バグを取ることです。  
+TOMLに情報を追加するのは簡単で、しかも見やすいです。  
+
+Code:  
+
+```rust
+//! Learn how to use TOML.  
+//! TOMLの使い方を学びます。  
+
+use casual_logger::{Log, Table};
+
+fn main() {
+    Log::set_file_name("today-s-plan");
+    Log::remove_old_logs();
+
+    // Use table by '_t' suffix.
+    // '_t' を末尾に付けて、テーブルを使用します。
+    Log::info_t(
+        // Key is alphanumeric underscore hyphen.
+        // A-Z, a-z, 0-9, _, -.
+        // キーに使える文字は英数字下線ハイフンです。
+        "ShoppingToday",
+        Table::default()
+            // Japanese YEN.
+            // 日本円。
+            .int("FluorescentLight", -7_000)
+            .int("VacuumCleaner", -53_000)
+            // Do not validate value. Unsafe.
+            .literal(
+                "VacuumCleanerPricesAtOtherStores",
+                "[ -63_000, -4_000, -10_000 ]",
+            )
+            .int("Rent", -40_000)
+            .uint("Salary", 190_000)
+            .str(
+                "Remark",
+                "Buy shelves in the near month..
+Replace the washing machine after a few years
+近い月に棚。
+数年後に洗濯機買い替え。",
+            ),
+    );
+
+    Log::flush();
+}
+```
+
+Output `today-s-plan-2020-07-21.log.toml` automatically generated:  
+
+```toml
+["Now=2020-07-21 08:25:26&Pid=2116&Thr=ThreadId(1)&Seq=1"]
+Info = 'ShoppingToday'
+FluorescentLight = -7000
+Remark = '''
+Buy shelves in the near month..
+Replace the washing machine after a few years
+近い月に棚。
+数年後に洗濯機買い替え。
+'''
+Rent = -40000
+Salary = 190000
+VacuumCleaner = -53000
+VacuumCleanerPricesAtOtherStores = [ -63_000, -4_000, -10_000 ]
+
+
+```
+
+## Example 3
+
+For practical purposes, specify the file retention days and log level.  
+Specify important to force the file name.  
+This is important when using 'casual_logger' in multiple libraries.  
+Important designation is on a first-come-first-served basis.  
+実際には、ファイルの保存日数とログレベルを指定します。  
+重要を指定して、ファイル名を強制します。  
+これは、複数のライブラリでカジュアルなロガーを使用する場合に重要です。  
+重要指定は、先着順です。  
+
 Code:  
 
 ```rust
@@ -42,6 +129,10 @@ Code:
 use casual_logger::{Level, Log, Table};
 
 fn main() {
+    // You can always make it important,
+    // so if you get lost, always omit important...
+    // いつでも important にできるので、
+    // 迷ったら常に important を省きましょう……
     Log::set_file_name_important("lesson1"); // For app use.
     Log::set_file_name("mischief1"); // For library use.
     Log::set_retention_days(2);
@@ -49,7 +140,7 @@ fn main() {
     Log::remove_old_logs();
 
     Log::info_t(
-        "Result",
+        "GameRecord",
         Table::default()
             .uint("Age", 200018)
             .str("Condition", "It's ok.")
@@ -58,13 +149,6 @@ fn main() {
             .str("Area", "Rever side")
             .str("Weather", "Rain")
             .int("Elevation", -40)
-            // Do not validate value. Unsafe.
-            .literal("Point", "[ 800, 300, 500 ]")
-            .str(
-                "Message",
-                "Hell, world!!
-こんにちわ、世界！！",
-            ),
     );
 
     Log::flush();
@@ -74,18 +158,13 @@ fn main() {
 Output `lesson1-2020-07-21.log.toml` automatically generated:  
 
 ```toml
-["Now=2020-07-21 06:37:48&Pid=7904&Thr=ThreadId(1)&Seq=1"]
-Info = 'Result'
+["Now=2020-07-21 08:40:50&Pid=12996&Thr=ThreadId(1)&Seq=1"]
+Info = 'GameRecord'
 "Lung breathing" = true
 Age = 200018
 Area = 'Rever side'
 Condition = "It's ok."
 Elevation = -40
-Message = '''
-Hell, world!!
-こんにちわ、世界！！
-'''
-Point = [ 800, 300, 500 ]
 Rank = 'A'
 Weather = 'Rain'
 
