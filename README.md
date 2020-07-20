@@ -17,7 +17,7 @@ fn main() {
 
     Log::info("Hello, world!!");
 
-    Log::wait();
+    Log::flush();
 }
 ```
 
@@ -60,7 +60,7 @@ fn main() {
             ),
     );
 
-    Log::wait();
+    Log::flush();
 }
 ```
 
@@ -105,7 +105,7 @@ The concept used by beginners.
 ### Disclaim
 
 * (1) In trade off for processing speed:
-  * **Don't forget wait** for logging to complete at **end of program**.
+  * **Don't forget flush** for logging to complete at **end of program**.
   * There is a waiting time of **20 milli second or more** before the logger ends.
 * (2) In trade off for ease of introduction:
   * You can break the toml format. **Do not validate**.
@@ -337,7 +337,7 @@ tree.",
     );
 
     // Wait for logging to complete or to timeout.
-    Log::wait();
+    Log::flush();
 }
 ```
 
@@ -768,16 +768,16 @@ tree.
 
 ```
 
-### Don't forget wait for logging to complete at end of program
+### Don't forget flush for logging to complete at end of program
 
 Code:  
 
 ```rust
     // Wait for logging to complete or to timeout.
-    Log::wait();
+    Log::flush();
 ```
 
-If you do not wait,  
+If you do not flush,  
 the program will exit before writing all the logs.  
 
 ## TODO

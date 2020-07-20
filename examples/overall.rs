@@ -211,5 +211,5 @@ tree.",
     );
 
     // Wait for logging to complete or to timeout.
-    Log::wait();
+    Log::flush();
 }

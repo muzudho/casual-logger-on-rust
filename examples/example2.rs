@@ -23,5 +23,5 @@ fn main() {
             ),
     );
 
-    Log::wait();
+    Log::flush();
 }

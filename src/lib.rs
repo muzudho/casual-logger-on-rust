@@ -381,10 +381,22 @@ impl Log {
         };
         remove_num
     }
+
     /// Wait for logging to complete.  
     ///
     /// See also: Log::set_timeout_secs(), Log::set_opt().  
+    #[deprecated(
+        since = "0.5.1",
+        note = "Please use the casual_logger::Log::flush() method instead"
+    )]
     pub fn wait() {
+        Log::flush();
+    }
+
+    /// Wait for logging to complete.  
+    ///
+    /// See also: Log::set_timeout_secs(), Log::set_opt().  
+    pub fn flush() {
         let (timeout_secs, opt) = if let Ok(logger) = LOGGER.lock() {
             (
                 Logger::get_timeout_sec(&logger),
@@ -435,7 +447,7 @@ impl Log {
     /// Wait for logging to complete.
     #[deprecated(
         since = "0.3.2",
-        note = "Please use the casual_logger::Log::wait() method instead"
+        note = "Please use the casual_logger::Log::flush() method instead"
     )]
     pub fn wait_for_logging_to_complete<F>(timeout_secs: u64, count_down: F)
     where
@@ -468,7 +480,7 @@ impl Log {
             }
 
             // Out of QUEUE.lock().
-            if let Some(completed) = Log::flush() {
+            if let Some(completed) = Log::flush_target_queue() {
                 if completed {
                     // Reset.
                     empty_que_count = 0;
@@ -740,7 +752,7 @@ impl Log {
         // Fatal runs at any level.
         Log::reserve(&Table::new(Level::Fatal, message, false));
         // Wait for logging to complete or to timeout.
-        Log::wait();
+        Log::flush();
         message.to_string()
     }
     /// Fatal level. There is a trailing newline.
@@ -750,7 +762,7 @@ impl Log {
         // Fatal runs at any level.
         Log::reserve(&Table::new(Level::Fatal, message, true));
         // Wait for logging to complete or to timeout.
-        Log::wait();
+        Log::flush();
         // Append trailing newline.
         format!("{}{}", message, NEW_LINE).to_string()
     }
@@ -765,7 +777,7 @@ impl Log {
         table.message_trailing_newline = false;
         Log::reserve(table);
         // Wait for logging to complete or to timeout.
-        Log::wait();
+        Log::flush();
         message.to_string()
     }
     /// Fatal level. There is a trailing newline.
@@ -778,7 +790,7 @@ impl Log {
         table.message_trailing_newline = true;
         Log::reserve(table);
         // Wait for logging to complete or to timeout.
-        Log::wait();
+        Log::flush();
         // Append trailing newline.
         format!("{}{}", message, NEW_LINE).to_string()
     }
@@ -825,7 +837,7 @@ impl Log {
             if signal.can_flush() {
                 signal.set_can_flush(false);
                 thread::spawn(move || {
-                    Log::flush();
+                    Log::flush_target_queue();
                 });
             }
         }
@@ -838,7 +850,7 @@ impl Log {
     /// Some(true) - Complete.
     /// Some(false) - Not work.
     /// None - Error.
-    fn flush() -> Option<bool> {
+    fn flush_target_queue() -> Option<bool> {
         // By buffering, the number of file writes is reduced.
         let mut str_buf = String::new();
 

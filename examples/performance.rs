@@ -63,7 +63,7 @@ fn main() {
     }
 
     // Wait for logging to complete or to timeout.
-    Log::wait();
+    Log::flush();
 
     // Block.
     let count_1 = if let Ok(count_1) = receiver1.recv() {

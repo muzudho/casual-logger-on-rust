@@ -68,5 +68,5 @@ key",
             ),
     );
 
-    Log::wait();
+    Log::flush();
 }
