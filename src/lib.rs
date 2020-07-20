@@ -428,7 +428,29 @@ impl Log {
     /// Wait for seconds logging to complete.  
     pub fn set_timeout_secs(secs: u64) {
         if let Ok(mut logger) = LOGGER.lock() {
-            logger.timeout_secs = secs;
+            if !logger.timeout_secs_important {
+                logger.timeout_secs = secs;
+            }
+        }
+    }
+
+    /// The timeout seconds cannot be changed later.  
+    /// タイムアウト秒は後で変更できません。  
+    ///
+    /// See also: `Log::set_timeout_secs()`.  
+    pub fn set_timeout_secs_important(secs: u64) {
+        Log::set_timeout_secs(secs);
+        if let Ok(mut logger) = LOGGER.lock() {
+            logger.timeout_secs_important = true;
+        }
+    }
+
+    /// The timeout seconds.  
+    /// タイムアウト秒。  
+    pub fn get_timeout_secs() -> Result<u64, String> {
+        match LOGGER.lock() {
+            Ok(logger) => Ok(logger.timeout_secs),
+            Err(e) => Err(e.to_string()),
         }
     }
 
@@ -1092,26 +1114,29 @@ pub struct Logger {
         note = "Please use the casual_logger::Log::set_retention_days() method instead"
     )]
     pub retention_days: i64,
-    /// Controll file.
-    log_file: Option<LogFile>,
-    /// Timeout seconds when fatal.
-    #[deprecated(
-        since = "0.3.2",
-        note = "Please use the casual_logger::Log::set_timeout_secs() method instead"
-    )]
-    pub fatal_timeout_secs: u64,
+    /// The timeout seconds cannot be changed later.  
+    /// タイムアウト秒は後で変更できません。  
+    timeout_secs_important: bool,
     /// Timeout seconds.
     #[deprecated(
         since = "0.3.9",
         note = "Please use the casual_logger::Log::set_timeout_secs() method instead"
     )]
     pub timeout_secs: u64,
+    /// Timeout seconds when fatal.
+    #[deprecated(
+        since = "0.3.2",
+        note = "Please use the casual_logger::Log::set_timeout_secs() method instead"
+    )]
+    pub fatal_timeout_secs: u64,
     /// Set to true to allow Casual_logger to output information to stdout and stderr.
     #[deprecated(
         since = "0.3.10",
         note = "Please use the casual_logger::Log::set_opt(Opt::Development) method instead"
     )]
     pub development: bool,
+    /// Controll file.
+    log_file: Option<LogFile>,
 }
 impl Default for Logger {
     fn default() -> Self {
@@ -1128,6 +1153,7 @@ impl Default for Logger {
             level: Level::Trace,
             retention_days_important: false,
             retention_days: 7,
+            timeout_secs_important: false,
             timeout_secs: 30,
             fatal_timeout_secs: 30,
             development: false,

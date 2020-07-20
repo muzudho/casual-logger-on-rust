@@ -26,6 +26,14 @@ fn main() {
         Log::get_retention_days().unwrap()
     ));
 
+    // Timeout seconds.
+    Log::set_timeout_secs_important(45);
+    Log::set_timeout_secs(70);
+    Log::debug(&format!(
+        "timeout_secs=|{}|",
+        Log::get_timeout_secs().unwrap()
+    ));
+
     // Finish.
     Log::remove_old_logs();
     Log::flush();
