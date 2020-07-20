@@ -6,7 +6,9 @@
 // (1) `cargo test`
 // (2a) `cargo run --example example1`
 // (2b) `cargo run --example example2`
-// (2c) `cargo run --example overall`
+// (2c) `cargo run --example fatal`
+// (2d) `cargo run --example important`
+// (2e) `cargo run --example overall`
 // (3) Open auto-generated log file. I check it.
 // (4) Remove the log file.
 // (5) Version up on Cargo.toml.
@@ -295,6 +297,16 @@ impl Log {
         }
     }
 
+    /// Example:  
+    ///
+    /// If 'tic-tac-toe-2020-07-11.log.toml', This is 'tic-tac-toe'.  
+    pub fn get_file_name() -> Result<String, String> {
+        match LOGGER.lock() {
+            Ok(logger) => Ok(logger.file_prefix.to_string()),
+            Err(e) => Err(e.to_string()),
+        }
+    }
+
     /// The file name cannot be changed later.  
     /// ファイル名は後で変更できません。  
     ///
@@ -311,16 +323,39 @@ impl Log {
     /// If you don't like the .toml extension, change.  
     pub fn set_file_ext(ext: Extension) {
         if let Ok(mut logger) = LOGGER.lock() {
-            match ext {
-                Extension::LogToml => {
-                    logger.file_suffix = ".log".to_string();
-                    logger.file_extention = ".toml".to_string();
-                }
-                Extension::Log => {
-                    logger.file_suffix = "".to_string();
-                    logger.file_extention = ".log".to_string();
+            if !logger.file_ext_important {
+                match ext {
+                    Extension::LogToml => {
+                        logger.file_suffix = ".log".to_string();
+                        logger.file_extension = ".toml".to_string();
+                    }
+                    Extension::Log => {
+                        logger.file_suffix = "".to_string();
+                        logger.file_extension = ".log".to_string();
+                    }
                 }
             }
+        }
+    }
+
+    /// The file extension cannot be changed later.  
+    /// ファイル名は後で変更できません。  
+    ///
+    /// See also: `Log::set_file_name()`.  
+    pub fn set_file_ext_important(ext: Extension) {
+        Log::set_file_ext(ext);
+        if let Ok(mut logger) = LOGGER.lock() {
+            logger.file_ext_important = true;
+        }
+    }
+
+    /// Example:  
+    ///
+    /// If 'tic-tac-toe-2020-07-11.log.toml', This is '.log.toml'.  
+    pub fn get_file_ext_str() -> Result<String, String> {
+        match LOGGER.lock() {
+            Ok(logger) => Ok(format!("{}{}", logger.file_suffix, logger.file_extension)),
+            Err(e) => Err(e.to_string()),
         }
     }
 
@@ -987,10 +1022,13 @@ pub struct Logger {
     file_name_important: bool,
     /// For example, the short name of your application.
     file_prefix: String,
+    /// The file suffix, extension cannot be changed later.  
+    /// 接尾辞、拡張子は後で変更できません。  
+    file_ext_important: bool,
     /// For example, '.log'. To be safe, include a word that clearly states that you can delete the file.
     file_suffix: String,
     /// If you don't like the .toml extension, leave the suffix empty and the .log extension.
-    file_extention: String,
+    file_extension: String,
     /// File retention days. Delete the file after day from StartDate.
     #[deprecated(
         since = "0.3.8",
@@ -1028,12 +1066,13 @@ impl Default for Logger {
     fn default() -> Self {
         let prefix = "default";
         let suffix = ".log";
-        let extention = ".toml";
+        let extension = ".toml";
         Logger {
             file_name_important: false,
             file_prefix: prefix.to_string(),
+            file_ext_important: false,
             file_suffix: suffix.to_string(),
-            file_extention: extention.to_string(),
+            file_extension: extension.to_string(),
             retention_days: 7,
             log_file: None,
             level: Level::Trace,
@@ -1078,10 +1117,15 @@ impl Logger {
     /// Example:  
     ///
     /// If 'tic-tac-toe-2020-07-11.log.toml', This is 'tic-tac-toe'.  
+    #[deprecated(
+        since = "0.5.2",
+        note = "Please use the casual_logger::Log::get_file_name() method instead"
+    )]
     #[allow(dead_code)]
     pub fn get_file_prefix(&self) -> &str {
         &self.file_prefix
     }
+
     /// Example:  
     ///
     /// If 'tic-tac-toe-2020-07-11.log.toml', This is '.log'.  
@@ -1093,8 +1137,8 @@ impl Logger {
     ///
     /// If 'tic-tac-toe-2020-07-11.log.toml', This is '.toml'.  
     #[allow(dead_code)]
-    pub fn get_file_extention(&self) -> &str {
-        &self.file_extention
+    pub fn get_file_extension(&self) -> &str {
+        &self.file_extension
     }
     /// Set name except StartDate.  
     ///
@@ -1108,18 +1152,20 @@ impl Logger {
         note = "Please use the casual_logger::Log::set_file_name() or casual_logger::Log::set_toml_ext() method instead"
     )]
     #[allow(dead_code)]
-    pub fn set_file_name(&mut self, prefix: &str, suffix: &str, extention: &str) {
+    pub fn set_file_name(&mut self, prefix: &str, suffix: &str, extension: &str) {
         if !self.file_name_important {
             self.file_prefix = prefix.to_string();
+        }
+        if !self.file_ext_important {
             self.file_suffix = suffix.to_string();
-            self.file_extention = extention.to_string();
+            self.file_extension = extension.to_string();
         }
     }
     /// Create new file, or get exists file.  
     fn new_today_file(
         file_prefix: &str,
         file_suffix: &str,
-        file_extention: &str,
+        file_extension: &str,
     ) -> (Date<Local>, File) {
         let start_date = Local::today();
         let file = OpenOptions::new()
@@ -1131,7 +1177,7 @@ impl Logger {
                 file_prefix,
                 start_date.format("%Y-%m-%d"),
                 file_suffix,
-                file_extention
+                file_extension
             )))
             .unwrap();
         (start_date, file)
@@ -1149,10 +1195,10 @@ impl Logger {
         //      prefix = "tic-tac-toe"
         //      now = "-2020-07-11"
         //      suffix = ".log"
-        //      extention = ".toml"
+        //      extension = ".toml"
         let re = if let Ok(x) = Regex::new(&format!(
             "./{}-{}{}{}",
-            self.file_prefix, r"(\d{4})-(\d{2})-(\d{2})", self.file_suffix, self.file_extention
+            self.file_prefix, r"(\d{4})-(\d{2})-(\d{2})", self.file_suffix, self.file_extension
         )) {
             x
         } else {
@@ -1235,7 +1281,7 @@ impl Logger {
         // New file, if file removed or new.
         if let None = self.log_file {
             let (start_date, file) =
-                Logger::new_today_file(&self.file_prefix, &self.file_suffix, &self.file_extention);
+                Logger::new_today_file(&self.file_prefix, &self.file_suffix, &self.file_extension);
             self.log_file = Some(LogFile::new(start_date, file));
         }
 
