@@ -57,7 +57,7 @@ const NEW_LINE_ESCAPED_CHARS: &'static [char; 2] = &['\\', 'n'];
 /// |<-- Low Level ------------------------- High level -->|  
 /// |<-- High priority ------------------- Low priority -->|  
 /// | Fatal < Error < Warn < Notice < Info < Debug < Trace |  
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub enum Level {
     /// If the program cannot continue.
     #[allow(dead_code)]
@@ -341,7 +341,7 @@ impl Log {
     /// The file extension cannot be changed later.  
     /// ファイル名は後で変更できません。  
     ///
-    /// See also: `Log::set_file_name()`.  
+    /// See also: `Log::set_file_ext()`.  
     pub fn set_file_ext_important(ext: Extension) {
         Log::set_file_ext(ext);
         if let Ok(mut logger) = LOGGER.lock() {
@@ -367,7 +367,30 @@ impl Log {
     /// |Fatal< Error < Warn < Notice < Info < Debug <Trace|  
     pub fn set_level(level: Level) {
         if let Ok(mut logger) = LOGGER.lock() {
-            logger.level = level;
+            if !logger.level_important {
+                logger.level = level;
+            }
+        }
+    }
+
+    /// The level cannot be changed later.  
+    /// レベルは後で変更できません。  
+    ///
+    /// See also: `Log::set_level()`.  
+    pub fn set_level_important(level: Level) {
+        Log::set_level(level);
+        if let Ok(mut logger) = LOGGER.lock() {
+            logger.level_important = true;
+        }
+    }
+
+    /// Example:  
+    ///
+    /// If 'tic-tac-toe-2020-07-11.log.toml', This is '.log.toml'.  
+    pub fn get_level() -> Result<Level, String> {
+        match LOGGER.lock() {
+            Ok(logger) => Ok(logger.level),
+            Err(e) => Err(e.to_string()),
         }
     }
 
@@ -1037,6 +1060,9 @@ pub struct Logger {
     pub retention_days: i64,
     /// Controll file.
     log_file: Option<LogFile>,
+    /// The level cannot be changed later.  
+    /// レベルは後で変更できません。  
+    level_important: bool,
     /// Activation.
     #[deprecated(
         since = "0.3.7",
@@ -1075,6 +1101,7 @@ impl Default for Logger {
             file_extension: extension.to_string(),
             retention_days: 7,
             log_file: None,
+            level_important: false,
             level: Level::Trace,
             fatal_timeout_secs: 30,
             timeout_secs: 30,
