@@ -9,6 +9,8 @@
 // (2c) `cargo run --example fatal`
 // (2d) `cargo run --example important`
 // (2e) `cargo run --example overall`
+// (2f) `cargo run --example performance`
+// (2g) `cargo run --example toml_cover`
 // (3) Open auto-generated log file. I check it.
 // (4) Remove the log file.
 // (5) Version up on Cargo.toml.
@@ -191,6 +193,15 @@ impl Default for Table {
     }
 }
 impl Table {
+    /// Create a new table.  
+    /// 新しいテーブルを作成します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `level` - Log level.  
+    ///             ログ・レベル。  
+    /// * `trailing_newline` - Trailing newline.  
+    ///                         改行の有無。  
     fn new(level: Level, message: &str, trailing_newline: bool) -> Self {
         Table {
             sorted_map: BTreeMap::new(),
@@ -219,11 +230,24 @@ impl Table {
         converted
     }
     */
+    /// Deprecated.  
+    /// 廃止。  
     #[deprecated(since = "0.4.1", note = "This is private method")]
     pub fn format_str_value(value: &str) -> String {
         Parser::format_str_value(value)
     }
-    /// Correct the key automatically.
+    /// Correct the key automatically.  
+    /// キーを補正します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
     fn correct_key(key: &str) -> String {
         if let Ok(logger) = LOGGER.lock() {
             match Logger::get_optimization(&logger) {
@@ -254,8 +278,45 @@ impl Table {
             key.to_string()
         }
     }
-    /// Insert string value.
-    pub fn str<'a>(&'a mut self, key: &'a str, value: &'a str) -> &'a mut Self {
+    /// Insert literal string value. Do not put in quotes.  
+    /// リテラル文字列を挿入します。引用符で挟みません。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    /// * `value` - A value.  
+    ///             値。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
+    pub fn literal<'a>(&'a mut self, key: &'a str, value: &str) -> &'a mut Self {
+        self.sorted_map.insert(
+            // Log detail level.
+            Table::correct_key(key),
+            // Message.
+            value.to_string(),
+        );
+
+        self
+    }
+    /// Insert string value.  
+    /// 文字列を挿入します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    /// * `value` - A value.  
+    ///             値。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
+    pub fn str<'a>(&'a mut self, key: &'a str, value: &str) -> &'a mut Self {
         self.sorted_map.insert(
             // Log detail level.
             Table::correct_key(key),
@@ -265,8 +326,117 @@ impl Table {
 
         self
     }
-    /// Insert literal string value.
-    pub fn literal<'a>(&'a mut self, key: &'a str, value: &'a str) -> &'a mut Self {
+    /// Insert character value.  
+    /// 文字を挿入します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    /// * `value` - A value.  
+    ///             値。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
+    pub fn char<'a>(&'a mut self, key: &'a str, value: char) -> &'a mut Self {
+        self.sorted_map.insert(
+            // Log detail level.
+            Table::correct_key(key),
+            // Message.
+            Table::format_str_value(&value.to_string()).to_string(),
+        );
+
+        self
+    }
+    /// Insert integer value.  
+    /// 符号付き整数を挿入します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    /// * `value` - A value.  
+    ///             値。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
+    pub fn int<'a>(&'a mut self, key: &'a str, value: i128) -> &'a mut Self {
+        self.sorted_map.insert(
+            // Log detail level.
+            Table::correct_key(key),
+            // Message.
+            value.to_string(),
+        );
+
+        self
+    }
+    /// Insert unsigned integer value.  
+    /// 符号無し整数を挿入します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    /// * `value` - A value.  
+    ///             値。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
+    pub fn uint<'a>(&'a mut self, key: &'a str, value: u128) -> &'a mut Self {
+        self.sorted_map.insert(
+            // Log detail level.
+            Table::correct_key(key),
+            // Message.
+            value.to_string(),
+        );
+
+        self
+    }
+    /// Insert float value.  
+    /// 浮動小数点数を挿入します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    /// * `value` - A value.  
+    ///             値。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
+    pub fn float<'a>(&'a mut self, key: &'a str, value: f64) -> &'a mut Self {
+        self.sorted_map.insert(
+            // Log detail level.
+            Table::correct_key(key),
+            // Message.
+            value.to_string(),
+        );
+
+        self
+    }
+    /// Insert boolean value.  
+    /// 真理値を挿入します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    /// * `value` - A value.  
+    ///             値。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
+    pub fn bool<'a>(&'a mut self, key: &'a str, value: bool) -> &'a mut Self {
         self.sorted_map.insert(
             // Log detail level.
             Table::correct_key(key),
@@ -281,7 +451,14 @@ impl Table {
 /// Easy to use logging.
 pub struct Log {}
 impl Log {
-    /// Log file name prefix.  
+    /// For library use. No for application use.  
+    /// ライブラリでの使用向け。 アプリケーション向けではありません。  
+    ///
+    /// Set the log file name prefix.  
+    /// ログ・ファイル名接頭辞を設定します。  
+    ///
+    /// The policy is to associate one log file with one application.  
+    /// ポリシーは、1つのログファイルを1つのアプリケーションに関連付けることです。  
     ///
     /// Example: 'tic-tac-toe-2020-07-11.log.toml'  
     /// - Prefix: 'tic-tac-toe'  
@@ -289,6 +466,8 @@ impl Log {
     /// - Suffix: '.log' - To be safe, include a word that  
     ///         clearly states that you can delete the file.  
     /// - Extention: '.toml'  
+    ///
+    /// See also: 'Log::set_file_name_important()'.  
     pub fn set_file_name(prefix: &str) {
         if let Ok(mut logger) = LOGGER.lock() {
             if !logger.file_name_important {
@@ -307,10 +486,23 @@ impl Log {
         }
     }
 
-    /// The file name cannot be changed later.  
-    /// ファイル名は後で変更できません。  
+    /// For application use. No for library use.  
+    /// アプリケーションでの使用向け。 ライブラリ向けではありません。  
     ///
-    /// See also: `Log::set_file_name()`.  
+    /// Set the log file name prefix. The file name cannot be changed later.  
+    /// ログ・ファイル名接頭辞を設定します。ファイル名は後で変更できません。  
+    ///
+    /// The policy is to associate one log file with one application.  
+    /// ポリシーは、1つのログファイルを1つのアプリケーションに関連付けることです。  
+    ///
+    /// Example: 'tic-tac-toe-2020-07-11.log.toml'  
+    /// - Prefix: 'tic-tac-toe'  
+    /// - StartDate: '-2020-07-11' automatically.  
+    /// - Suffix: '.log' - To be safe, include a word that  
+    ///         clearly states that you can delete the file.  
+    /// - Extention: '.toml'  
+    ///
+    /// See also: 'Log::set_file_name()'.  
     pub fn set_file_name_important(prefix: &str) {
         Log::set_file_name(prefix);
         if let Ok(mut logger) = LOGGER.lock() {
@@ -595,6 +787,12 @@ impl Log {
         F: Fn(u64, String),
     {
         let mut elapsed_milli_secs = 0;
+
+        // Wait a moment for the thread just created to write.
+        // 今作成されたスレッドが書き込むのを少し待ちます。
+        thread::sleep(std::time::Duration::from_millis(20));
+        elapsed_milli_secs += 20;
+
         let mut empty_que_count = 0;
         // let mut participating_threads_count = 0;
         // || 0 < participating_threads_count

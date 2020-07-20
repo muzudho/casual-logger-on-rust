@@ -1,4 +1,5 @@
 //! All features are described in one copy and paste.
+//! すべての機能が1つのコピー＆ペーストで説明されています。
 
 use casual_logger::{Extension, Level, Log, Opt, Table};
 
@@ -19,13 +20,13 @@ fn main() {
     // - StartDate is automatically added.
     //   開始日は自動で付きます。
     //
-    // Set the prefix with 'set_file_name' method.
-    // 接頭辞を付けてください。
+    // Set the file name prefix.
+    // ファイル名に接頭辞を付けてください。
     Log::set_file_name("tic-tac-toe");
-    //
-    // Important cannot be changed later.
-    // 末尾に '_important' を付ければ後の変更を
-    // 無効にできます。
+    // Methods with a trailing'_important'
+    // can negate later changes.
+    // 末尾に '_important' の付いたメソッドは、
+    // 後の変更を無効にできます。
     // Log::set_file_name_important("tic-tac-toe");
     //
     // Log file extension:

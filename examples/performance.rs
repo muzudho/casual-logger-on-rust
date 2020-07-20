@@ -15,6 +15,7 @@ fn main() {
     // Log::set_opt(Opt::BeginnersSupport); // 7657 ms. --> 9589 ms.
     Log::set_opt(Opt::Release); // 10998 ms. --> 10409 ms. --> 14035 ms. --> 13975 ms.
     Log::remove_old_logs();
+    println!("Notice  | Start!");
 
     // Multi thread test.
     let size = 100_000;

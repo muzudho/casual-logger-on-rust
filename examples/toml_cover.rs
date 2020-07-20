@@ -13,6 +13,11 @@ fn main() {
     Log::infoln_t(
         "String test",
         Table::default()
+            .int("Distance", -128)
+            .uint("Age", 200018)
+            .float("Weight", 45.5)
+            .bool("Tall", false)
+            .char("Initial", 'A')
             .str("FilePathOnWindows", "C:\\User\\Muzudho")
             .str("FilePathOnWindowsInDSQ", "''C:\\User\\Muzudho''")
             .str("FilePathOnLinuxOS", "/etc/nginx/conf.d")

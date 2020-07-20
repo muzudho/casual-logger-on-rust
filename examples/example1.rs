@@ -1,4 +1,5 @@
-//! You can copy and paste and use immediately.
+//! You can copy and paste and use immediately.  
+//! コピー＆ペーストしてすぐに使用できます。  
 
 use casual_logger::Log;
 

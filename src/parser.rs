@@ -31,7 +31,8 @@ impl Parser {
         text.replace("\\", "\\\\")
     }
 
-    #[deprecated(since = "0.4.1", note = "This is private method")]
+    /// Parse a string.  
+    /// 文字列をパースします。  
     pub fn format_str_value(value: &str) -> String {
         // let value = Table::convert_multi_byte_string(slice);
         // Divide by A, B, C, E or F.

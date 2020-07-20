@@ -41,5 +41,6 @@ fn main() {
 
     // Finish.
     Log::remove_old_logs();
+
     Log::flush();
 }
