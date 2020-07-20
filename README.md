@@ -42,7 +42,7 @@ Code:
 use casual_logger::{Level, Log, Table};
 
 fn main() {
-    Log::set_file_name_important("lesson1"); // For app.
+    Log::set_file_name_important("lesson1"); // For app use.
     Log::set_file_name("mischief1"); // For library use.
     Log::set_retention_days(2);
     Log::set_level(Level::Info);
@@ -102,8 +102,12 @@ The concept used by beginners.
 * **Rotate** log by date automatically.
 * **Delete** old log files. (semi-automatic)
 * Log files can **only be placed** in the working directory.
-* 1 application, 1 log file. Writing a log from the library writes the log to **the first (or last) specified** log file.  
-    1つのアプリケーション、1つのログ・ファイル。 ライブラリからログを書き込むと、**指定した最初（または最後）**のログファイルにログが書き込まれます。  
+* Write policy is **one application, one log file**.  
+    書込み方針は、 **１アプリケーション１ログファイル** です。  
+    * Priority 1: First important log file.  
+        優先順位１: 最初に重要指定したログ・ファイル。
+    * Priority 2: Last specified log file.  
+        優先順位２: 最後に指定したログ・ファイル。
 
 ### 2. Human readable log
 

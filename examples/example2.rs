@@ -4,7 +4,7 @@
 use casual_logger::{Level, Log, Table};
 
 fn main() {
-    Log::set_file_name_important("lesson1"); // For app.
+    Log::set_file_name_important("lesson1"); // For app use.
     Log::set_file_name("mischief1"); // For library use.
     Log::set_retention_days(2);
     Log::set_level(Level::Info);
