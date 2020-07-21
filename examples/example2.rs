@@ -20,6 +20,7 @@ fn main() {
             .int("FluorescentLight", -7_000)
             .int("VacuumCleaner", -53_000)
             // Do not validate value. Unsafe.
+            // 構文チェックされません。慎重に。
             .literal(
                 "VacuumCleanerPricesAtOtherStores",
                 "[ -63_000, -4_000, -10_000 ]",
@@ -28,8 +29,8 @@ fn main() {
             .uint("Salary", 190_000)
             .str(
                 "Remark",
-                "Buy shelves in the near month..
-Replace the washing machine after a few years
+                "Buy shelves in the near month.
+Replace the washing machine after a few years.
 近い月に棚。
 数年後に洗濯機買い替え。",
             ),

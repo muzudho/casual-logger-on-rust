@@ -2,6 +2,11 @@
 
 This logger with **few settings** to repeat practice of many programming tutorials.  
 Not for product use.  
+このロガーは、多くのプログラミングチュートリアルの練習を  
+繰り返したい人向けに、設定の手間が少ないようにしています。  
+
+Japanese before machine translation is attached.  
+機械翻訳する前の日本語を添えます。  
 
 ## Example 1
 
@@ -40,7 +45,7 @@ Using TOML for log file is not bad except for production use.
 It's painful to spend 1.5 times as much time searching the tree in the game,  
 but what you really want is to fix a bug.  
 It is easy to add information to TOML and it is easy to see.  
-ログ・ファイルにTOMLを使用することは、本番環境での使用を除いて悪くありません。  
+ログファイルにTOMLを使用することは本番環境での使用を除いて悪くありません。  
 ゲームの木探索時間が1.5倍になるのは辛いですが、  
 本当に欲しいのは、バグを取ることです。  
 TOMLに情報を追加するのは簡単で、しかも見やすいです。  
@@ -70,6 +75,7 @@ fn main() {
             .int("FluorescentLight", -7_000)
             .int("VacuumCleaner", -53_000)
             // Do not validate value. Unsafe.
+            // 構文チェックされません。慎重に。
             .literal(
                 "VacuumCleanerPricesAtOtherStores",
                 "[ -63_000, -4_000, -10_000 ]",
@@ -96,8 +102,8 @@ Output `today-s-plan-2020-07-21.log.toml` automatically generated:
 Info = 'ShoppingToday'
 FluorescentLight = -7000
 Remark = '''
-Buy shelves in the near month..
-Replace the washing machine after a few years
+Buy shelves in the near month.
+Replace the washing machine after a few years.
 近い月に棚。
 数年後に洗濯機買い替え。
 '''
@@ -117,7 +123,7 @@ This is important when using 'casual_logger' in multiple libraries.
 Important designation is on a first-come-first-served basis.  
 実際には、ファイルの保存日数とログレベルを指定します。  
 重要を指定して、ファイル名を強制します。  
-これは、複数のライブラリでカジュアルなロガーを使用する場合に重要です。  
+これは、複数のライブラリで 'カジュアル・ロガー' を使用する場合に重要です。  
 重要指定は、先着順です。  
 
 Code:  
@@ -229,14 +235,13 @@ fn main() {
     // ログ・ファイル名の例:
     //
     //      'tic-tac-toe-2020-07-11.log.toml'
-    //       -----------
-    //       Prefix     -----------
-    //       接頭辞     StartDate  ----
-    //                  開始日     Suffix
-    //                             接尾辞
-    //                                 -----
-    //                                 Extention
-    //                                 拡張子
+    //      1-----------          3----
+    //                 2-----------   4-----
+    //
+    //      1 Prefix              3 Suffix
+    //        接頭辞                接尾辞
+    //                 2 StartDate    4 Extention
+    //                   開始日         拡張子
     //
     // - StartDate is automatically added.
     //   開始日は自動で付きます。
