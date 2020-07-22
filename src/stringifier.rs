@@ -33,7 +33,7 @@ impl Stringifier {
         let mut toml = format!(
             "[\"{}\"]
 ",
-            Stringifier::create_table_name(i_table)
+            i_table.name
         );
         // Log level message.
         let message = if i_table.table.message_trailing_newline {
@@ -63,24 +63,22 @@ impl Stringifier {
         toml
     }
 
-    /// abc in `["abc"]`
-    pub fn create_table_name(i_table: &InternalTable) -> String {
+    /// Table name to keep for ordering.
+    /// For example, you can parse it easily by writing the table name like a GET query.
+    pub fn create_table_name2(seq: u128) -> String {
         format!(
-            // Table name to keep for ordering.
-            // For example, you can parse it easily by writing the table name like a GET query.
-            "Now={}&Pid={}&Thr={}&Seq={}",
             // If you use ISO8601, It's "%Y-%m-%dT%H:%M:%S%z". However, it does not set the date format.
             // Make it easier to read.
+            "Now={}&Pid={}&Thr={}&Seq={}",
             Local::now().format("%Y-%m-%d %H:%M:%S"),
             // Process ID.
             process::id(),
-            // Thread ID. However, Note that you are not limited to numbers.
-            i_table.thread_id,
-            // Line number. This is to avoid duplication.
-            i_table.seq
+            Stringifier::thread_id().to_string(),
+            seq
         )
         .to_string()
     }
+    /// Automatic. Thread ID. However, Note that you are not limited to numbers.
     pub fn thread_id() -> String {
         format!("{:?}", thread::current().id())
     }

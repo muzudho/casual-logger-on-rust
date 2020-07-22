@@ -1165,7 +1165,7 @@ impl Default for Logger {
     }
 }
 impl Logger {
-    /// Sequential number on thread.
+    /// Automatic sequential number on thread.
     pub fn create_seq() -> u128 {
         SEQ.with(move |seq| {
             let old = *seq.borrow();

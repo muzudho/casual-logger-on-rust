@@ -16,10 +16,9 @@ lazy_static! {
 
 #[derive(Clone)]
 pub struct InternalTable {
-    /// Automatic. Thread ID. However, Note that you are not limited to numbers.
-    pub thread_id: String,
-    /// Automatic.
-    pub seq: u128,
+    /// Table name.
+    /// `a=1&b=2` in `["a=1&b=2"]`.
+    pub name: String,
     /// Clone.
     pub table: Table,
     /// Indent level.
@@ -28,8 +27,7 @@ pub struct InternalTable {
 impl InternalTable {
     pub fn new(table: &Table) -> Self {
         InternalTable {
-            thread_id: Stringifier::thread_id().to_string(),
-            seq: Logger::create_seq(),
+            name: Stringifier::create_table_name2(Logger::create_seq()),
             table: table.clone(),
             indent: 0,
         }
