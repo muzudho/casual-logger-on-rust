@@ -18,7 +18,7 @@ lazy_static! {
 #[derive(Clone)]
 pub struct InternalTable {
     /// `A` in `[A.B]`.
-    pub parent_name: Option<String>,
+    pub parent_table_name: Option<String>,
     /// Table name.
     /// `a=1&b=2` in `["a=1&b=2"]`.
     pub base_name: String,
@@ -28,9 +28,9 @@ pub struct InternalTable {
     pub indent: usize,
 }
 impl InternalTable {
-    pub fn new(parent_name: Option<String>, base_name: &str, table: &Table) -> Self {
+    pub fn new(parent_table_name: Option<String>, base_name: &str, table: &Table) -> Self {
         InternalTable {
-            parent_name: parent_name,
+            parent_table_name: parent_table_name,
             base_name: base_name.to_string(),
             table: table.clone(),
             indent: 0,
@@ -39,8 +39,8 @@ impl InternalTable {
     pub fn full_name(&self) -> String {
         format!(
             "{}{}",
-            if let Some(parent_name) = &self.parent_name {
-                format!("{}.", parent_name)
+            if let Some(parent_table_name) = &self.parent_table_name {
+                format!("{}.", parent_table_name)
             } else {
                 "".to_string()
             },
@@ -109,6 +109,9 @@ impl InternalTable {
 impl Default for Table {
     fn default() -> Self {
         Table {
+            // The base name is added when writing the log.
+            // ログを書くときにベース名が付きます。
+            base_name: "".to_string(),
             level: Level::Trace,
             message: "".to_string(),
             message_trailing_newline: false,
@@ -362,15 +365,15 @@ impl Table {
         self
     }
     /// TODO WIP.
-    pub fn subt<'a>(&'a mut self, key: &str, table: &Table) -> &'a mut Self {
+    pub fn subt<'a>(&'a mut self, base_name: &str, table: &Table) -> &'a mut Self {
         self.get_sub_tables(|sub_tables| {
             sub_tables.insert(
                 // Base name.
-                Table::correct_key(key),
+                Table::correct_key(base_name),
                 // Message.
                 InternalTable::new(
-                    None, // Later.
-                    &Table::correct_key(key),
+                    Some(table.base_name.clone()),
+                    &Table::correct_key(base_name),
                     &table,
                 ),
             );
