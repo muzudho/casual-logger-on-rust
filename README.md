@@ -13,7 +13,7 @@ Japanese before machine translation is attached.
 Minimal case.  
 最小の例。  
 
-Code:  
+Your code:  
 
 ```rust
 //! You can copy and paste and use immediately.  
@@ -41,7 +41,10 @@ Info = 'Hello, world!!'
 
 ## Example 2
 
-Code:  
+Sometimes you want the logger to be quiet.  
+ロガーに静かにしていて欲しいときもありますね。  
+
+Your code:  
 
 ```rust
 //! There are 7 log levels.  
@@ -103,7 +106,7 @@ It is easy to add information to TOML and it is easy to see.
 本当に欲しいのは、バグを取ることです。  
 TOMLに情報を追加するのは簡単で、しかも見やすいです。  
 
-Code:  
+Your code:  
 
 ```rust
 //! Learn how to use TOML.  
@@ -176,7 +179,7 @@ What if someone else used 'casual_logger' in another library?
 もし他のライブラリで誰かが 'casual_logger' を使っていたなら、  
 どうなるでしょうか？  
 
-Code:  
+Your code:  
 
 ```rust
 //! See how to override the settings.  
@@ -741,7 +744,7 @@ It is designed to use `Log::fatal()` as the first argument for `panic!()`. It is
 
 ## At second, Description
 
-Code:  
+Your code:  
 
 ```rust
 use casual_logger::{Extension, Level, Log, Table};
@@ -797,7 +800,7 @@ Extension:
 |           |             | to be colored in the editor. |         |
 | `LogToml` | `.log.toml` | Toml format.                 | Default |
 
-Set up, Code:  
+Your code:  
 
 ```rust
 fn main() {
@@ -814,7 +817,7 @@ fn main() {
 
 ### Log rotation
 
-Code:  
+Your code:  
 
 ```rust
     Log::set_retention_days(2);
@@ -837,7 +840,7 @@ Example:
 
 ### Log level
 
-Code:  
+Your code:  
 
 ```rust
     Log::set_level(Level::Trace);
@@ -887,7 +890,7 @@ Example:
 |          | If you want to find a bug in the program,          |
 |          | write a lot.                                       |
 
-Code:  
+Your code:  
 
 ```rust
     // Multi-line string.
@@ -931,7 +934,7 @@ Fatal returns a string so you can try to record a panic message.
 However, the last log may not be written if the program exits first.  
 See also: **Log::set_timeout_secs()** method.  
 
-Code:  
+Your code:  
 
 ```rust
     // Wait for seconds logging to complete.
@@ -968,7 +971,7 @@ It is difficult to explain to beginners how to use TOML.
 If you make a TOML that cannot be parsed **literal**ly,  
 please correct it.  
 
-Code:  
+Your code:  
 
 ```rust
     // TOML say a table. So-called map.
@@ -1015,7 +1018,7 @@ tree.
 
 ### Don't forget flush for logging to complete at end of program
 
-Code:  
+Your code:  
 
 ```rust
     // Wait for logging to complete or to timeout.
@@ -1043,7 +1046,7 @@ the program will exit before writing all the logs.
 
 ### Customize method
 
-Code: main.rs  
+Your code: main.rs  
 
 ```rust
 use casual_logger::{Level, Log};
