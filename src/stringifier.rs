@@ -1,7 +1,17 @@
 //! Escape control characters.
 
+use crate::table::InternalTable;
+use crate::NEW_LINE;
+use chrono::Local;
 use regex::Regex;
+use std::process;
 use std::sync::Mutex;
+use std::thread;
+
+lazy_static! {
+    /// Triple single quotation.
+    static ref RE_TRIPLE_SINGLE_QUOTE: Mutex<Regex> = Mutex::new(Regex::new(r"'''").unwrap());
+}
 
 // For multi-platform. Windows, or not.
 #[cfg(windows)]
@@ -13,22 +23,29 @@ const NEW_LINE_SEQUENCE: &'static str = "\\n";
 #[cfg(not(windows))]
 const NEW_LINE_CHARS: &'static [char; 1] = &['\n'];
 
-lazy_static! {
-    /// Triple single quotation.
-    static ref RE_TRIPLE_SINGLE_QUOTE: Mutex<Regex> = Mutex::new(Regex::new(r"'''").unwrap());
-}
-
 /// Escape control characters.
-pub struct Parser {}
-impl Parser {
-    /// Escape double quotation.
-    pub fn escape_double_quotation(text: &str) -> String {
-        text.replace("\"", "\\\"")
+pub struct Stringifier {}
+impl Stringifier {
+    /// abc in `["abc"]`
+    pub fn create_table_name(i_table: &InternalTable) -> String {
+        format!(
+            // Table name to keep for ordering.
+            // For example, you can parse it easily by writing the table name like a GET query.
+            "Now={}&Pid={}&Thr={}&Seq={}",
+            // If you use ISO8601, It's "%Y-%m-%dT%H:%M:%S%z". However, it does not set the date format.
+            // Make it easier to read.
+            Local::now().format("%Y-%m-%d %H:%M:%S"),
+            // Process ID.
+            process::id(),
+            // Thread ID. However, Note that you are not limited to numbers.
+            i_table.thread_id,
+            // Line number. This is to avoid duplication.
+            i_table.seq
+        )
+        .to_string()
     }
-
-    /// Escape back slash.
-    fn escape_back_slash(text: &str) -> String {
-        text.replace("\\", "\\\\")
+    pub fn thread_id() -> String {
+        format!("{:?}", thread::current().id())
     }
 
     /// Parse a string.  
@@ -49,11 +66,11 @@ impl Parser {
             // if re.is_match(value) {
             if value.contains("'''") {
                 let escaped_string = if let Some(escaped_trailing_newline_string) =
-                    Parser::escape_trailing_newline(value)
+                    Stringifier::escape_trailing_newline(value)
                 {
-                    Parser::escape_double_quotation(&escaped_trailing_newline_string)
+                    Stringifier::escape_double_quotation(&escaped_trailing_newline_string)
                 } else {
-                    Parser::escape_double_quotation(value)
+                    Stringifier::escape_double_quotation(value)
                 };
                 return format!(
                     "\"\"\"
@@ -70,17 +87,17 @@ impl Parser {
             )
         } else {
             // One liner.
-            let escaped_trailng_newline_string = Parser::escape_trailing_newline(value);
+            let escaped_trailng_newline_string = Stringifier::escape_trailing_newline(value);
             if let Some(escaped_trailng_newline_string) = escaped_trailng_newline_string {
                 return format!(
                     "\"{}\"",
-                    Parser::escape_double_quotation(&escaped_trailng_newline_string)
+                    Stringifier::escape_double_quotation(&escaped_trailng_newline_string)
                 );
             }
             if value.contains("'") {
                 return format!(
                     "\"{}\"",
-                    Parser::escape_double_quotation(&Parser::escape_back_slash(value))
+                    Stringifier::escape_double_quotation(&Stringifier::escape_back_slash(value))
                 );
             }
 
@@ -88,12 +105,20 @@ impl Parser {
         }
     }
 
+    /// Escape back slash.
+    pub fn escape_back_slash(text: &str) -> String {
+        text.replace("\\", "\\\\")
+    }
+    /// Escape double quotation.
+    pub fn escape_double_quotation(text: &str) -> String {
+        text.replace("\"", "\\\"")
+    }
     /// Escape trailing newline.
     ///
     /// # Returns
     ///
     /// Escaped string or None.
-    fn escape_trailing_newline(value: &str) -> Option<String> {
+    pub fn escape_trailing_newline(value: &str) -> Option<String> {
         let ch_vec: Vec<char> = value.chars().collect();
         if NEW_LINE_CHARS.len() == 2 && 1 < ch_vec.len() {
             if ch_vec[ch_vec.len() - 2] == NEW_LINE_CHARS[0]

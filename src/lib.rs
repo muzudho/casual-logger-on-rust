@@ -25,10 +25,10 @@ extern crate chrono;
 extern crate regex;
 // extern crate sys_info;
 
-mod parser;
+mod stringifier;
 mod table;
 
-use crate::parser::Parser;
+use crate::stringifier::Stringifier;
 use crate::table::InternalTable;
 use chrono::{Date, Duration, Local, TimeZone};
 use regex::Regex;
@@ -41,7 +41,6 @@ use std::fs::{File, OpenOptions};
 use std::io::{BufWriter, Write};
 use std::ops::Add;
 use std::path::Path;
-use std::process;
 use std::sync::Mutex;
 use std::thread;
 // use sys_info::mem_info;
@@ -185,7 +184,7 @@ impl Table {
 }
 /// TODO WIP.
 pub struct Separation {
-    tables: BTreeMap<String, Table>,
+    tables: BTreeMap<String, InternalTable>,
 }
 impl Default for Separation {
     fn default() -> Self {
@@ -197,14 +196,26 @@ impl Default for Separation {
 impl Separation {
     /// TODO WIP.
     pub fn table(&mut self, name: &str, table: &Table) -> &mut Self {
-        self.tables.insert(name.to_string(), table.clone());
+        self.tables.insert(
+            name.to_string(),
+            InternalTable::new(&Stringifier::thread_id(), Logger::create_seq(), table),
+        );
         self
     }
     /// TODO WIP.
     fn log(&self) {
         let mut table = Table::default();
-        for (name, _sub_table) in &self.tables {
-            table.literal(name, "WIP.");
+        for (name, sub_table) in &self.tables {
+            // TODO Stringify.
+            table.literal(
+                name,
+                &format!(
+                    "{}
+WIP = 'WIP.'
+",
+                    Stringifier::create_table_name(&sub_table)
+                ),
+            );
         }
         Log::reserve(&table);
     }
@@ -910,15 +921,9 @@ impl Log {
         }
         */
 
-        let seq = SEQ.with(move |seq| {
-            let old = *seq.borrow();
-            *seq.borrow_mut() += 1;
-            old
-        });
-
         // Out side of SEQ.with().
         let internal_table =
-            InternalTable::new(&format!("{:?}", thread::current().id()), seq, &table);
+            InternalTable::new(&Stringifier::thread_id(), Logger::create_seq(), &table);
 
         if let Ok(reseve_target) = RESERVE_TARGET.lock() {
             if reseve_target.is_t() {
@@ -1020,41 +1025,35 @@ impl Log {
         Some(0 < count)
     }
 
-    fn convert_table_to_string(wrapper: &InternalTable) -> String {
-        let message = if wrapper.table.message_trailing_newline {
-            // There is a trailing newline.
-            format!("{}{}", wrapper.table.message, NEW_LINE)
-        } else {
-            wrapper.table.message.to_string()
-        };
+    fn convert_table_to_string(i_table: &InternalTable) -> String {
         // Write as TOML.
         // Table name.
         let mut toml = format!(
-            // Table name to keep for ordering.
-            // For example, you can parse it easily by writing the table name like a GET query.
-            "[\"Now={}&Pid={}&Thr={}&Seq={}\"]
-{} = {}
+            "[\"{}\"]
 ",
-            // If you use ISO8601, It's "%Y-%m-%dT%H:%M:%S%z". However, it does not set the date format.
-            // Make it easier to read.
-            Local::now().format("%Y-%m-%d %H:%M:%S"),
-            // Process ID.
-            process::id(),
-            // Thread ID. However, Note that you are not limited to numbers.
-            wrapper.thread_id,
-            // Line number. This is to avoid duplication.
-            wrapper.seq,
-            wrapper.table.level,
-            Parser::format_str_value(&message)
-        )
-        .to_string();
-        for (k, formatted_v) in &wrapper.table.sorted_map {
+            Stringifier::create_table_name(i_table)
+        );
+        // Log level message.
+        let message = if i_table.table.message_trailing_newline {
+            // There is a trailing newline.
+            format!("{}{}", i_table.table.message, NEW_LINE)
+        } else {
+            i_table.table.message.to_string()
+        };
+        toml.push_str(&format!(
+            "{} = {}
+",
+            i_table.table.level,
+            Stringifier::format_str_value(&message)
+        ));
+        for (k, formatted_v) in &i_table.table.sorted_map {
             toml.push_str(&format!(
                 "{} = {}
 ",
                 k, formatted_v
             ));
         }
+        // New line.
         toml.push_str(
             "
 ",
@@ -1155,6 +1154,14 @@ impl Default for Logger {
     }
 }
 impl Logger {
+    /// Sequential number on thread.
+    pub fn create_seq() -> u128 {
+        SEQ.with(move |seq| {
+            let old = *seq.borrow();
+            *seq.borrow_mut() += 1;
+            old
+        })
+    }
     fn get_timeout_sec(logger: &Logger) -> u64 {
         if logger.timeout_secs != 30 {
             logger.timeout_secs

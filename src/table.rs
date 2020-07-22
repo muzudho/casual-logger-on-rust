@@ -1,4 +1,4 @@
-use crate::parser::Parser;
+use crate::stringifier::Stringifier;
 use crate::Level;
 use crate::Logger;
 use crate::Opt;
@@ -97,7 +97,7 @@ impl Table {
         if let Ok(re_white_space) = RE_WHITE_SPACE.lock() {
             format!(
                 "\"{}\"",
-                Parser::escape_double_quotation(&re_white_space.replace_all(key, " "))
+                Stringifier::escape_double_quotation(&re_white_space.replace_all(key, " "))
             )
         } else {
             // TODO Error
@@ -147,7 +147,7 @@ impl Table {
             // Log detail level.
             Table::correct_key(key),
             // Message.
-            Parser::format_str_value(value).to_string(),
+            Stringifier::format_str_value(value).to_string(),
         );
 
         self
@@ -171,7 +171,7 @@ impl Table {
             // Log detail level.
             Table::correct_key(key),
             // Message.
-            Parser::format_str_value(&value.to_string()).to_string(),
+            Stringifier::format_str_value(&value.to_string()).to_string(),
         );
 
         self
