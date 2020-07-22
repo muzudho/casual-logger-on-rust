@@ -10,8 +10,8 @@ Japanese before machine translation is attached.
 
 ## Example 1
 
-Minimal case.  
-最小の例。  
+Can it be used without reading Example 2 and later?  
+Example 2 以降を読まなくても使えるかも？  
 
 Your code:  
 
