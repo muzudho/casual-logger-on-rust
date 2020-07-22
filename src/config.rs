@@ -1,8 +1,7 @@
 use crate::log_file::LogFile;
-use crate::Level;
-use crate::Opt;
-use crate::OPT_STATE;
-use crate::SEQ;
+use crate::{
+    Level, Opt, DEFAULT_LOG_LEVEL, DEFAULT_RETENTION_DAYS, DEFAULT_TIMEOUT_SECS, OPT_STATE, SEQ,
+};
 use chrono::{Date, Duration, Local, TimeZone};
 use regex::Regex;
 use std::fs;
@@ -51,7 +50,7 @@ pub struct Logger {
     /// ファイル保持日数は後で変更できません。  
     pub retention_days_important: bool,
     /// File retention days. Delete the file after day from StartDate.
-    pub retention_days: i64,
+    pub retention_days: u32,
     /// The timeout seconds cannot be changed later.  
     /// タイムアウト秒は後で変更できません。  
     pub timeout_secs_important: bool,
@@ -68,11 +67,11 @@ impl Default for Logger {
             file_ext_important: false,
             file_extension: ".log.toml".to_string(),
             level_important: false,
-            level: Level::Trace,
+            level: DEFAULT_LOG_LEVEL,
             retention_days_important: false,
-            retention_days: 7,
+            retention_days: DEFAULT_RETENTION_DAYS,
             timeout_secs_important: false,
-            timeout_secs: 30,
+            timeout_secs: DEFAULT_TIMEOUT_SECS,
             log_file: None,
         }
     }
@@ -117,6 +116,7 @@ impl Logger {
                 start_date.format("%Y-%m-%d"),
                 file_extension
             )))
+            // TODO error handling.
             .unwrap();
         (start_date, file)
     }
@@ -184,7 +184,7 @@ impl Logger {
                     let file_date = Local.ymd(year, month, day);
 
                     // Over the retention days.
-                    if file_date.add(Duration::days(self.retention_days)) < Local::today() {
+                    if file_date.add(Duration::days(self.retention_days as i64)) < Local::today() {
                         // Remove file.
                         if let Ok(_why) = fs::remove_file(name) {
                             // Nothing is output even if log writing fails.
@@ -220,6 +220,7 @@ impl Logger {
         }
 
         // Return file handle.
+        // TODO error handling.
         &self.log_file.as_ref().unwrap().file
     }
 }

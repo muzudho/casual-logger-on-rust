@@ -54,12 +54,24 @@ const NEW_LINE: &'static str = "\n";
 #[cfg(not(windows))]
 const NEW_LINE_ESCAPED_CHARS: &'static [char; 2] = &['\\', 'n'];
 
+/// Log level.
+pub const DEFAULT_LOG_LEVEL: Level = Level::Trace;
+
+/// File retention days. Default is 1 week.
+pub const DEFAULT_RETENTION_DAYS: u32 = 7;
+
+/// Wait for complete to flush log.
+pub const DEFAULT_TIMEOUT_SECS: u64 = 30;
+
+/// Optimization.
+pub const DEFAULT_OPTIMIZATION: Opt = Opt::BeginnersSupport;
+
 /// The higher this level, the more will be omitted.  
 ///
 /// |<-- Low Level ------------------------- High level -->|  
 /// |<-- High priority ------------------- Low priority -->|  
 /// | Fatal < Error < Warn < Notice < Info < Debug < Trace |  
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum Level {
     /// If the program cannot continue.
     #[allow(dead_code)]
@@ -365,7 +377,7 @@ impl Log {
     pub fn set_retention_days(days: u32) {
         if let Ok(mut logger) = LOGGER.lock() {
             if !logger.retention_days_important {
-                logger.retention_days = days as i64;
+                logger.retention_days = days;
             }
         }
     }

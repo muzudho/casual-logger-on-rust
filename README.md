@@ -84,26 +84,12 @@ fn main() {
             )
             .int("Rent", -40_000)
             .uint("Salary", 190_000)
-            .char("Condition", 'A')
             .str(
                 "Remark",
                 "Buy shelves in the near month.
 Replace the washing machine after a few years.
 近い月に棚。
 数年後に洗濯機買い替え。",
-            )
-            .float("ShelveDepth", 46.5)
-            .bool("PaidRent", true)
-            // It is easier to see if you do
-            // not use a sub table.
-            // サブテーブルを使用しない方が
-            // 見やすいです。
-            .sub_t(
-                "RestFood",
-                Table::default()
-                    .int("FrozenRamen", 2)
-                    .int("BottoleOfTea", 1)
-                    .int("Kimchi", 1),
             ),
     );
 
@@ -114,11 +100,9 @@ Replace the washing machine after a few years.
 Output `today-s-plan-2020-07-22.log.toml` automatically generated:  
 
 ```toml
-["Now=2020-07-22T22:54:57+0900&Pid=13204&Thr=ThreadId(1)&Seq=1"]
+["Now=2020-07-22T23:06:11+0900&Pid=13696&Thr=ThreadId(1)&Seq=1"]
 Info = 'ShoppingToday'
-Condition = 'A'
 FluorescentLight = -7000
-PaidRent = true
 Remark = '''
 Buy shelves in the near month.
 Replace the washing machine after a few years.
@@ -127,13 +111,8 @@ Replace the washing machine after a few years.
 '''
 Rent = -40000
 Salary = 190000
-ShelveDepth = 46.5
 VacuumCleaner = -53000
 VacuumCleanerPricesAtOtherStores = [ -63_000, -4_000, -10_000 ]
-  ["Now=2020-07-22T22:54:57+0900&Pid=13204&Thr=ThreadId(1)&Seq=1".RestFood]
-  BottoleOfTea = 1
-  FrozenRamen = 2
-  Kimchi = 1
 
 
 ```
@@ -152,50 +131,77 @@ Important designation is on a first-come-first-served basis.
 Code:  
 
 ```rust
-//! You can copy and paste and use immediately.  
-//! コピー＆ペーストしてすぐに使用できます。  
+//! If someone used "casual_logger" in some library,  
+//! see how to override the settings.  
+//! もし他のライブラリで誰かが 'casual_logger' を使って  
+//! いたなら、設定を上書きする方法を確認してください。  
 
-use casual_logger::{Level, Log, Table};
+use casual_logger::{Extension, Level, Log, Table};
 
 fn main() {
+    // By specifying important, the setting will be
+    // effective on a first come first serve basis.
     // You can always make it important,
     // so if you get lost, always omit important...
+    // 重要を指定することで、設定は早い者勝ちで有効になります。
     // いつでも important にできるので、
     // 迷ったら常に important を省きましょう……
     Log::set_file_name_important("lesson1"); // For app use.
     Log::set_file_name("mischief1"); // For library use.
-    Log::set_retention_days(2);
-    Log::set_level(Level::Info);
+
+    Log::set_file_ext_important(Extension::LogToml);
+    Log::set_file_ext(Extension::Log);
+
+    Log::set_retention_days_important(2);
+    Log::set_retention_days(31);
+
+    Log::set_level_important(Level::Info);
+    Log::set_level(Level::Notice);
+
     Log::remove_old_logs();
 
     Log::info_t(
-        "GameRecord",
+        "This is an Application.",
         Table::default()
-            .uint("Age", 200018)
-            .str("Condition", "It's ok.")
-            .bool("Lung breathing", true)
-            .char("Rank", 'A')
-            .str("Area", "Rever side")
-            .str("Weather", "Rain")
-            .int("Elevation", -40),
+            .str(
+                "FileName",
+                &Log::get_file_name() //
+                    .unwrap_or_else(|err| err),
+            )
+            .str(
+                "Extension",
+                &Log::get_file_ext_str() //
+                    .unwrap_or_else(|err| err),
+            )
+            .uint(
+                "RetentionDays",
+                Log::get_retention_days() //
+                    .unwrap_or_else(|_| 0)
+                    .into(),
+            )
+            .str(
+                "Level",
+                &match Log::get_level() {
+                    Ok(level) => format!("{:?}", level) //
+                        .to_string(),
+                    Err(e) => e.to_string(),
+                },
+            ),
     );
 
     Log::flush();
 }
 ```
 
-Output `lesson1-2020-07-22.log.toml` automatically generated:  
+Output `lesson1-2020-07-23.log.toml` automatically generated:  
 
 ```toml
-["Now=2020-07-22T22:55:58+0900&Pid=16428&Thr=ThreadId(1)&Seq=1"]
-Info = 'GameRecord'
-"Lung breathing" = true
-Age = 200018
-Area = 'Rever side'
-Condition = "It's ok."
-Elevation = -40
-Rank = 'A'
-Weather = 'Rain'
+["Now=2020-07-23T00:05:03+0900&Pid=6316&Thr=ThreadId(1)&Seq=1"]
+Info = 'This is an Application.'
+Extension = '.log.toml'
+FileName = 'lesson1'
+Level = 'Info'
+RetentionDays = 2
 
 
 ```

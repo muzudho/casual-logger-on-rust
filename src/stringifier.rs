@@ -1,7 +1,5 @@
 //! Escape control characters.
 
-use crate::table::InternalTable;
-use crate::NEW_LINE;
 use chrono::Local;
 use regex::Regex;
 use std::process;

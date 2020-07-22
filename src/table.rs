@@ -1,4 +1,3 @@
-use crate::config::LOGGER;
 use crate::stringifier::Stringifier;
 use crate::Level;
 use crate::Logger;
@@ -6,7 +5,6 @@ use crate::Opt;
 use crate::Table;
 use crate::NEW_LINE;
 use regex::Regex;
-use std::collections::BTreeMap;
 use std::sync::Mutex;
 
 lazy_static! {
