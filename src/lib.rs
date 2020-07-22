@@ -205,7 +205,7 @@ impl Separation {
     /// TODO WIP.
     fn log(&self) {
         let mut table = Table::default();
-        for (name, sub_table) in &self.tables {
+        for (name, i_table) in &self.tables {
             // TODO Stringify.
             table.literal(
                 name,
@@ -213,7 +213,7 @@ impl Separation {
                     "{}
 WIP = 'WIP.'
 ",
-                    Stringifier::create_table_name(&sub_table)
+                    Stringifier::convert_table_to_string(&i_table)
                 ),
             );
         }
@@ -982,7 +982,7 @@ impl Log {
             if let Ok(mut queue) = QUEUE_T.lock() {
                 loop {
                     if let Some(internal_table) = queue.pop_back() {
-                        str_buf.push_str(&Log::convert_table_to_string(&internal_table));
+                        str_buf.push_str(&Stringifier::convert_table_to_string(&internal_table));
                         count += 1;
                     } else {
                         break;
@@ -995,7 +995,7 @@ impl Log {
             if let Ok(mut queue) = QUEUE_F.lock() {
                 loop {
                     if let Some(internal_table) = queue.pop_back() {
-                        str_buf.push_str(&Log::convert_table_to_string(&internal_table));
+                        str_buf.push_str(&Stringifier::convert_table_to_string(&internal_table));
                         count += 1;
                     } else {
                         break;
@@ -1023,42 +1023,6 @@ impl Log {
         }
 
         Some(0 < count)
-    }
-
-    fn convert_table_to_string(i_table: &InternalTable) -> String {
-        // Write as TOML.
-        // Table name.
-        let mut toml = format!(
-            "[\"{}\"]
-",
-            Stringifier::create_table_name(i_table)
-        );
-        // Log level message.
-        let message = if i_table.table.message_trailing_newline {
-            // There is a trailing newline.
-            format!("{}{}", i_table.table.message, NEW_LINE)
-        } else {
-            i_table.table.message.to_string()
-        };
-        toml.push_str(&format!(
-            "{} = {}
-",
-            i_table.table.level,
-            Stringifier::format_str_value(&message)
-        ));
-        for (k, formatted_v) in &i_table.table.sorted_map {
-            toml.push_str(&format!(
-                "{} = {}
-",
-                k, formatted_v
-            ));
-        }
-        // New line.
-        toml.push_str(
-            "
-",
-        );
-        toml
     }
 }
 

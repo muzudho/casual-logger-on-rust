@@ -23,9 +23,46 @@ const NEW_LINE_SEQUENCE: &'static str = "\\n";
 #[cfg(not(windows))]
 const NEW_LINE_CHARS: &'static [char; 1] = &['\n'];
 
+/// Unstable.
 /// Escape control characters.
 pub struct Stringifier {}
 impl Stringifier {
+    pub fn convert_table_to_string(i_table: &InternalTable) -> String {
+        // Write as TOML.
+        // Table name.
+        let mut toml = format!(
+            "[\"{}\"]
+",
+            Stringifier::create_table_name(i_table)
+        );
+        // Log level message.
+        let message = if i_table.table.message_trailing_newline {
+            // There is a trailing newline.
+            format!("{}{}", i_table.table.message, NEW_LINE)
+        } else {
+            i_table.table.message.to_string()
+        };
+        toml.push_str(&format!(
+            "{} = {}
+",
+            i_table.table.level,
+            Stringifier::format_str_value(&message)
+        ));
+        for (k, formatted_v) in &i_table.table.sorted_map {
+            toml.push_str(&format!(
+                "{} = {}
+",
+                k, formatted_v
+            ));
+        }
+        // New line.
+        toml.push_str(
+            "
+",
+        );
+        toml
+    }
+
     /// abc in `["abc"]`
     pub fn create_table_name(i_table: &InternalTable) -> String {
         format!(
