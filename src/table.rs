@@ -32,10 +32,16 @@ pub struct InternalTable {
     pub table: KindOfTable,
 }
 impl InternalTable {
-    pub fn new(base_name: &str, table: &Table) -> Self {
+    pub fn from_table(table: &Table) -> Self {
         InternalTable {
-            base_name: base_name.to_string(),
+            base_name: table.base_name.to_string(),
             table: KindOfTable::Table(table.clone()),
+        }
+    }
+    pub fn from_sub_table(name: &str, sub_table: &Table) -> Self {
+        InternalTable {
+            base_name: name.to_string(),
+            table: KindOfTable::Table(sub_table.clone()),
         }
     }
     pub fn create_log_level_kv_pair(table: &Table) -> String {
@@ -186,8 +192,8 @@ impl InternalArrayOfTable {
 }
 */
 
-/*
-/// TODO WIP. Array of Table.
+/// TODO Array of Table.  
+/// テーブルの配列。  
 pub struct ArrayOfTable {
     tables: Vec<Table>,
 }
@@ -197,13 +203,14 @@ impl Default for ArrayOfTable {
     }
 }
 impl ArrayOfTable {
-    /// TODO WIP.
+    /// TODO
+    /// Push a table.  
+    /// テーブルを追加します。  
     pub fn table(&mut self, table: &Table) -> &mut Self {
         self.tables.push(table.clone());
         self
     }
 }
-*/
 
 impl Default for Table {
     fn default() -> Self {
@@ -455,12 +462,40 @@ impl Table {
                 // Base name.
                 Table::correct_key(base_name),
                 // Message.
+                InternalTable::from_sub_table(&Table::correct_key(base_name), &sub_table),
+            );
+        });
+
+        self
+    }
+    /* TODO WIP.
+    /// Insert array of table recursively.
+    /// テーブルの配列を再帰的に挿入します。
+    ///
+    /// # Arguments
+    ///
+    /// * `base_name` - Array of table name.
+    ///                 テーブルの配列名。
+    /// * `table` - Array of table.
+    ///             テーブルの配列。
+    ///
+    /// # Returns
+    ///
+    /// Main table.
+    /// メインの方のテーブル。
+    pub fn sub_aot<'a>(&'a mut self, base_name: &str, aot: &ArrayOfTable) -> &'a mut Self {
+        self.get_sub_tables(|sub_i_tables| {
+            sub_i_tables.insert(
+                // Base name.
+                Table::correct_key(base_name),
+                // Message.
                 InternalTable::new(&Table::correct_key(base_name), &sub_table),
             );
         });
 
         self
     }
+    */
     /// Insert unsigned integer value.  
     /// 符号無し整数を挿入します。  
     ///

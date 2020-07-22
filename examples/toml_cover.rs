@@ -95,12 +95,14 @@ key",
 
     /*
     // TODO WIP. Delete. Array of Table.
-    Log::trace_aot(
+    Log::trace_t(
         "TestArrayOfTable",
-        &ArrayOfTable::default()
-            .table(&Table::default().int("Apple", 1))
-            .table(&Table::default().int("Banana", 2))
-            .table(&Table::default().int("Cherry", 3)),
+        Table::default().sub_aot(
+            &ArrayOfTable::default()
+                .table(&Table::default().int("Apple", 1))
+                .table(&Table::default().int("Banana", 2))
+                .table(&Table::default().int("Cherry", 3)),
+        ),
     );
     */
 

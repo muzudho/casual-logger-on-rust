@@ -635,22 +635,24 @@ impl Log {
     /// Trace level. No trailing newline.
     pub fn trace(message: &str) {
         if Log::enabled(Level::Trace) {
-            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-            Log::reserve(&InternalTable::new(
-                base_name,
-                &Table::new(Level::Trace, message, false, base_name),
-            ));
+            Log::reserve(&InternalTable::from_table(&Table::new(
+                Level::Trace,
+                message,
+                false,
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+            )));
         }
     }
 
     /// Trace level. There is a trailing newline.
     pub fn traceln(message: &str) {
         if Log::enabled(Level::Trace) {
-            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-            Log::reserve(&InternalTable::new(
-                base_name,
-                &Table::new(Level::Trace, message, true, base_name),
-            ));
+            Log::reserve(&InternalTable::from_table(&Table::new(
+                Level::Trace,
+                message,
+                true,
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+            )));
         }
     }
 
@@ -661,7 +663,7 @@ impl Log {
             table.level = Level::Trace;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(&InternalTable::new(&table.base_name, table));
+            Log::reserve(&InternalTable::from_table(table));
         }
     }
 
@@ -672,29 +674,31 @@ impl Log {
             table.level = Level::Trace;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(&InternalTable::new(&table.base_name, table));
+            Log::reserve(&InternalTable::from_table(table));
         }
     }
 
     /// Debug level. No trailing newline.
     pub fn debug(message: &str) {
         if Log::enabled(Level::Debug) {
-            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-            Log::reserve(&InternalTable::new(
-                base_name,
-                &Table::new(Level::Debug, message, false, base_name),
-            ));
+            Log::reserve(&InternalTable::from_table(&Table::new(
+                Level::Debug,
+                message,
+                false,
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+            )));
         }
     }
 
     /// Debug level. There is a trailing newline.
     pub fn debugln(message: &str) {
         if Log::enabled(Level::Debug) {
-            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-            Log::reserve(&InternalTable::new(
-                base_name,
-                &Table::new(Level::Debug, message, true, base_name),
-            ));
+            Log::reserve(&InternalTable::from_table(&Table::new(
+                Level::Debug,
+                message,
+                true,
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+            )));
         }
     }
 
@@ -705,7 +709,7 @@ impl Log {
             table.level = Level::Debug;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(&InternalTable::new(&table.base_name, table));
+            Log::reserve(&InternalTable::from_table(table));
         }
     }
 
@@ -716,29 +720,31 @@ impl Log {
             table.level = Level::Debug;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(&InternalTable::new(&table.base_name, table));
+            Log::reserve(&InternalTable::from_table(table));
         }
     }
 
     /// Info level. No trailing newline.
     pub fn info(message: &str) {
         if Log::enabled(Level::Info) {
-            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-            Log::reserve(&InternalTable::new(
-                base_name,
-                &Table::new(Level::Info, message, false, base_name),
-            ));
+            Log::reserve(&InternalTable::from_table(&Table::new(
+                Level::Info,
+                message,
+                false,
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+            )));
         }
     }
 
     /// Info level. There is a trailing newline.
     pub fn infoln(message: &str) {
         if Log::enabled(Level::Info) {
-            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-            Log::reserve(&InternalTable::new(
-                base_name,
-                &Table::new(Level::Info, message, true, base_name),
-            ));
+            Log::reserve(&InternalTable::from_table(&Table::new(
+                Level::Info,
+                message,
+                true,
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+            )));
         }
     }
 
@@ -749,7 +755,7 @@ impl Log {
             table.level = Level::Info;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(&InternalTable::new(&table.base_name, table));
+            Log::reserve(&InternalTable::from_table(table));
         }
     }
 
@@ -760,28 +766,30 @@ impl Log {
             table.level = Level::Info;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(&InternalTable::new(&table.base_name, table));
+            Log::reserve(&InternalTable::from_table(table));
         }
     }
     /// Notice level. No trailing newline.
     pub fn notice(message: &str) {
         if Log::enabled(Level::Notice) {
-            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-            Log::reserve(&InternalTable::new(
-                base_name,
-                &Table::new(Level::Notice, message, false, base_name),
-            ));
+            Log::reserve(&InternalTable::from_table(&Table::new(
+                Level::Notice,
+                message,
+                false,
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+            )));
         }
     }
 
     /// Notice level. There is a trailing newline.
     pub fn noticeln(message: &str) {
         if Log::enabled(Level::Notice) {
-            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-            Log::reserve(&InternalTable::new(
-                base_name,
-                &Table::new(Level::Notice, message, true, base_name),
-            ));
+            Log::reserve(&InternalTable::from_table(&Table::new(
+                Level::Notice,
+                message,
+                true,
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+            )));
         }
     }
     /// Notice level. No trailing newline. Use table.
@@ -791,7 +799,7 @@ impl Log {
             table.level = Level::Notice;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(&InternalTable::new(&table.base_name, table));
+            Log::reserve(&InternalTable::from_table(table));
         }
     }
 
@@ -802,29 +810,31 @@ impl Log {
             table.level = Level::Notice;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(&InternalTable::new(&table.base_name, table));
+            Log::reserve(&InternalTable::from_table(table));
         }
     }
 
     /// Warning level. No trailing newline.
     pub fn warn(message: &str) {
         if Log::enabled(Level::Warn) {
-            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-            Log::reserve(&InternalTable::new(
-                base_name,
-                &Table::new(Level::Warn, message, false, base_name),
-            ));
+            Log::reserve(&InternalTable::from_table(&Table::new(
+                Level::Warn,
+                message,
+                false,
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+            )));
         }
     }
 
     /// Warning level. There is a trailing newline.
     pub fn warnln(message: &str) {
         if Log::enabled(Level::Warn) {
-            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-            Log::reserve(&InternalTable::new(
-                base_name,
-                &Table::new(Level::Warn, message, true, base_name),
-            ));
+            Log::reserve(&InternalTable::from_table(&Table::new(
+                Level::Warn,
+                message,
+                true,
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+            )));
         }
     }
 
@@ -835,7 +845,7 @@ impl Log {
             table.level = Level::Warn;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(&InternalTable::new(&table.base_name, table));
+            Log::reserve(&InternalTable::from_table(table));
         }
     }
 
@@ -846,29 +856,31 @@ impl Log {
             table.level = Level::Warn;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(&InternalTable::new(&table.base_name, table));
+            Log::reserve(&InternalTable::from_table(table));
         }
     }
 
     /// Error level. No trailing newline.
     pub fn error(message: &str) {
         if Log::enabled(Level::Error) {
-            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-            Log::reserve(&InternalTable::new(
-                base_name,
-                &Table::new(Level::Error, message, false, base_name),
-            ));
+            Log::reserve(&InternalTable::from_table(&Table::new(
+                Level::Error,
+                message,
+                false,
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+            )));
         }
     }
 
     /// Error level. There is a trailing newline.
     pub fn errorln(message: &str) {
         if Log::enabled(Level::Error) {
-            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-            Log::reserve(&InternalTable::new(
-                base_name,
-                &Table::new(Level::Error, message, true, base_name),
-            ));
+            Log::reserve(&InternalTable::from_table(&Table::new(
+                Level::Error,
+                message,
+                true,
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+            )));
         }
     }
 
@@ -879,7 +891,7 @@ impl Log {
             table.level = Level::Error;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(&InternalTable::new(&table.base_name, table));
+            Log::reserve(&InternalTable::from_table(table));
         }
     }
 
@@ -890,18 +902,19 @@ impl Log {
             table.level = Level::Error;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(&InternalTable::new(&table.base_name, table));
+            Log::reserve(&InternalTable::from_table(table));
         }
     }
     /// Fatal level. No trailing newline.
     /// Fatal is Panic! Can be used as the first argument of.
     pub fn fatal(message: &str) -> String {
         // Fatal runs at any level.
-        let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-        Log::reserve(&InternalTable::new(
-            base_name,
-            &Table::new(Level::Fatal, message, false, base_name),
-        ));
+        Log::reserve(&InternalTable::from_table(&Table::new(
+            Level::Fatal,
+            message,
+            false,
+            &Stringifier::create_identify_table_name(Logger::create_seq()),
+        )));
         // Wait for logging to complete or to timeout.
         Log::flush();
         message.to_string()
@@ -910,11 +923,12 @@ impl Log {
     /// Fatal is Panic! Can be used as the first argument of.
     pub fn fatalln(message: &str) -> String {
         // Fatal runs at any level.
-        let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
-        Log::reserve(&InternalTable::new(
-            base_name,
-            &Table::new(Level::Fatal, message, true, base_name),
-        ));
+        Log::reserve(&InternalTable::from_table(&Table::new(
+            Level::Fatal,
+            message,
+            true,
+            &Stringifier::create_identify_table_name(Logger::create_seq()),
+        )));
         // Wait for logging to complete or to timeout.
         Log::flush();
         // Append trailing newline.
@@ -929,7 +943,7 @@ impl Log {
         table.level = Level::Fatal;
         table.message = message.to_string();
         table.message_trailing_newline = false;
-        Log::reserve(&InternalTable::new(&table.base_name, table));
+        Log::reserve(&InternalTable::from_table(table));
         // Wait for logging to complete or to timeout.
         Log::flush();
         message.to_string()
@@ -942,7 +956,7 @@ impl Log {
         table.level = Level::Fatal;
         table.message = message.to_string();
         table.message_trailing_newline = true;
-        Log::reserve(&InternalTable::new(&table.base_name, table));
+        Log::reserve(&InternalTable::from_table(table));
         // Wait for logging to complete or to timeout.
         Log::flush();
         // Append trailing newline.
