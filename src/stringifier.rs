@@ -31,10 +31,8 @@ impl Stringifier {
     /// For example, you can parse it easily by writing the table name like a GET query.
     pub fn create_identify_table_name(seq: u128) -> String {
         format!(
-            // If you use ISO8601, It's "%Y-%m-%dT%H:%M:%S%z". However, it does not set the date format.
-            // Make it easier to read.
             "\"Now={}&Pid={}&Thr={}&Seq={}\"",
-            Local::now().format("%Y-%m-%d %H:%M:%S"),
+            Local::now().format("%Y-%m-%dT%H:%M:%S%z"),
             // Process ID.
             process::id(),
             Stringifier::thread_id().to_string(),

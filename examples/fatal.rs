@@ -1,4 +1,5 @@
-//! You can copy and paste and use immediately.
+//! For test.
+//! テスト用。
 
 use casual_logger::Log;
 

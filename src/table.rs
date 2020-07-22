@@ -1,9 +1,9 @@
+use crate::config::LOGGER;
 use crate::stringifier::Stringifier;
 use crate::Level;
 use crate::Logger;
 use crate::Opt;
 use crate::Table;
-use crate::LOGGER;
 use crate::NEW_LINE;
 use regex::Regex;
 use std::collections::BTreeMap;
@@ -21,7 +21,7 @@ pub struct InternalTable {
     /// `B` in `[A.B]`.
     /// `a=1&b=2` in `["a=1&b=2"]`.
     pub base_name: String,
-    /// Clone.
+    /// Clone table.
     pub table: Table,
 }
 impl InternalTable {
@@ -49,7 +49,7 @@ impl InternalTable {
         let toml = &mut String::new();
         let indent_spaces = &mut String::new();
         // Write as TOML.
-        // TODO Recursive.
+        // Recursive.
         InternalTable::stringify_sub_table(
             toml,
             indent_spaces,
@@ -121,6 +121,61 @@ impl InternalTable {
         }
     }
 }
+
+/*
+/// TODO WIP. Delete. Array of Table.
+pub struct InternalArrayOfTable {
+    tables: Vec<InternalTable>,
+}
+impl Default for InternalArrayOfTable {
+    fn default() -> Self {
+        InternalArrayOfTable { tables: Vec::new() }
+    }
+}
+impl InternalArrayOfTable {
+    /// TODO WIP.
+    pub fn table(&mut self, base_name: &str, table: &Table) -> &mut Self {
+        self.tables.push(InternalTable::new(base_name, table));
+        self
+    }
+    /// TODO WIP.
+    fn log(&self, indent_level: usize) {
+        let mut indent_space = String::new();
+        for i in 0..indent_level {
+            indent_space.push_str("  ");
+        }
+
+        let mut table = Table::default();
+        for (name, i_table) in &self.tables {
+            // TODO Stringify.
+            table.literal(name, &format!("{}{}", indent_space, i_table.stringify()));
+        }
+
+        Log::reserve(&InternalTable::new(
+            &Stringifier::create_identify_table_name(Logger::create_seq()),
+            &table,
+        ));
+    }
+}
+*/
+
+/// TODO WIP. Delete. Array of Table.
+pub struct ArrayOfTable {
+    tables: Vec<Table>,
+}
+impl Default for ArrayOfTable {
+    fn default() -> Self {
+        ArrayOfTable { tables: Vec::new() }
+    }
+}
+impl ArrayOfTable {
+    /// TODO WIP.
+    pub fn table(&mut self, table: &Table) -> &mut Self {
+        self.tables.push(table.clone());
+        self
+    }
+}
+
 impl Default for Table {
     fn default() -> Self {
         Table {

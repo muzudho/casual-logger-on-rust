@@ -92,13 +92,15 @@ key",
                     .sub_t("a3b2", Table::default().int("a3b2c1", 321)),
             ),
     );
+
     /*
-    // TODO WIP. Delete.
-    Log::trace_s(
-        &Separation::default()
-            .table("Alice", &Table::default().int("Apple", 1))
-            .table("Bob", &Table::default().int("Banana", 2))
-            .table("Charley", &Table::default().int("Cherry", 3)),
+    // TODO WIP. Delete. Array of Table.
+    Log::trace_aot(
+        "TestArrayOfTable",
+        &ArrayOfTable::default()
+            .table(&Table::default().int("Apple", 1))
+            .table(&Table::default().int("Banana", 2))
+            .table(&Table::default().int("Cherry", 3)),
     );
     */
 
