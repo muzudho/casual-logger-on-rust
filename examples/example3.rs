@@ -27,34 +27,41 @@ fn main() {
 
     Log::remove_old_logs();
 
-    Log::info_t(
-        "This is an Application.",
-        Table::default()
-            .str(
-                "FileName",
-                &Log::get_file_name() //
-                    .unwrap_or_else(|err| err),
-            )
-            .str(
-                "Extension",
-                &Log::get_file_ext_str() //
-                    .unwrap_or_else(|err| err),
-            )
-            .uint(
-                "RetentionDays",
-                Log::get_retention_days() //
-                    .unwrap_or_else(|_| 0)
-                    .into(),
-            )
-            .str(
-                "Level",
-                &match Log::get_level() {
-                    Ok(level) => format!("{:?}", level) //
+    // If there are more arguments, make a pre-judgment.
+    // 引数が増えたら前判定しましょう。
+    if Log::enabled(Level::Info) {
+        Log::info_t(
+            "This is an Application.",
+            Table::default()
+                .str(
+                    "FileName",
+                    &Log::get_file_name() //
+                        .unwrap_or_else(|err| err),
+                )
+                .str(
+                    "Extension",
+                    &Log::get_file_ext_str() //
+                        .unwrap_or_else(|err| err),
+                )
+                .uint(
+                    "RetentionDays",
+                    Log::get_retention_days() //
+                        .unwrap_or_else(|_| 0)
+                        .into(),
+                )
+                .str(
+                    "Level",
+                    &match Log::get_level() {
+                        Ok(level) => format!(
+                            "{:?}", //
+                            level
+                        )
                         .to_string(),
-                    Err(e) => e.to_string(),
-                },
-            ),
-    );
+                        Err(e) => e.to_string(),
+                    },
+                ),
+        );
+    }
 
     Log::flush();
 }

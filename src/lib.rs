@@ -54,19 +54,26 @@ const NEW_LINE: &'static str = "\n";
 // #[cfg(not(windows))]
 // const NEW_LINE_ESCAPED_CHARS: &'static [char; 2] = &['\\', 'n'];
 
-/// Log level.
+/// The log level is `Level::Trace` by default.  
+/// ログレベルはデフォルトで `Level::Trace` です。  
 pub const DEFAULT_LOG_LEVEL: Level = Level::Trace;
 
-/// File retention days. Default is 1 week.
+/// The file retention period is 7 days by default.  
+/// ファイルの保存期間は、デフォルトで7日です。  
 pub const DEFAULT_RETENTION_DAYS: u32 = 7;
 
-/// Wait for complete to flush log.
+/// The default timeout is 30 seconds.  
+/// Used for Log::flush() wait time.  
+/// タイムアウトのデフォルトは30秒です。  
+/// Log::flush() の待機時間に使われます。  
 pub const DEFAULT_TIMEOUT_SECS: u64 = 30;
 
-/// Optimization.
+/// The optimization is `Opt::BeginnersSupport` by default.  
+/// 最適化はデフォルトで `Opt::BeginnersSupport` です。  
 pub const DEFAULT_OPTIMIZATION: Opt = Opt::BeginnersSupport;
 
-/// The higher this level, the more will be omitted.  
+/// The higher this level, the more detailed the log.  
+/// このレベルが高いほど、ログはより詳細になります。  
 ///
 /// |<-- Low Level ------------------------- High level -->|  
 /// |<-- High priority ------------------- Low priority -->|  
@@ -160,11 +167,16 @@ thread_local!(static SEQ: RefCell<u128> = {
     RefCell::new(1)
 });
 
-/// TOML table included in the log file. Do not validate.
+/// TOML table included in the log file. The form is not validated.  
+/// However, if "Log::set_opt(Opt::BeginnersSupport)" is set,  
+/// it will intervene with some automatic correction.  
+/// ログファイルに含まれるTOMLテーブル。書式の妥当性検証はしません。  
+/// ただし、"Log::set_opt(Opt::BeginnersSupport)" が設定されている場合は、  
+/// ある程度の自動修正で介入します。  
 #[derive(Clone)]
 pub struct Table {
-    // The base name is added when writing the log.
-    // ログを書くときにベース名が付きます。
+    /// The base name is added when writing the log.  
+    /// ログを書くときにベース名が付きます。  
     base_name: String,
     level: Level,
     message: String,
@@ -220,26 +232,24 @@ impl Table {
     }
 }
 
-/// Easy to use logging.
+/// Easy to use logging.  
+/// 使いやすいロギング。  
 pub struct Log {}
 impl Log {
-    /// For library use. No for application use.  
-    /// ライブラリでの使用向け。 アプリケーション向けではありません。  
-    ///
     /// Set the log file name prefix.  
     /// ログ・ファイル名接頭辞を設定します。  
     ///
-    /// Example of Log file name:
-    /// ログ・ファイル名の例:
+    /// Example of Log file name:  
+    /// ログ・ファイル名の例:  
     ///
-    ///      'tic-tac-toe-2020-07-11.log.toml'
-    ///       1----------           3--------
-    ///                  2----------
+    ///       tic-tac-toe-2020-07-11.log.toml  
+    ///       1----------           3--------  
+    ///                  2----------  
     ///
-    ///       1 Prefix              3 Extention
-    ///         接頭辞                拡張子
-    ///                  2 StartDate
-    ///                    開始日
+    ///       1 Prefix              3 Extention  
+    ///         接頭辞                拡張子  
+    ///                  2 StartDate  
+    ///                    開始日  
     ///
     /// **StartDate** is basically today.  
     /// If the rotation fails, it is the start date.
@@ -272,20 +282,20 @@ impl Log {
     /// Set the log file name prefix. The file name cannot be changed later.  
     /// ログ・ファイル名接頭辞を設定します。ファイル名は後で変更できません。  
     ///
-    /// Example of Log file name:
-    /// ログ・ファイル名の例:
+    /// Example of Log file name:  
+    /// ログ・ファイル名の例:  
     ///
-    ///      'tic-tac-toe-2020-07-11.log.toml'
-    ///       1----------           3--------
-    ///                  2----------
+    ///       tic-tac-toe-2020-07-11.log.toml  
+    ///       1----------           3--------  
+    ///                  2----------  
     ///
-    ///       1 Prefix              3 Extention
-    ///         接頭辞                拡張子
-    ///                  2 StartDate
-    ///                    開始日
+    ///       1 Prefix              3 Extention  
+    ///         接頭辞                拡張子  
+    ///                  2 StartDate  
+    ///                    開始日  
     ///
     /// **StartDate** is basically today.  
-    /// If the rotation fails, it is the start date.
+    /// If the rotation fails, it is the start date.  
     ///
     /// **`.log`** to be safe, include a word that  
     /// clearly states that you can delete the file.  
@@ -1076,7 +1086,8 @@ impl Log {
     }
 }
 
-/// File extension.
+/// The extension of the log file.  
+/// ログファイルの拡張子です。  
 pub enum Extension {
     /// *.log
     Log,
@@ -1143,14 +1154,18 @@ impl ParticipatingThreadsCounter {
 }
 */
 
-/// Optimization.
+/// Optimization.  
+/// 最適化。  
 #[derive(Clone, Copy, Debug)]
 pub enum Opt {
-    /// Displays the work running in the background to standard output.
+    /// Displays the work running in the background to standard output.  
+    /// バックグラウンドで実行中の作業を標準出力に表示します。  
     Development,
-    /// Corrects TOML format errors automatically.
+    /// Corrects TOML format errors automatically.  
+    /// TOML形式のエラーを自動的に修正します。  
     BeginnersSupport,
-    /// It limits functions and improves execution speed.
+    /// It limits functions and improves execution speed.  
+    /// 機能を制限し、実行速度を向上させます。  
     Release,
 }
 
@@ -1159,7 +1174,8 @@ struct OptState {
     /// The optimization cannot be changed later.  
     /// 最適化は後で変更できません。  
     opt_important: bool,
-    /// Optimization.
+    /// Optimization.  
+    /// 最適化。  
     opt: Opt,
 }
 impl Default for OptState {
