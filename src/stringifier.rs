@@ -27,49 +27,13 @@ const NEW_LINE_CHARS: &'static [char; 1] = &['\n'];
 /// Escape control characters.
 pub struct Stringifier {}
 impl Stringifier {
-    pub fn convert_table_to_string(i_table: &InternalTable) -> String {
-        // Write as TOML.
-        // Table name.
-        let mut toml = format!(
-            "[\"{}\"]
-",
-            i_table.name
-        );
-        // Log level message.
-        let message = if i_table.table.message_trailing_newline {
-            // There is a trailing newline.
-            format!("{}{}", i_table.table.message, NEW_LINE)
-        } else {
-            i_table.table.message.to_string()
-        };
-        toml.push_str(&format!(
-            "{} = {}
-",
-            i_table.table.level,
-            Stringifier::format_str_value(&message)
-        ));
-        for (k, formatted_v) in &i_table.table.sorted_map {
-            toml.push_str(&format!(
-                "{} = {}
-",
-                k, formatted_v
-            ));
-        }
-        // New line.
-        toml.push_str(
-            "
-",
-        );
-        toml
-    }
-
     /// Table name to keep for ordering.
     /// For example, you can parse it easily by writing the table name like a GET query.
-    pub fn create_table_name2(seq: u128) -> String {
+    pub fn create_identify_table_name(seq: u128) -> String {
         format!(
             // If you use ISO8601, It's "%Y-%m-%dT%H:%M:%S%z". However, it does not set the date format.
             // Make it easier to read.
-            "Now={}&Pid={}&Thr={}&Seq={}",
+            "\"Now={}&Pid={}&Thr={}&Seq={}\"",
             Local::now().format("%Y-%m-%d %H:%M:%S"),
             // Process ID.
             process::id(),

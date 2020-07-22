@@ -4,6 +4,7 @@ use crate::Logger;
 use crate::Opt;
 use crate::Table;
 use crate::LOGGER;
+use crate::NEW_LINE;
 use regex::Regex;
 use std::collections::BTreeMap;
 use std::sync::Mutex;
@@ -16,27 +17,79 @@ lazy_static! {
 
 #[derive(Clone)]
 pub struct InternalTable {
+    /// `A` in `[A.B]`.
+    pub parent_name: Option<String>,
     /// Table name.
     /// `a=1&b=2` in `["a=1&b=2"]`.
-    pub name: String,
+    pub base_name: String,
     /// Clone.
     pub table: Table,
     /// Indent level.
     pub indent: usize,
 }
 impl InternalTable {
-    pub fn new(table: &Table) -> Self {
+    pub fn new(base_name: &str, table: &Table) -> Self {
         InternalTable {
-            name: Stringifier::create_table_name2(Logger::create_seq()),
+            parent_name: None,
+            base_name: base_name.to_string(),
             table: table.clone(),
             indent: 0,
         }
+    }
+    pub fn full_name(&self) -> String {
+        format!(
+            "{}{}",
+            if let Some(parent_name) = &self.parent_name {
+                format!("{}.", parent_name)
+            } else {
+                "".to_string()
+            },
+            self.base_name
+        )
+    }
+    pub fn stringify(&self) -> String {
+        // Write as TOML.
+        // Table name.
+        let mut toml = format!(
+            "[{}]
+",
+            self.full_name()
+        );
+        // Log level message.
+        let message = if self.table.message_trailing_newline {
+            // There is a trailing newline.
+            format!("{}{}", self.table.message, NEW_LINE)
+        } else {
+            self.table.message.to_string()
+        };
+        toml.push_str(&format!(
+            "{} = {}
+",
+            self.table.level,
+            Stringifier::format_str_value(&message)
+        ));
+        // Sorted map.
+        if let Some(sorted_map) = &self.table.sorted_map {
+            for (k, formatted_v) in sorted_map {
+                toml.push_str(&format!(
+                    "{} = {}
+    ",
+                    k, formatted_v
+                ));
+            }
+        }
+        // New line.
+        toml.push_str(
+            "
+",
+        );
+        toml
     }
 }
 impl Default for Table {
     fn default() -> Self {
         Table {
-            sorted_map: BTreeMap::new(),
+            sorted_map: None,
             level: Level::Trace,
             message: "".to_string(),
             message_trailing_newline: false,
@@ -121,12 +174,14 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn literal<'a>(&'a mut self, key: &'a str, value: &str) -> &'a mut Self {
-        self.sorted_map.insert(
-            // Log detail level.
-            Table::correct_key(key),
-            // Message.
-            value.to_string(),
-        );
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                // Log detail level.
+                Table::correct_key(key),
+                // Message.
+                value.to_string(),
+            );
+        });
 
         self
     }
@@ -145,12 +200,14 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn str<'a>(&'a mut self, key: &'a str, value: &str) -> &'a mut Self {
-        self.sorted_map.insert(
-            // Log detail level.
-            Table::correct_key(key),
-            // Message.
-            Stringifier::format_str_value(value).to_string(),
-        );
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                // Log detail level.
+                Table::correct_key(key),
+                // Message.
+                Stringifier::format_str_value(value).to_string(),
+            );
+        });
 
         self
     }
@@ -169,12 +226,14 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn char<'a>(&'a mut self, key: &'a str, value: char) -> &'a mut Self {
-        self.sorted_map.insert(
-            // Log detail level.
-            Table::correct_key(key),
-            // Message.
-            Stringifier::format_str_value(&value.to_string()).to_string(),
-        );
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                // Log detail level.
+                Table::correct_key(key),
+                // Message.
+                Stringifier::format_str_value(&value.to_string()).to_string(),
+            );
+        });
 
         self
     }
@@ -193,12 +252,14 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn int<'a>(&'a mut self, key: &'a str, value: i128) -> &'a mut Self {
-        self.sorted_map.insert(
-            // Log detail level.
-            Table::correct_key(key),
-            // Message.
-            value.to_string(),
-        );
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                // Log detail level.
+                Table::correct_key(key),
+                // Message.
+                value.to_string(),
+            );
+        });
 
         self
     }
@@ -217,12 +278,14 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn uint<'a>(&'a mut self, key: &'a str, value: u128) -> &'a mut Self {
-        self.sorted_map.insert(
-            // Log detail level.
-            Table::correct_key(key),
-            // Message.
-            value.to_string(),
-        );
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                // Log detail level.
+                Table::correct_key(key),
+                // Message.
+                value.to_string(),
+            );
+        });
 
         self
     }
@@ -241,12 +304,14 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn float<'a>(&'a mut self, key: &'a str, value: f64) -> &'a mut Self {
-        self.sorted_map.insert(
-            // Log detail level.
-            Table::correct_key(key),
-            // Message.
-            value.to_string(),
-        );
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                // Log detail level.
+                Table::correct_key(key),
+                // Message.
+                value.to_string(),
+            );
+        });
 
         self
     }
@@ -265,12 +330,31 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn bool<'a>(&'a mut self, key: &'a str, value: bool) -> &'a mut Self {
-        self.sorted_map.insert(
-            // Log detail level.
-            Table::correct_key(key),
-            // Message.
-            value.to_string(),
-        );
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                // Log detail level.
+                Table::correct_key(key),
+                // Message.
+                value.to_string(),
+            );
+        });
+
+        self
+    }
+    /// TODO WIP.
+    pub fn subt<'a>(&'a mut self, key: &str, table: &Table) -> &'a mut Self {
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                // Log detail level.
+                Table::correct_key(key),
+                // Message.
+                InternalTable::new(
+                    &Stringifier::create_identify_table_name(Logger::create_seq()),
+                    &table,
+                )
+                .stringify(),
+            );
+        });
 
         self
     }

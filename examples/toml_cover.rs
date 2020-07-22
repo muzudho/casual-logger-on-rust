@@ -1,7 +1,7 @@
 //! Toml cover check.
 //! [TOML v1.0.0-rc.1](https://toml.io/en/v1.0.0-rc.1)
 
-use casual_logger::{Log, Opt, Separation, Table};
+use casual_logger::{Log, Opt, Table};
 
 fn main() {
     Log::set_file_name("toml-cover");
@@ -74,12 +74,25 @@ key",
     );
 
     // TODO WIP.
+    Log::info_t(
+        "SubTableTest",
+        Table::default()
+            .str("name", "apple")
+            // Sub table.
+            .subt(
+                "physical",
+                Table::default().str("color", "red").str("shape", "round"),
+            ),
+    );
+    /*
+    // TODO WIP. Delete.
     Log::trace_s(
         &Separation::default()
             .table("Alice", &Table::default().int("Apple", 1))
             .table("Bob", &Table::default().int("Banana", 2))
             .table("Charley", &Table::default().int("Cherry", 3)),
     );
+    */
 
     Log::flush();
 }

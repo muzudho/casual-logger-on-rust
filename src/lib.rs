@@ -161,7 +161,8 @@ pub struct Table {
     level: Level,
     message: String,
     message_trailing_newline: bool,
-    sorted_map: BTreeMap<String, String>,
+    sorted_map: Option<BTreeMap<String, String>>,
+    // sub_tables: BTreeMap<String, Table>,
 }
 impl Table {
     /// Create a new table.  
@@ -175,14 +176,28 @@ impl Table {
     ///                         改行の有無。  
     fn new(level: Level, message: &str, trailing_newline: bool) -> Self {
         Table {
-            sorted_map: BTreeMap::new(),
+            sorted_map: None,
             level: level,
             message: message.to_string(),
             message_trailing_newline: trailing_newline,
         }
     }
+
+    fn get_sorted_map<F>(&mut self, mut callback: F)
+    where
+        F: FnMut(&mut BTreeMap<String, String>),
+    {
+        if let None = self.sorted_map {
+            self.sorted_map = Some(BTreeMap::new());
+        }
+
+        if let Some(sorted_map) = &mut self.sorted_map {
+            callback(sorted_map);
+        }
+    }
 }
-/// TODO WIP.
+/*
+/// TODO WIP. Delete.
 pub struct Separation {
     tables: BTreeMap<String, InternalTable>,
 }
@@ -196,8 +211,13 @@ impl Default for Separation {
 impl Separation {
     /// TODO WIP.
     pub fn table(&mut self, name: &str, table: &Table) -> &mut Self {
-        self.tables
-            .insert(name.to_string(), InternalTable::new(table));
+        self.tables.insert(
+            name.to_string(),
+            InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                table,
+            ),
+        );
         self
     }
     /// TODO WIP.
@@ -210,19 +230,16 @@ impl Separation {
         let mut table = Table::default();
         for (name, i_table) in &self.tables {
             // TODO Stringify.
-            table.literal(
-                name,
-                &format!(
-                    "{}{}",
-                    indent_space,
-                    Stringifier::convert_table_to_string(&i_table)
-                ),
-            );
+            table.literal(name, &format!("{}{}", indent_space, i_table.stringify()));
         }
 
-        Log::reserve(&InternalTable::new(&table));
+        Log::reserve(&InternalTable::new(
+            &Stringifier::create_identify_table_name(Logger::create_seq()),
+            &table,
+        ));
     }
 }
+*/
 
 /// Easy to use logging.
 pub struct Log {}
@@ -639,11 +656,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn trace(message: &str) {
         if Log::enabled(Level::Trace) {
-            Log::reserve(&InternalTable::new(&Table::new(
-                Level::Trace,
-                message,
-                false,
-            )));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                &Table::new(Level::Trace, message, false),
+            ));
         }
     }
 
@@ -651,11 +667,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn traceln(message: &str) {
         if Log::enabled(Level::Trace) {
-            Log::reserve(&InternalTable::new(&Table::new(
-                Level::Trace,
-                message,
-                true,
-            )));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                &Table::new(Level::Trace, message, true),
+            ));
         }
     }
 
@@ -666,16 +681,21 @@ impl Log {
             table.level = Level::Trace;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(&InternalTable::new(table));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                table,
+            ));
         }
     }
-    /// TODO WIP.
+    /*
+    /// TODO WIP. Delete.
     #[allow(dead_code)]
     pub fn trace_s(separation: &Separation) {
         if Log::enabled(Level::Trace) {
             separation.log(0);
         }
     }
+    */
 
     /// Trace level. There is a trailing newline. Use table.
     #[allow(dead_code)]
@@ -684,7 +704,10 @@ impl Log {
             table.level = Level::Trace;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(&InternalTable::new(table));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                table,
+            ));
         }
     }
 
@@ -692,11 +715,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn debug(message: &str) {
         if Log::enabled(Level::Debug) {
-            Log::reserve(&InternalTable::new(&Table::new(
-                Level::Debug,
-                message,
-                false,
-            )));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                &Table::new(Level::Debug, message, false),
+            ));
         }
     }
 
@@ -704,11 +726,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn debugln(message: &str) {
         if Log::enabled(Level::Debug) {
-            Log::reserve(&InternalTable::new(&Table::new(
-                Level::Debug,
-                message,
-                true,
-            )));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                &Table::new(Level::Debug, message, true),
+            ));
         }
     }
 
@@ -719,7 +740,10 @@ impl Log {
             table.level = Level::Debug;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(&InternalTable::new(table));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                table,
+            ));
         }
     }
 
@@ -730,7 +754,10 @@ impl Log {
             table.level = Level::Debug;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(&InternalTable::new(table));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                table,
+            ));
         }
     }
 
@@ -738,11 +765,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn info(message: &str) {
         if Log::enabled(Level::Info) {
-            Log::reserve(&InternalTable::new(&Table::new(
-                Level::Info,
-                message,
-                false,
-            )));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                &Table::new(Level::Info, message, false),
+            ));
         }
     }
 
@@ -750,7 +776,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn infoln(message: &str) {
         if Log::enabled(Level::Info) {
-            Log::reserve(&InternalTable::new(&Table::new(Level::Info, message, true)));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                &Table::new(Level::Info, message, true),
+            ));
         }
     }
 
@@ -761,7 +790,10 @@ impl Log {
             table.level = Level::Info;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(&InternalTable::new(table));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                table,
+            ));
         }
     }
 
@@ -772,18 +804,20 @@ impl Log {
             table.level = Level::Info;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(&InternalTable::new(table));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                table,
+            ));
         }
     }
     /// Notice level. No trailing newline.
     #[allow(dead_code)]
     pub fn notice(message: &str) {
         if Log::enabled(Level::Notice) {
-            Log::reserve(&InternalTable::new(&Table::new(
-                Level::Notice,
-                message,
-                false,
-            )));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                &Table::new(Level::Notice, message, false),
+            ));
         }
     }
 
@@ -791,11 +825,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn noticeln(message: &str) {
         if Log::enabled(Level::Notice) {
-            Log::reserve(&InternalTable::new(&Table::new(
-                Level::Notice,
-                message,
-                true,
-            )));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                &Table::new(Level::Notice, message, true),
+            ));
         }
     }
     /// Notice level. No trailing newline. Use table.
@@ -805,7 +838,10 @@ impl Log {
             table.level = Level::Notice;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(&InternalTable::new(table));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                table,
+            ));
         }
     }
 
@@ -816,7 +852,10 @@ impl Log {
             table.level = Level::Notice;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(&InternalTable::new(table));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                table,
+            ));
         }
     }
 
@@ -824,11 +863,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn warn(message: &str) {
         if Log::enabled(Level::Warn) {
-            Log::reserve(&InternalTable::new(&Table::new(
-                Level::Warn,
-                message,
-                false,
-            )));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                &Table::new(Level::Warn, message, false),
+            ));
         }
     }
 
@@ -836,7 +874,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn warnln(message: &str) {
         if Log::enabled(Level::Warn) {
-            Log::reserve(&InternalTable::new(&Table::new(Level::Warn, message, true)));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                &Table::new(Level::Warn, message, true),
+            ));
         }
     }
 
@@ -847,7 +888,10 @@ impl Log {
             table.level = Level::Warn;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(&InternalTable::new(table));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                table,
+            ));
         }
     }
 
@@ -858,7 +902,10 @@ impl Log {
             table.level = Level::Warn;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(&InternalTable::new(table));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                table,
+            ));
         }
     }
 
@@ -866,11 +913,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn error(message: &str) {
         if Log::enabled(Level::Error) {
-            Log::reserve(&InternalTable::new(&Table::new(
-                Level::Error,
-                message,
-                false,
-            )));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                &Table::new(Level::Error, message, false),
+            ));
         }
     }
 
@@ -878,11 +924,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn errorln(message: &str) {
         if Log::enabled(Level::Error) {
-            Log::reserve(&InternalTable::new(&Table::new(
-                Level::Error,
-                message,
-                true,
-            )));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                &Table::new(Level::Error, message, true),
+            ));
         }
     }
 
@@ -893,7 +938,10 @@ impl Log {
             table.level = Level::Error;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(&InternalTable::new(table));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                table,
+            ));
         }
     }
 
@@ -904,7 +952,10 @@ impl Log {
             table.level = Level::Error;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(&InternalTable::new(table));
+            Log::reserve(&InternalTable::new(
+                &Stringifier::create_identify_table_name(Logger::create_seq()),
+                table,
+            ));
         }
     }
     /// Fatal level. No trailing newline.
@@ -912,11 +963,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn fatal(message: &str) -> String {
         // Fatal runs at any level.
-        Log::reserve(&InternalTable::new(&Table::new(
-            Level::Fatal,
-            message,
-            false,
-        )));
+        Log::reserve(&InternalTable::new(
+            &Stringifier::create_identify_table_name(Logger::create_seq()),
+            &Table::new(Level::Fatal, message, false),
+        ));
         // Wait for logging to complete or to timeout.
         Log::flush();
         message.to_string()
@@ -926,11 +976,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn fatalln(message: &str) -> String {
         // Fatal runs at any level.
-        Log::reserve(&InternalTable::new(&Table::new(
-            Level::Fatal,
-            message,
-            true,
-        )));
+        Log::reserve(&InternalTable::new(
+            &Stringifier::create_identify_table_name(Logger::create_seq()),
+            &Table::new(Level::Fatal, message, true),
+        ));
         // Wait for logging to complete or to timeout.
         Log::flush();
         // Append trailing newline.
@@ -945,7 +994,10 @@ impl Log {
         table.level = Level::Fatal;
         table.message = message.to_string();
         table.message_trailing_newline = false;
-        Log::reserve(&InternalTable::new(table));
+        Log::reserve(&InternalTable::new(
+            &Stringifier::create_identify_table_name(Logger::create_seq()),
+            table,
+        ));
         // Wait for logging to complete or to timeout.
         Log::flush();
         message.to_string()
@@ -958,7 +1010,10 @@ impl Log {
         table.level = Level::Fatal;
         table.message = message.to_string();
         table.message_trailing_newline = true;
-        Log::reserve(&InternalTable::new(table));
+        Log::reserve(&InternalTable::new(
+            &Stringifier::create_identify_table_name(Logger::create_seq()),
+            table,
+        ));
         // Wait for logging to complete or to timeout.
         Log::flush();
         // Append trailing newline.
@@ -1029,7 +1084,7 @@ impl Log {
             if let Ok(mut queue) = QUEUE_T.lock() {
                 loop {
                     if let Some(internal_table) = queue.pop_back() {
-                        str_buf.push_str(&Stringifier::convert_table_to_string(&internal_table));
+                        str_buf.push_str(&internal_table.stringify());
                         count += 1;
                     } else {
                         break;
@@ -1042,7 +1097,7 @@ impl Log {
             if let Ok(mut queue) = QUEUE_F.lock() {
                 loop {
                     if let Some(internal_table) = queue.pop_back() {
-                        str_buf.push_str(&Stringifier::convert_table_to_string(&internal_table));
+                        str_buf.push_str(&internal_table.stringify());
                         count += 1;
                     } else {
                         break;
