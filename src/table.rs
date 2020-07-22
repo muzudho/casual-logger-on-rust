@@ -31,79 +31,29 @@ impl InternalTable {
             table: table.clone(),
         }
     }
+    pub fn create_log_level_kv_pair(table: &Table) -> String {
+        let message = if table.message_trailing_newline {
+            // There is a trailing newline.
+            format!("{}{}", table.message, NEW_LINE)
+        } else {
+            table.message.to_string()
+        };
+        format!(
+            "{} = {}
+",
+            table.level,
+            Stringifier::format_str_value(&message)
+        )
+    }
     pub fn stringify(&self) -> String {
+        let log_level_kv_pair = Some(InternalTable::create_log_level_kv_pair(&self.table));
         let parent: Option<&str> = None;
-        let mut toml = String::new();
-        let mut indent_spaces = String::new();
+        let toml = &mut String::new();
+        let indent_spaces = &mut String::new();
+        let i_table = &self;
         // Write as TOML.
         // TODO Recursive.
         // Table name.
-        let path = &format!(
-            "{}{}",
-            if let Some(parent) = parent {
-                format!("{}.", parent).to_string()
-            } else {
-                "".to_string()
-            },
-            self.base_name
-        );
-        toml.push_str(&indent_spaces);
-        toml = format!(
-            "[{}]
-",
-            path
-        );
-        // Log level message.
-        let message = if self.table.message_trailing_newline {
-            // There is a trailing newline.
-            format!("{}{}", self.table.message, NEW_LINE)
-        } else {
-            self.table.message.to_string()
-        };
-        toml.push_str(&format!(
-            "{} = {}
-",
-            self.table.level,
-            Stringifier::format_str_value(&message)
-        ));
-        // Sorted map.
-        if let Some(sorted_map) = &self.table.sorted_map {
-            for (k, formatted_v) in sorted_map {
-                toml.push_str(&format!(
-                    "{} = {}
-",
-                    k, formatted_v
-                ));
-            }
-        }
-        // Sub tables.
-        if let Some(sub_tables) = &self.table.sub_tables {
-            indent_spaces.push_str("  ");
-            for (_k1, i_table) in sub_tables {
-                InternalTable::stringify_sub_table(
-                    &mut toml,
-                    &mut indent_spaces,
-                    Some(path),
-                    i_table,
-                );
-            }
-            indent_spaces.pop();
-            indent_spaces.pop();
-        }
-        // New line.
-        toml.push_str(
-            "
-",
-        );
-        toml
-    }
-
-    pub fn stringify_sub_table(
-        toml: &mut String,
-        indent_spaces: &mut String,
-        parent: Option<&str>,
-        i_table: &InternalTable,
-    ) {
         let path = &format!(
             "{}{}",
             if let Some(parent) = parent {
@@ -119,6 +69,10 @@ impl InternalTable {
 ",
             path
         ));
+        // Log level message.
+        if let Some(log_level_kv_pair) = log_level_kv_pair {
+            toml.push_str(&log_level_kv_pair);
+        }
         // Sorted map.
         if let Some(sorted_map) = &i_table.table.sorted_map {
             for (k2, formatted_v) in sorted_map {
@@ -133,8 +87,76 @@ impl InternalTable {
         // Sub tables.
         if let Some(sub_tables) = &i_table.table.sub_tables {
             indent_spaces.push_str("  ");
-            for (_k1, i_table) in sub_tables {
-                InternalTable::stringify_sub_table(toml, indent_spaces, Some(path), i_table);
+            for (_k1, sub_i_table) in sub_tables {
+                InternalTable::stringify_sub_table(
+                    toml,
+                    indent_spaces,
+                    Some(path),
+                    None,
+                    sub_i_table,
+                );
+            }
+            indent_spaces.pop();
+            indent_spaces.pop();
+        }
+        // End of recursive.
+        // New line.
+        toml.push_str(
+            "
+",
+        );
+        toml.to_string()
+    }
+
+    pub fn stringify_sub_table(
+        toml: &mut String,
+        indent_spaces: &mut String,
+        parent: Option<&str>,
+        log_level_kv_pair: Option<String>,
+        i_table: &InternalTable,
+    ) {
+        // Table name.
+        let path = &format!(
+            "{}{}",
+            if let Some(parent) = parent {
+                format!("{}.", parent).to_string()
+            } else {
+                "".to_string()
+            },
+            i_table.base_name
+        );
+        toml.push_str(&indent_spaces);
+        toml.push_str(&format!(
+            "[{}]
+",
+            path
+        ));
+        // Log level message.
+        if let Some(log_level_kv_pair) = log_level_kv_pair {
+            toml.push_str(&log_level_kv_pair);
+        }
+        // Sorted map.
+        if let Some(sorted_map) = &i_table.table.sorted_map {
+            for (k2, formatted_v) in sorted_map {
+                toml.push_str(&indent_spaces);
+                toml.push_str(&format!(
+                    "{} = {}
+",
+                    k2, formatted_v
+                ));
+            }
+        }
+        // Sub tables.
+        if let Some(sub_tables) = &i_table.table.sub_tables {
+            indent_spaces.push_str("  ");
+            for (_k1, sub_i_table) in sub_tables {
+                InternalTable::stringify_sub_table(
+                    toml,
+                    indent_spaces,
+                    Some(path),
+                    None,
+                    sub_i_table,
+                );
             }
             indent_spaces.pop();
             indent_spaces.pop();
