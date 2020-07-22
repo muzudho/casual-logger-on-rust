@@ -257,9 +257,8 @@ impl Log {
     /// Example: 'tic-tac-toe-2020-07-11.log.toml'  
     /// - Prefix: 'tic-tac-toe'  
     /// - StartDate: '-2020-07-11' automatically.  
-    /// - Suffix: '.log' - To be safe, include a word that  
+    /// - Extention: '.log.toml' or '.log' - To be safe, include a word that  
     ///         clearly states that you can delete the file.  
-    /// - Extention: '.toml'  
     ///
     /// See also: 'Log::set_file_name()'.  
     pub fn set_file_name_important(prefix: &str) {
@@ -277,11 +276,9 @@ impl Log {
             if !logger.file_ext_important {
                 match ext {
                     Extension::LogToml => {
-                        logger.file_suffix = ".log".to_string();
-                        logger.file_extension = ".toml".to_string();
+                        logger.file_extension = ".log.toml".to_string();
                     }
                     Extension::Log => {
-                        logger.file_suffix = "".to_string();
                         logger.file_extension = ".log".to_string();
                     }
                 }
@@ -305,7 +302,7 @@ impl Log {
     /// If 'tic-tac-toe-2020-07-11.log.toml', This is '.log.toml'.  
     pub fn get_file_ext_str() -> Result<String, String> {
         match LOGGER.lock() {
-            Ok(logger) => Ok(format!("{}{}", logger.file_suffix, logger.file_extension)),
+            Ok(logger) => Ok(logger.file_extension.to_string()),
             Err(e) => Err(e.to_string()),
         }
     }

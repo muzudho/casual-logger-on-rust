@@ -18,11 +18,17 @@ lazy_static! {
 
 /// Configuration.  
 ///
-/// All: 'tic-tac-toe-2020-07-11.log.toml'  
-/// Prefix: 'tic-tac-toe'  
-/// StartDate: '-2020-07-11'  
-/// Suffix: '.log'  
-/// Extention: '.toml'  
+/// Example of Log file name:
+/// ログ・ファイル名の例:
+///
+///      'tic-tac-toe-2020-07-11.log.toml'
+///       1----------           3--------
+///                  2----------
+///
+///       1 Prefix              3 Extention
+///         接頭辞                拡張子
+///                  2 StartDate
+///                    開始日
 ///
 /// If you don't like the .toml extension, leave the suffix empty and the .log extension.  
 pub struct Logger {
@@ -34,9 +40,7 @@ pub struct Logger {
     /// The file suffix, extension cannot be changed later.  
     /// 接尾辞、拡張子は後で変更できません。  
     pub file_ext_important: bool,
-    /// For example, '.log'. To be safe, include a word that clearly states that you can delete the file.
-    pub file_suffix: String,
-    /// If you don't like the .toml extension, leave the suffix empty and the .log extension.
+    /// '.log.toml' or '.log'.
     pub file_extension: String,
     /// The level cannot be changed later.  
     /// レベルは後で変更できません。  
@@ -58,15 +62,11 @@ pub struct Logger {
 }
 impl Default for Logger {
     fn default() -> Self {
-        let prefix = "default";
-        let suffix = ".log";
-        let extension = ".toml";
         Logger {
             file_name_important: false,
-            file_prefix: prefix.to_string(),
+            file_prefix: "default".to_string(),
             file_ext_important: false,
-            file_suffix: suffix.to_string(),
-            file_extension: extension.to_string(),
+            file_extension: ".log.toml".to_string(),
             level_important: false,
             level: Level::Trace,
             retention_days_important: false,
@@ -105,21 +105,16 @@ impl Logger {
     }
 
     /// Create new file, or get exists file.  
-    fn new_today_file(
-        file_prefix: &str,
-        file_suffix: &str,
-        file_extension: &str,
-    ) -> (Date<Local>, File) {
+    fn new_today_file(file_prefix: &str, file_extension: &str) -> (Date<Local>, File) {
         let start_date = Local::today();
         let file = OpenOptions::new()
             .create(true)
             .append(true)
             // Example: 'default-2020-07-11.log.toml'.
             .open(Path::new(&format!(
-                "{}-{}{}{}",
+                "{}-{}{}",
                 file_prefix,
                 start_date.format("%Y-%m-%d"),
-                file_suffix,
                 file_extension
             )))
             .unwrap();
@@ -134,11 +129,10 @@ impl Logger {
         //      all = './tic-tac-toe-2020-07-11.log.toml'
         //      prefix = "tic-tac-toe"
         //      now = "-2020-07-11"
-        //      suffix = ".log"
-        //      extension = ".toml"
+        //      extension = ".log.toml" or ".log"
         let re = if let Ok(x) = Regex::new(&format!(
-            "./{}-{}{}{}",
-            self.file_prefix, r"(\d{4})-(\d{2})-(\d{2})", self.file_suffix, self.file_extension
+            "./{}-{}{}",
+            self.file_prefix, r"(\d{4})-(\d{2})-(\d{2})", self.file_extension
         )) {
             x
         } else {
@@ -221,7 +215,7 @@ impl Logger {
         // New file, if file removed or new.
         if let None = self.log_file {
             let (start_date, file) =
-                Logger::new_today_file(&self.file_prefix, &self.file_suffix, &self.file_extension);
+                Logger::new_today_file(&self.file_prefix, &self.file_extension);
             self.log_file = Some(LogFile::new(start_date, file));
         }
 

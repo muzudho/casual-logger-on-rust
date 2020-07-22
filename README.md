@@ -255,13 +255,13 @@ fn main() {
     // ログ・ファイル名の例:
     //
     //      'tic-tac-toe-2020-07-11.log.toml'
-    //       1----------           3---
-    //                  2----------    4----
+    //       1----------           3--------
+    //                  2----------
     //
-    //       1 Prefix              3 Suffix
-    //         接頭辞                接尾辞
-    //                  2 StartDate    4 Extention
-    //                    開始日         拡張子
+    //       1 Prefix              3 Extention
+    //         接頭辞                拡張子
+    //                  2 StartDate
+    //                    開始日
     //
     // - StartDate is automatically added.
     //   開始日は自動で付きます。
