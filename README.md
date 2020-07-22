@@ -255,13 +255,13 @@ fn main() {
     // ログ・ファイル名の例:
     //
     //      'tic-tac-toe-2020-07-11.log.toml'
-    //      1-----------          3----
-    //                 2-----------   4-----
+    //       1----------           3---
+    //                  2----------    4----
     //
-    //      1 Prefix              3 Suffix
-    //        接頭辞                接尾辞
-    //                 2 StartDate    4 Extention
-    //                   開始日         拡張子
+    //       1 Prefix              3 Suffix
+    //         接頭辞                接尾辞
+    //                  2 StartDate    4 Extention
+    //                    開始日         拡張子
     //
     // - StartDate is automatically added.
     //   開始日は自動で付きます。
@@ -325,7 +325,7 @@ fn main() {
 
     // Multi-line string.
     // The suffix "ln" adds a newline at the end.
-    Log::infoln(
+    Log::info(
         "Hello, world!!
 こんにちわ、世界！！",
     );
@@ -441,38 +441,49 @@ fn main() {
     Log::error("(2)Error on (1)Fatal. Skip!");
     Log::fatal("(1)Fatal on (1)Fatal.");
 
+    Log::set_level(Level::Info);
     // TOML say a table. So-called map.
     // Use table by '_t' suffix.
     // TOMLのテーブルは、いわゆるマップです。
     // '_t' を末尾に付けて、テーブルを使用します。
-    Log::set_level(Level::Info);
     Log::info_t(
-        "The sky is from top to bottom!!
-上から下まで空です！！",
+        // Key is alphanumeric underscore hyphen.
+        // A-Z, a-z, 0-9, _, -.
+        // キーに使える文字は英数字下線ハイフンです。
+        "ShoppingToday",
         Table::default()
-            .str(
-                // Do not include spaces in your key.
-                "ABird",
-                "fly in the sky.",
+            // Japanese YEN.
+            // 日本円。
+            .int("FluorescentLight", -7_000)
+            .int("VacuumCleaner", -53_000)
+            // Do not validate value. Unsafe.
+            // 構文チェックされません。慎重に。
+            .literal(
+                "VacuumCleanerPricesAtOtherStores",
+                "[ -63_000, -4_000, -10_000 ]",
             )
+            .int("Rent", -40_000)
+            .uint("Salary", 190_000)
+            .char("Condition", 'A')
             .str(
-                // The wrong key will be changed
-                // automatically.
-                "Blue bird",
-                "fly in the sky.",
+                "Remark",
+                "Buy shelves in the near month.
+Replace the washing machine after a few years.
+近い月に棚。
+数年後に洗濯機買い替え。",
             )
-            // Not enclose this value in quotation marks.
-            .literal("NumberOfSwimmingFish", "2")
-            .str(
-                "ThreeMonkeys",
-                "climb
-a tall
-tree.",
-            )
-            .str(
-                // Dotted key not supported yet.
-                "W.I.P",
-                "I'm thinking of another way.",
+            .float("ShelveDepth", 46.5)
+            .bool("PaidRent", true)
+            // It is easier to see if you do
+            // not use a sub table.
+            // サブテーブルを使用しない方が
+            // 見やすいです。
+            .sub_t(
+                "RestFood",
+                Table::default()
+                    .int("FrozenRamen", 2)
+                    .int("BottoleOfTea", 1)
+                    .int("Kimchi", 1),
             ),
     );
 
@@ -481,159 +492,164 @@ tree.",
 }
 ```
 
-Output `./tic-tac-toe-2020-07-21.log.toml` auto generated:  
+Output `./tic-tac-toe-2020-07-22.log.toml` auto generated:  
 
 ```toml
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=1"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=1"]
 Info = '''
 Hello, world!!
 こんにちわ、世界！！
-
 '''
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=2"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=2"]
 Info = "x is 100.\r\n"
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=3"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=3"]
 Trace = '( 1)TRACE'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=4"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=4"]
 Trace = "( 2)trace-line\r\n"
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=5"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=5"]
 Debug = '( 3)DEBUG'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=6"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=6"]
 Debug = "( 4)debug-line\r\n"
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=7"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=7"]
 Info = '( 5)INFO'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=8"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=8"]
 Info = "( 6)info-line\r\n"
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=9"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=9"]
 Notice = '( 7)NOTICE'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=10"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=10"]
 Notice = "( 8)notice-line\r\n"
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=11"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=11"]
 Warn = '( 9)WARN'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=12"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=12"]
 Warn = "(10)warn-line\r\n"
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=13"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=13"]
 Error = '(11)ERROR'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=14"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=14"]
 Error = "(12)error-line\r\n"
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=15"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=15"]
 Fatal = '(13)FATAL'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=16"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=16"]
 Fatal = "(14)fatal-line\r\n"
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=17"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=17"]
 Trace = '(7)Trace on (7)Trace.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=18"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=18"]
 Debug = '(6)Debug on (7)Trace.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=19"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=19"]
 Info = '(5)Info on (7)Trace.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=20"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=20"]
 Notice = '(4)Notice on (7)Trace.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=21"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=21"]
 Warn = '(3)Warn on (7)Trace.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=22"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=22"]
 Error = '(2)Error on (7)Trace.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=23"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=23"]
 Fatal = '(1)Fatal on (7)Trace.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=24"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=24"]
 Debug = '(6)Debug on (6)debug.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=25"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=25"]
 Info = '(5)Info on (6)debug.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=26"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=26"]
 Notice = '(4)Notice on (6)debug.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=27"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=27"]
 Warn = '(3)Warn on (6)debug.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=28"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=28"]
 Error = '(2)Error on (6)debug.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=29"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=29"]
 Fatal = '(1)Fatal on (6)debug.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=30"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=30"]
 Info = '(5)Info on (5)Info.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=31"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=31"]
 Notice = '(4)Notice on (5)Info.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=32"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=32"]
 Warn = '(3)Warn on (5)Info.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=33"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=33"]
 Error = '(2)Error on (5)Info.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=34"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=34"]
 Fatal = '(1)Fatal on (5)Info.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=35"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=35"]
 Notice = '(4)Notice on (4)Notice.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=36"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=36"]
 Warn = '(3)Warn on (4)Notice.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=37"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=37"]
 Error = '(2)Error on (4)Notice.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=38"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=38"]
 Fatal = '(1)Fatal on (4)Notice.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=39"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=39"]
 Warn = '(3)Warn on (3)Warn.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=40"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=40"]
 Error = '(2)Error on (3)Warn.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=41"]
+["Now=2020-07-22 19:32:51&Pid=19316&Thr=ThreadId(1)&Seq=41"]
 Fatal = '(1)Fatal on (3)Warn.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=42"]
+["Now=2020-07-22 19:32:52&Pid=19316&Thr=ThreadId(1)&Seq=42"]
 Error = '(2)Error on (2)Error.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=43"]
+["Now=2020-07-22 19:32:52&Pid=19316&Thr=ThreadId(1)&Seq=43"]
 Fatal = '(1)Fatal on (2)Error.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=44"]
+["Now=2020-07-22 19:32:52&Pid=19316&Thr=ThreadId(1)&Seq=44"]
 Fatal = '(1)Fatal on (1)Fatal.'
 
-["Now=2020-07-21 06:45:42&Pid=10680&Thr=ThreadId(1)&Seq=45"]
-Info = '''
-The sky is from top to bottom!!
-上から下まで空です！！
+["Now=2020-07-22 19:32:52&Pid=19316&Thr=ThreadId(1)&Seq=45"]
+Info = 'ShoppingToday'
+Condition = 'A'
+FluorescentLight = -7000
+PaidRent = true
+Remark = '''
+Buy shelves in the near month.
+Replace the washing machine after a few years.
+近い月に棚。
+数年後に洗濯機買い替え。
 '''
-"Blue bird" = 'fly in the sky.'
-"W.I.P" = "I'm thinking of another way."
-ABird = 'fly in the sky.'
-NumberOfSwimmingFish = 2
-ThreeMonkeys = '''
-climb
-a tall
-tree.
-'''
+Rent = -40000
+Salary = 190000
+ShelveDepth = 46.5
+VacuumCleaner = -53000
+VacuumCleanerPricesAtOtherStores = [ -63_000, -4_000, -10_000 ]
+  ["Now=2020-07-22 19:32:52&Pid=19316&Thr=ThreadId(1)&Seq=45".RestFood]
+  BottoleOfTea = 1
+  FrozenRamen = 2
+  Kimchi = 1
 
 
 ```

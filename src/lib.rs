@@ -177,9 +177,9 @@ impl Table {
     ///             ログ・レベル。  
     /// * `trailing_newline` - Trailing newline.  
     ///                         改行の有無。  
-    fn new(level: Level, message: &str, trailing_newline: bool) -> Self {
+    fn new(level: Level, message: &str, trailing_newline: bool, base_name: &str) -> Self {
         Table {
-            base_name: Stringifier::create_identify_table_name(Logger::create_seq()),
+            base_name: base_name.to_string(),
             level: level,
             message: message.to_string(),
             message_trailing_newline: trailing_newline,
@@ -674,9 +674,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn trace(message: &str) {
         if Log::enabled(Level::Trace) {
+            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
             Log::reserve(&InternalTable::new(
-                &Stringifier::create_identify_table_name(Logger::create_seq()),
-                &Table::new(Level::Trace, message, false),
+                base_name,
+                &Table::new(Level::Trace, message, false, base_name),
             ));
         }
     }
@@ -685,9 +686,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn traceln(message: &str) {
         if Log::enabled(Level::Trace) {
+            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
             Log::reserve(&InternalTable::new(
-                &Stringifier::create_identify_table_name(Logger::create_seq()),
-                &Table::new(Level::Trace, message, true),
+                base_name,
+                &Table::new(Level::Trace, message, true, base_name),
             ));
         }
     }
@@ -729,9 +731,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn debug(message: &str) {
         if Log::enabled(Level::Debug) {
+            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
             Log::reserve(&InternalTable::new(
-                &Stringifier::create_identify_table_name(Logger::create_seq()),
-                &Table::new(Level::Debug, message, false),
+                base_name,
+                &Table::new(Level::Debug, message, false, base_name),
             ));
         }
     }
@@ -740,9 +743,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn debugln(message: &str) {
         if Log::enabled(Level::Debug) {
+            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
             Log::reserve(&InternalTable::new(
-                &Stringifier::create_identify_table_name(Logger::create_seq()),
-                &Table::new(Level::Debug, message, true),
+                base_name,
+                &Table::new(Level::Debug, message, true, base_name),
             ));
         }
     }
@@ -775,9 +779,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn info(message: &str) {
         if Log::enabled(Level::Info) {
+            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
             Log::reserve(&InternalTable::new(
-                &Stringifier::create_identify_table_name(Logger::create_seq()),
-                &Table::new(Level::Info, message, false),
+                base_name,
+                &Table::new(Level::Info, message, false, base_name),
             ));
         }
     }
@@ -786,9 +791,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn infoln(message: &str) {
         if Log::enabled(Level::Info) {
+            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
             Log::reserve(&InternalTable::new(
-                &Stringifier::create_identify_table_name(Logger::create_seq()),
-                &Table::new(Level::Info, message, true),
+                base_name,
+                &Table::new(Level::Info, message, true, base_name),
             ));
         }
     }
@@ -820,9 +826,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn notice(message: &str) {
         if Log::enabled(Level::Notice) {
+            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
             Log::reserve(&InternalTable::new(
-                &Stringifier::create_identify_table_name(Logger::create_seq()),
-                &Table::new(Level::Notice, message, false),
+                base_name,
+                &Table::new(Level::Notice, message, false, base_name),
             ));
         }
     }
@@ -831,9 +838,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn noticeln(message: &str) {
         if Log::enabled(Level::Notice) {
+            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
             Log::reserve(&InternalTable::new(
-                &Stringifier::create_identify_table_name(Logger::create_seq()),
-                &Table::new(Level::Notice, message, true),
+                base_name,
+                &Table::new(Level::Notice, message, true, base_name),
             ));
         }
     }
@@ -865,9 +873,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn warn(message: &str) {
         if Log::enabled(Level::Warn) {
+            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
             Log::reserve(&InternalTable::new(
-                &Stringifier::create_identify_table_name(Logger::create_seq()),
-                &Table::new(Level::Warn, message, false),
+                base_name,
+                &Table::new(Level::Warn, message, false, base_name),
             ));
         }
     }
@@ -876,9 +885,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn warnln(message: &str) {
         if Log::enabled(Level::Warn) {
+            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
             Log::reserve(&InternalTable::new(
-                &Stringifier::create_identify_table_name(Logger::create_seq()),
-                &Table::new(Level::Warn, message, true),
+                base_name,
+                &Table::new(Level::Warn, message, true, base_name),
             ));
         }
     }
@@ -911,9 +921,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn error(message: &str) {
         if Log::enabled(Level::Error) {
+            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
             Log::reserve(&InternalTable::new(
-                &Stringifier::create_identify_table_name(Logger::create_seq()),
-                &Table::new(Level::Error, message, false),
+                base_name,
+                &Table::new(Level::Error, message, false, base_name),
             ));
         }
     }
@@ -922,9 +933,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn errorln(message: &str) {
         if Log::enabled(Level::Error) {
+            let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
             Log::reserve(&InternalTable::new(
-                &Stringifier::create_identify_table_name(Logger::create_seq()),
-                &Table::new(Level::Error, message, true),
+                base_name,
+                &Table::new(Level::Error, message, true, base_name),
             ));
         }
     }
@@ -957,9 +969,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn fatal(message: &str) -> String {
         // Fatal runs at any level.
+        let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
         Log::reserve(&InternalTable::new(
-            &Stringifier::create_identify_table_name(Logger::create_seq()),
-            &Table::new(Level::Fatal, message, false),
+            base_name,
+            &Table::new(Level::Fatal, message, false, base_name),
         ));
         // Wait for logging to complete or to timeout.
         Log::flush();
@@ -970,9 +983,10 @@ impl Log {
     #[allow(dead_code)]
     pub fn fatalln(message: &str) -> String {
         // Fatal runs at any level.
+        let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
         Log::reserve(&InternalTable::new(
-            &Stringifier::create_identify_table_name(Logger::create_seq()),
-            &Table::new(Level::Fatal, message, true),
+            base_name,
+            &Table::new(Level::Fatal, message, true, base_name),
         ));
         // Wait for logging to complete or to timeout.
         Log::flush();

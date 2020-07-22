@@ -379,14 +379,27 @@ impl Table {
 
         self
     }
-    /// TODO WIP.
-    pub fn sub_t<'a>(&'a mut self, base_name: &str, table: &Table) -> &'a mut Self {
+    /// Insert table recursively.  
+    /// テーブルを再帰的に挿入します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `base_name` - Sub table name.  
+    ///                 サブ・テーブル名。  
+    /// * `table` - Sub table.  
+    ///             サブ・テーブル。  
+    ///
+    /// # Returns
+    ///
+    /// Main table.  
+    /// メインの方のテーブル。  
+    pub fn sub_t<'a>(&'a mut self, base_name: &str, sub_table: &Table) -> &'a mut Self {
         self.get_sub_tables(|sub_i_tables| {
             sub_i_tables.insert(
                 // Base name.
                 Table::correct_key(base_name),
                 // Message.
-                InternalTable::new(&Table::correct_key(base_name), &table),
+                InternalTable::new(&Table::correct_key(base_name), &sub_table),
             );
         });
 
