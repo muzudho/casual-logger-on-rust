@@ -1,24 +1,15 @@
 use crate::log_file::LogFile;
-use crate::stringifier::Stringifier;
-use crate::table::ArrayOfTable;
-use crate::table::InternalTable;
 use crate::Level;
 use crate::Opt;
 use crate::OPT_STATE;
 use crate::SEQ;
 use chrono::{Date, Duration, Local, TimeZone};
 use regex::Regex;
-use std::cell::RefCell;
-use std::collections::BTreeMap;
-use std::collections::VecDeque;
-use std::fmt;
 use std::fs;
 use std::fs::{File, OpenOptions};
-use std::io::{BufWriter, Write};
 use std::ops::Add;
 use std::path::Path;
 use std::sync::Mutex;
-use std::thread;
 
 lazy_static! {
     /// Logger grobal variable.
@@ -51,19 +42,11 @@ pub struct Logger {
     /// レベルは後で変更できません。  
     pub level_important: bool,
     /// Activation.
-    #[deprecated(
-        since = "0.3.7",
-        note = "Please use the casual_logger::Log::set_level() method instead"
-    )]
     pub level: Level,
     /// The file retention days cannot be changed later.  
     /// ファイル保持日数は後で変更できません。  
     pub retention_days_important: bool,
     /// File retention days. Delete the file after day from StartDate.
-    #[deprecated(
-        since = "0.3.8",
-        note = "Please use the casual_logger::Log::set_retention_days() method instead"
-    )]
     pub retention_days: i64,
     /// The timeout seconds cannot be changed later.  
     /// タイムアウト秒は後で変更できません。  
@@ -74,12 +57,6 @@ pub struct Logger {
         note = "Please use the casual_logger::Log::set_timeout_secs() method instead"
     )]
     pub timeout_secs: u64,
-    /// Timeout seconds when fatal.
-    #[deprecated(
-        since = "0.3.2",
-        note = "Please use the casual_logger::Log::set_timeout_secs() method instead"
-    )]
-    pub fatal_timeout_secs: u64,
     /// Set to true to allow Casual_logger to output information to stdout and stderr.
     #[deprecated(
         since = "0.3.10",
@@ -106,7 +83,6 @@ impl Default for Logger {
             retention_days: 7,
             timeout_secs_important: false,
             timeout_secs: 30,
-            fatal_timeout_secs: 30,
             development: false,
             log_file: None,
         }
@@ -120,15 +96,6 @@ impl Logger {
             *seq.borrow_mut() += 1;
             old
         })
-    }
-    pub fn get_timeout_sec(logger: &Logger) -> u64 {
-        if logger.timeout_secs != 30 {
-            logger.timeout_secs
-        } else if logger.fatal_timeout_secs != 30 {
-            logger.fatal_timeout_secs
-        } else {
-            logger.timeout_secs
-        }
     }
 
     pub fn get_optimization(logger: &Logger) -> Opt {

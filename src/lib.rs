@@ -33,19 +33,12 @@ mod table;
 use crate::config::Logger;
 use crate::config::LOGGER;
 use crate::stringifier::Stringifier;
-use crate::table::ArrayOfTable;
 use crate::table::InternalTable;
-use chrono::{Date, Duration, Local, TimeZone};
-use regex::Regex;
 use std::cell::RefCell;
 use std::collections::BTreeMap;
 use std::collections::VecDeque;
 use std::fmt;
-use std::fs;
-use std::fs::{File, OpenOptions};
 use std::io::{BufWriter, Write};
-use std::ops::Add;
-use std::path::Path;
 use std::sync::Mutex;
 use std::thread;
 // use sys_info::mem_info;
@@ -497,10 +490,7 @@ impl Log {
     /// See also: Log::set_timeout_secs(), Log::set_opt().  
     pub fn flush() {
         let (timeout_secs, opt) = if let Ok(logger) = LOGGER.lock() {
-            (
-                Logger::get_timeout_sec(&logger),
-                Logger::get_optimization(&logger),
-            )
+            (logger.timeout_secs, Logger::get_optimization(&logger))
         } else {
             // Error
             (0, Opt::BeginnersSupport)
