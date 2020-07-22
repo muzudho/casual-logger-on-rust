@@ -1,5 +1,5 @@
-//! Learn how to use TOML.  
-//! TOMLの使い方を学びます。  
+//! TOML tables are typed maps.  
+//! TOMLのテーブルは型付きのマップだ。  
 
 use casual_logger::{Log, Table};
 
@@ -7,21 +7,16 @@ fn main() {
     Log::set_file_name("today-s-plan");
     Log::remove_old_logs();
 
-    // TOML say a table. So-called map.
-    // Use table by '_t' suffix.
-    // TOMLのテーブルは、いわゆるマップです。
-    // '_t' を末尾に付けて、テーブルを使用します。
+    // Just add'_t'.
+    // '_t' を付けただけ。
     Log::info_t(
-        // Key is alphanumeric underscore hyphen.
-        // A-Z, a-z, 0-9, _, -.
-        // キーに使える文字は英数字下線ハイフンです。
-        "ShoppingToday",
+        "ShoppingToday", // A-Z, a-z, 0-9, _, -.
         Table::default()
             // Japanese YEN.
             // 日本円。
             .int("FluorescentLight", -7_000)
             .int("VacuumCleaner", -53_000)
-            // Do not validate value. Unsafe.
+            // '.literal()' is no validate. carefully.
             // 構文チェックされません。慎重に。
             .literal(
                 "VacuumCleanerPricesAtOtherStores",

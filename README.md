@@ -97,20 +97,14 @@ stack backtrace:
 
 ## Example 3
 
-Using TOML for log file is not bad except for production use.  
-It's painful to spend 1.5 times as much time searching the tree in the game,  
-but what you really want is to fix a bug.  
-It is easy to add information to TOML and it is easy to see.  
-ログファイルにTOMLを使用することは本番環境での使用を除いて悪くありません。  
-ゲームの木探索時間が1.5倍になるのは辛いですが、  
-本当に欲しいのは、バグを取ることです。  
-TOMLに情報を追加するのは簡単で、しかも見やすいです。  
+Is the log file TOML?  
+ログファイルはTOMLですか？  
 
 Your code:  
 
 ```rust
-//! Learn how to use TOML.  
-//! TOMLの使い方を学びます。  
+//! TOML tables are typed maps.  
+//! TOMLのテーブルは型付きのマップだ。  
 
 use casual_logger::{Log, Table};
 
@@ -118,21 +112,16 @@ fn main() {
     Log::set_file_name("today-s-plan");
     Log::remove_old_logs();
 
-    // TOML say a table. So-called map.
-    // Use table by '_t' suffix.
-    // TOMLのテーブルは、いわゆるマップです。
-    // '_t' を末尾に付けて、テーブルを使用します。
+    // Just add'_t'.
+    // '_t' を付けただけ。
     Log::info_t(
-        // Key is alphanumeric underscore hyphen.
-        // A-Z, a-z, 0-9, _, -.
-        // キーに使える文字は英数字下線ハイフンです。
-        "ShoppingToday",
+        "ShoppingToday", // A-Z, a-z, 0-9, _, -.
         Table::default()
             // Japanese YEN.
             // 日本円。
             .int("FluorescentLight", -7_000)
             .int("VacuumCleaner", -53_000)
-            // Do not validate value. Unsafe.
+            // '.literal()' is no validate. carefully.
             // 構文チェックされません。慎重に。
             .literal(
                 "VacuumCleanerPricesAtOtherStores",
