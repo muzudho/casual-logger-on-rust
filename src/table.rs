@@ -68,22 +68,12 @@ impl InternalTable {
         if let Some(sub_tables) = &self.table.sub_tables {
             indent_spaces.push_str("  ");
             for (_k1, i_table) in sub_tables {
-                toml.push_str(&indent_spaces);
-                toml.push_str(&format!(
-                    "[{}.{}]
-",
-                    self.base_name, i_table.base_name
-                ));
-                if let Some(sorted_map) = &i_table.table.sorted_map {
-                    for (k2, formatted_v) in sorted_map {
-                        toml.push_str(&indent_spaces);
-                        toml.push_str(&format!(
-                            "{} = {}
-",
-                            k2, formatted_v
-                        ));
-                    }
-                }
+                InternalTable::stringify_sub_table(
+                    &mut toml,
+                    &mut indent_spaces,
+                    &self.base_name,
+                    i_table,
+                );
             }
             indent_spaces.pop();
             indent_spaces.pop();
@@ -94,6 +84,40 @@ impl InternalTable {
 ",
         );
         toml
+    }
+
+    pub fn stringify_sub_table(
+        toml: &mut String,
+        indent_spaces: &mut String,
+        path: &str,
+        i_table: &InternalTable,
+    ) {
+        toml.push_str(&indent_spaces);
+        toml.push_str(&format!(
+            "[{}.{}]
+",
+            path, i_table.base_name
+        ));
+        // Sorted map.
+        if let Some(sorted_map) = &i_table.table.sorted_map {
+            for (k2, formatted_v) in sorted_map {
+                toml.push_str(&indent_spaces);
+                toml.push_str(&format!(
+                    "{} = {}
+",
+                    k2, formatted_v
+                ));
+            }
+        }
+        // Sub tables.
+        if let Some(sub_tables) = &i_table.table.sub_tables {
+            indent_spaces.push_str("  ");
+            for (_k1, i_table) in sub_tables {
+                InternalTable::stringify_sub_table(toml, indent_spaces, path, i_table);
+            }
+            indent_spaces.pop();
+            indent_spaces.pop();
+        }
     }
 }
 impl Default for Table {
@@ -355,7 +379,7 @@ impl Table {
         self
     }
     /// TODO WIP.
-    pub fn subt<'a>(&'a mut self, base_name: &str, table: &Table) -> &'a mut Self {
+    pub fn sub_t<'a>(&'a mut self, base_name: &str, table: &Table) -> &'a mut Self {
         self.get_sub_tables(|sub_i_tables| {
             sub_i_tables.insert(
                 // Base name.

@@ -79,9 +79,17 @@ key",
         Table::default()
             .str("name", "apple")
             // Sub table.
-            .subt(
+            .sub_t(
                 "physical",
-                Table::default().str("color", "red").str("shape", "round"),
+                Table::default()
+                    .str("color", "red")
+                    .str("shape", "round")
+                    .sub_t(
+                        "Virtual",
+                        Table::default()
+                            .str("background_color", "blue")
+                            .str("boarder_shape", "rect"),
+                    ),
             ),
     );
     /*
