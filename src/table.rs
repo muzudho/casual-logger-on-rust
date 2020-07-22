@@ -14,6 +14,7 @@ lazy_static! {
     static ref RE_WHITE_SPACE: Mutex<Regex> = Mutex::new(Regex::new(r"\s").unwrap());
 }
 
+#[derive(Clone)]
 pub struct InternalTable {
     /// Automatic. Thread ID. However, Note that you are not limited to numbers.
     pub thread_id: String,
@@ -21,13 +22,16 @@ pub struct InternalTable {
     pub seq: u128,
     /// Clone.
     pub table: Table,
+    /// Indent level.
+    pub indent: usize,
 }
 impl InternalTable {
-    pub fn new(thread_id: &str, seq: u128, table: &Table) -> Self {
+    pub fn new(table: &Table) -> Self {
         InternalTable {
-            thread_id: thread_id.to_string(),
-            seq: seq,
+            thread_id: Stringifier::thread_id().to_string(),
+            seq: Logger::create_seq(),
             table: table.clone(),
+            indent: 0,
         }
     }
 }

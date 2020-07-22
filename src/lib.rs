@@ -196,28 +196,31 @@ impl Default for Separation {
 impl Separation {
     /// TODO WIP.
     pub fn table(&mut self, name: &str, table: &Table) -> &mut Self {
-        self.tables.insert(
-            name.to_string(),
-            InternalTable::new(&Stringifier::thread_id(), Logger::create_seq(), table),
-        );
+        self.tables
+            .insert(name.to_string(), InternalTable::new(table));
         self
     }
     /// TODO WIP.
-    fn log(&self) {
+    fn log(&self, indent_level: usize) {
+        let mut indent_space = String::new();
+        for i in 0..indent_level {
+            indent_space.push_str("  ");
+        }
+
         let mut table = Table::default();
         for (name, i_table) in &self.tables {
             // TODO Stringify.
             table.literal(
                 name,
                 &format!(
-                    "{}
-WIP = 'WIP.'
-",
+                    "{}{}",
+                    indent_space,
                     Stringifier::convert_table_to_string(&i_table)
                 ),
             );
         }
-        Log::reserve(&table);
+
+        Log::reserve(&InternalTable::new(&table));
     }
 }
 
@@ -636,7 +639,11 @@ impl Log {
     #[allow(dead_code)]
     pub fn trace(message: &str) {
         if Log::enabled(Level::Trace) {
-            Log::reserve(&Table::new(Level::Trace, message, false));
+            Log::reserve(&InternalTable::new(&Table::new(
+                Level::Trace,
+                message,
+                false,
+            )));
         }
     }
 
@@ -644,7 +651,11 @@ impl Log {
     #[allow(dead_code)]
     pub fn traceln(message: &str) {
         if Log::enabled(Level::Trace) {
-            Log::reserve(&Table::new(Level::Trace, message, true));
+            Log::reserve(&InternalTable::new(&Table::new(
+                Level::Trace,
+                message,
+                true,
+            )));
         }
     }
 
@@ -655,14 +666,14 @@ impl Log {
             table.level = Level::Trace;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(table);
+            Log::reserve(&InternalTable::new(table));
         }
     }
     /// TODO WIP.
     #[allow(dead_code)]
     pub fn trace_s(separation: &Separation) {
         if Log::enabled(Level::Trace) {
-            separation.log();
+            separation.log(0);
         }
     }
 
@@ -673,7 +684,7 @@ impl Log {
             table.level = Level::Trace;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(table);
+            Log::reserve(&InternalTable::new(table));
         }
     }
 
@@ -681,7 +692,11 @@ impl Log {
     #[allow(dead_code)]
     pub fn debug(message: &str) {
         if Log::enabled(Level::Debug) {
-            Log::reserve(&Table::new(Level::Debug, message, false));
+            Log::reserve(&InternalTable::new(&Table::new(
+                Level::Debug,
+                message,
+                false,
+            )));
         }
     }
 
@@ -689,7 +704,11 @@ impl Log {
     #[allow(dead_code)]
     pub fn debugln(message: &str) {
         if Log::enabled(Level::Debug) {
-            Log::reserve(&Table::new(Level::Debug, message, true));
+            Log::reserve(&InternalTable::new(&Table::new(
+                Level::Debug,
+                message,
+                true,
+            )));
         }
     }
 
@@ -700,7 +719,7 @@ impl Log {
             table.level = Level::Debug;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(table);
+            Log::reserve(&InternalTable::new(table));
         }
     }
 
@@ -711,7 +730,7 @@ impl Log {
             table.level = Level::Debug;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(table);
+            Log::reserve(&InternalTable::new(table));
         }
     }
 
@@ -719,7 +738,11 @@ impl Log {
     #[allow(dead_code)]
     pub fn info(message: &str) {
         if Log::enabled(Level::Info) {
-            Log::reserve(&Table::new(Level::Info, message, false));
+            Log::reserve(&InternalTable::new(&Table::new(
+                Level::Info,
+                message,
+                false,
+            )));
         }
     }
 
@@ -727,7 +750,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn infoln(message: &str) {
         if Log::enabled(Level::Info) {
-            Log::reserve(&Table::new(Level::Info, message, true));
+            Log::reserve(&InternalTable::new(&Table::new(Level::Info, message, true)));
         }
     }
 
@@ -738,7 +761,7 @@ impl Log {
             table.level = Level::Info;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(table);
+            Log::reserve(&InternalTable::new(table));
         }
     }
 
@@ -749,14 +772,18 @@ impl Log {
             table.level = Level::Info;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(table);
+            Log::reserve(&InternalTable::new(table));
         }
     }
     /// Notice level. No trailing newline.
     #[allow(dead_code)]
     pub fn notice(message: &str) {
         if Log::enabled(Level::Notice) {
-            Log::reserve(&Table::new(Level::Notice, message, false));
+            Log::reserve(&InternalTable::new(&Table::new(
+                Level::Notice,
+                message,
+                false,
+            )));
         }
     }
 
@@ -764,7 +791,11 @@ impl Log {
     #[allow(dead_code)]
     pub fn noticeln(message: &str) {
         if Log::enabled(Level::Notice) {
-            Log::reserve(&Table::new(Level::Notice, message, true));
+            Log::reserve(&InternalTable::new(&Table::new(
+                Level::Notice,
+                message,
+                true,
+            )));
         }
     }
     /// Notice level. No trailing newline. Use table.
@@ -774,7 +805,7 @@ impl Log {
             table.level = Level::Notice;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(table);
+            Log::reserve(&InternalTable::new(table));
         }
     }
 
@@ -785,7 +816,7 @@ impl Log {
             table.level = Level::Notice;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(table);
+            Log::reserve(&InternalTable::new(table));
         }
     }
 
@@ -793,7 +824,11 @@ impl Log {
     #[allow(dead_code)]
     pub fn warn(message: &str) {
         if Log::enabled(Level::Warn) {
-            Log::reserve(&Table::new(Level::Warn, message, false));
+            Log::reserve(&InternalTable::new(&Table::new(
+                Level::Warn,
+                message,
+                false,
+            )));
         }
     }
 
@@ -801,7 +836,7 @@ impl Log {
     #[allow(dead_code)]
     pub fn warnln(message: &str) {
         if Log::enabled(Level::Warn) {
-            Log::reserve(&Table::new(Level::Warn, message, true));
+            Log::reserve(&InternalTable::new(&Table::new(Level::Warn, message, true)));
         }
     }
 
@@ -812,7 +847,7 @@ impl Log {
             table.level = Level::Warn;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(table);
+            Log::reserve(&InternalTable::new(table));
         }
     }
 
@@ -823,7 +858,7 @@ impl Log {
             table.level = Level::Warn;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(table);
+            Log::reserve(&InternalTable::new(table));
         }
     }
 
@@ -831,7 +866,11 @@ impl Log {
     #[allow(dead_code)]
     pub fn error(message: &str) {
         if Log::enabled(Level::Error) {
-            Log::reserve(&Table::new(Level::Error, message, false));
+            Log::reserve(&InternalTable::new(&Table::new(
+                Level::Error,
+                message,
+                false,
+            )));
         }
     }
 
@@ -839,7 +878,11 @@ impl Log {
     #[allow(dead_code)]
     pub fn errorln(message: &str) {
         if Log::enabled(Level::Error) {
-            Log::reserve(&Table::new(Level::Error, message, true));
+            Log::reserve(&InternalTable::new(&Table::new(
+                Level::Error,
+                message,
+                true,
+            )));
         }
     }
 
@@ -850,7 +893,7 @@ impl Log {
             table.level = Level::Error;
             table.message = message.to_string();
             table.message_trailing_newline = false;
-            Log::reserve(table);
+            Log::reserve(&InternalTable::new(table));
         }
     }
 
@@ -861,7 +904,7 @@ impl Log {
             table.level = Level::Error;
             table.message = message.to_string();
             table.message_trailing_newline = true;
-            Log::reserve(table);
+            Log::reserve(&InternalTable::new(table));
         }
     }
     /// Fatal level. No trailing newline.
@@ -869,7 +912,11 @@ impl Log {
     #[allow(dead_code)]
     pub fn fatal(message: &str) -> String {
         // Fatal runs at any level.
-        Log::reserve(&Table::new(Level::Fatal, message, false));
+        Log::reserve(&InternalTable::new(&Table::new(
+            Level::Fatal,
+            message,
+            false,
+        )));
         // Wait for logging to complete or to timeout.
         Log::flush();
         message.to_string()
@@ -879,7 +926,11 @@ impl Log {
     #[allow(dead_code)]
     pub fn fatalln(message: &str) -> String {
         // Fatal runs at any level.
-        Log::reserve(&Table::new(Level::Fatal, message, true));
+        Log::reserve(&InternalTable::new(&Table::new(
+            Level::Fatal,
+            message,
+            true,
+        )));
         // Wait for logging to complete or to timeout.
         Log::flush();
         // Append trailing newline.
@@ -894,7 +945,7 @@ impl Log {
         table.level = Level::Fatal;
         table.message = message.to_string();
         table.message_trailing_newline = false;
-        Log::reserve(table);
+        Log::reserve(&InternalTable::new(table));
         // Wait for logging to complete or to timeout.
         Log::flush();
         message.to_string()
@@ -907,32 +958,28 @@ impl Log {
         table.level = Level::Fatal;
         table.message = message.to_string();
         table.message_trailing_newline = true;
-        Log::reserve(table);
+        Log::reserve(&InternalTable::new(table));
         // Wait for logging to complete or to timeout.
         Log::flush();
         // Append trailing newline.
         format!("{}{}", message, NEW_LINE).to_string()
     }
 
-    fn reserve(table: &Table) {
+    fn reserve(i_table: &InternalTable) {
         /*
         if let Ok(mut participating_threads_counter) = PARTICIPANTING_THREADS_COUNTER.lock() {
             participating_threads_counter.increase_thread_count();
         }
         */
 
-        // Out side of SEQ.with().
-        let internal_table =
-            InternalTable::new(&Stringifier::thread_id(), Logger::create_seq(), &table);
-
         if let Ok(reseve_target) = RESERVE_TARGET.lock() {
             if reseve_target.is_t() {
                 if let Ok(mut queue) = QUEUE_T.lock() {
-                    queue.push_front(internal_table);
+                    queue.push_front(i_table.clone());
                 }
             } else {
                 if let Ok(mut queue) = QUEUE_F.lock() {
-                    queue.push_front(internal_table);
+                    queue.push_front(i_table.clone());
                 }
             }
         } else {
