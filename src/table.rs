@@ -224,14 +224,12 @@ impl Table {
     /// Table.  
     /// テーブル。  
     fn correct_key(key: &str) -> String {
-        if let Ok(logger) = LOGGER.lock() {
-            match Logger::get_optimization(&logger) {
-                Opt::Release => {
-                    return key.to_string();
-                }
-                _ => {}
+        match Logger::get_optimization() {
+            Opt::Release => {
+                return key.to_string();
             }
-        };
+            _ => {}
+        }
 
         // Check
         // TODO Dotted key support is difficult.

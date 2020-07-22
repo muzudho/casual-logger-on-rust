@@ -52,17 +52,7 @@ pub struct Logger {
     /// タイムアウト秒は後で変更できません。  
     pub timeout_secs_important: bool,
     /// Timeout seconds.
-    #[deprecated(
-        since = "0.3.9",
-        note = "Please use the casual_logger::Log::set_timeout_secs() method instead"
-    )]
     pub timeout_secs: u64,
-    /// Set to true to allow Casual_logger to output information to stdout and stderr.
-    #[deprecated(
-        since = "0.3.10",
-        note = "Please use the casual_logger::Log::set_opt(Opt::Development) method instead"
-    )]
-    pub development: bool,
     /// Controll file.
     log_file: Option<LogFile>,
 }
@@ -83,7 +73,6 @@ impl Default for Logger {
             retention_days: 7,
             timeout_secs_important: false,
             timeout_secs: 30,
-            development: false,
             log_file: None,
         }
     }
@@ -98,16 +87,12 @@ impl Logger {
         })
     }
 
-    pub fn get_optimization(logger: &Logger) -> Opt {
-        if logger.development == true {
-            Opt::Development
+    pub fn get_optimization() -> Opt {
+        if let Ok(opt_state) = OPT_STATE.lock() {
+            opt_state.get()
         } else {
-            if let Ok(opt_state) = OPT_STATE.lock() {
-                opt_state.get()
-            } else {
-                // Error
-                Opt::BeginnersSupport
-            }
+            // Error
+            Opt::BeginnersSupport
         }
     }
 

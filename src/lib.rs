@@ -405,23 +405,6 @@ impl Log {
         }
     }
 
-    /// You probably don't need to set this. Default: false.  
-    /// Set to true to allow Casual_logger to  
-    /// output information to stdout and stderr.  
-    #[deprecated(
-        since = "0.4.7",
-        note = "Please use the casual_logger::Log::set_opt(Opt::Development) method instead"
-    )]
-    pub fn set_development(during_development: bool) {
-        if let Ok(opt_state) = OPT_STATE.lock() {
-            if !opt_state.opt_important {
-                if let Ok(mut logger) = LOGGER.lock() {
-                    logger.development = during_development;
-                }
-            }
-        }
-    }
-
     /// Optimization.
     pub fn set_opt(optimization: Opt) {
         if let Ok(mut opt_state) = OPT_STATE.lock() {
@@ -458,7 +441,7 @@ impl Log {
         let remove_num = if let Ok(logger) = LOGGER.lock() {
             // Do not call 'Log::xxxxx()' in this code block.
             let remove_num = logger.remove_old_logs();
-            match Logger::get_optimization(&logger) {
+            match Logger::get_optimization() {
                 Opt::Development => {
                     if 0 < remove_num {
                         println!("casual_logger: Remove {} log file(s).", remove_num);
@@ -490,7 +473,7 @@ impl Log {
     /// See also: Log::set_timeout_secs(), Log::set_opt().  
     pub fn flush() {
         let (timeout_secs, opt) = if let Ok(logger) = LOGGER.lock() {
-            (logger.timeout_secs, Logger::get_optimization(&logger))
+            (logger.timeout_secs, Logger::get_optimization())
         } else {
             // Error
             (0, Opt::BeginnersSupport)
