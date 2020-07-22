@@ -157,7 +157,8 @@ impl InternalArrayOfTable {
 }
 */
 
-/// TODO WIP. Delete. Array of Table.
+/*
+/// TODO WIP. Array of Table.
 pub struct ArrayOfTable {
     tables: Vec<Table>,
 }
@@ -173,6 +174,7 @@ impl ArrayOfTable {
         self
     }
 }
+*/
 
 impl Default for Table {
     fn default() -> Self {

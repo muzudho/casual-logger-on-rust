@@ -47,12 +47,12 @@ use std::thread;
 // For multi-platform. Windows, or not.
 #[cfg(windows)]
 const NEW_LINE: &'static str = "\r\n";
-#[cfg(windows)]
-const NEW_LINE_ESCAPED_CHARS: &'static [char; 4] = &['\\', 'r', '\\', 'n'];
+// #[cfg(windows)]
+// const NEW_LINE_ESCAPED_CHARS: &'static [char; 4] = &['\\', 'r', '\\', 'n'];
 #[cfg(not(windows))]
 const NEW_LINE: &'static str = "\n";
-#[cfg(not(windows))]
-const NEW_LINE_ESCAPED_CHARS: &'static [char; 2] = &['\\', 'n'];
+// #[cfg(not(windows))]
+// const NEW_LINE_ESCAPED_CHARS: &'static [char; 2] = &['\\', 'n'];
 
 /// Log level.
 pub const DEFAULT_LOG_LEVEL: Level = Level::Trace;
@@ -546,11 +546,7 @@ impl Log {
         .to_string()
     }
     /// Wait for logging to complete.
-    #[deprecated(
-        since = "0.3.2",
-        note = "Please use the casual_logger::Log::flush() method instead"
-    )]
-    pub fn wait_for_logging_to_complete<F>(timeout_secs: u64, count_down: F)
+    fn wait_for_logging_to_complete<F>(timeout_secs: u64, count_down: F)
     where
         F: Fn(u64, String),
     {
@@ -662,16 +658,6 @@ impl Log {
             Log::reserve(&InternalTable::new(&table.base_name, table));
         }
     }
-
-    /*
-    /// TODO WIP. Delete.
-    #[allow(dead_code)]
-    pub fn trace_aot(aot: &ArrayOfTable) {
-        if Log::enabled(Level::Trace) {
-            Log::reserve(&InternalTable::from_aot(aot));
-        }
-    }
-    */
 
     /// Trace level. There is a trailing newline. Use table.
     #[allow(dead_code)]
