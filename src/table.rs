@@ -101,27 +101,21 @@ impl InternalTable {
             },
             i_table.base_name
         );
+        // Table or Array of table.
         match &i_table.table {
-            KindOfTable::Table(_) => {
+            KindOfTable::Table(k_table) => {
                 toml.push_str(&indent_spaces);
                 toml.push_str(&format!(
                     "[{}]
 ",
                     path
                 ));
-            }
-            KindOfTable::ArrayOfTable(aot) => {
-                // TODO
-            }
-        }
-        // Log level message.
-        if let Some(log_level_kv_pair) = log_level_kv_pair {
-            toml.push_str(&log_level_kv_pair);
-        }
-        // Sorted map.
-        match &i_table.table {
-            KindOfTable::Table(table) => {
-                if let Some(sorted_map) = &table.sorted_map {
+                // Log level message.
+                if let Some(log_level_kv_pair) = log_level_kv_pair {
+                    toml.push_str(&log_level_kv_pair);
+                }
+                // Sorted map.
+                if let Some(sorted_map) = &k_table.sorted_map {
                     for (k2, formatted_v) in sorted_map {
                         toml.push_str(&indent_spaces);
                         toml.push_str(&format!(
@@ -131,35 +125,8 @@ impl InternalTable {
                         ));
                     }
                 }
-            }
-            KindOfTable::ArrayOfTable(aot) => {
-                // TODO WIP.
-                for sibling_table in &aot.tables {
-                    // TODO Table header.
-                    toml.push_str(&indent_spaces);
-                    toml.push_str(&format!(
-                        "[[{}]]
-",
-                        path
-                    ));
-                    // Body.
-                    if let Some(sorted_map) = &sibling_table.sorted_map {
-                        for (k2, formatted_v) in sorted_map {
-                            toml.push_str(&indent_spaces);
-                            toml.push_str(&format!(
-                                "{} = {}
-",
-                                k2, formatted_v
-                            ));
-                        }
-                    }
-                }
-            }
-        }
-        // Sub tables.
-        match &i_table.table {
-            KindOfTable::Table(table) => {
-                if let Some(sub_tables) = &table.sub_tables {
+                // Sub tables.
+                if let Some(sub_tables) = &k_table.sub_tables {
                     indent_spaces.push_str("  ");
                     for (_k1, sub_i_table) in sub_tables {
                         InternalTable::stringify_sub_table(
@@ -174,9 +141,9 @@ impl InternalTable {
                     indent_spaces.pop();
                 }
             }
-            KindOfTable::ArrayOfTable(aot) => {
+            KindOfTable::ArrayOfTable(k_aot) => {
                 // TODO WIP.
-                for sibling_table in &aot.tables {
+                for sibling_table in &k_aot.tables {
                     // TODO Table header.
                     toml.push_str(&indent_spaces);
                     toml.push_str(&format!(
@@ -184,7 +151,18 @@ impl InternalTable {
 ",
                         path
                     ));
-                    // Body.
+                    // Sorted map.
+                    if let Some(sorted_map) = &sibling_table.sorted_map {
+                        for (k2, formatted_v) in sorted_map {
+                            toml.push_str(&indent_spaces);
+                            toml.push_str(&format!(
+                                "{} = {}
+",
+                                k2, formatted_v
+                            ));
+                        }
+                    }
+                    // Sub tables.
                     if let Some(sub_tables) = &sibling_table.sub_tables {
                         indent_spaces.push_str("  ");
                         for (_k1, sub_i_table) in sub_tables {
