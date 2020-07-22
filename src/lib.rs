@@ -4,8 +4,9 @@
 // Publish:
 //
 // (1) `cargo test`
-// (2a) `cargo run --example example1`
-// (2b) `cargo run --example example2`
+// (2a1) `cargo run --example example1`
+// (2a2) `cargo run --example example2`
+// (2a3) `cargo run --example example3`
 // (2c) `cargo run --example fatal`
 // (2d) `cargo run --example important`
 // (2e) `cargo run --example overall`
@@ -216,15 +217,23 @@ impl Log {
     /// Set the log file name prefix.  
     /// ログ・ファイル名接頭辞を設定します。  
     ///
-    /// The policy is to associate one log file with one application.  
-    /// ポリシーは、1つのログファイルを1つのアプリケーションに関連付けることです。  
+    /// Example of Log file name:
+    /// ログ・ファイル名の例:
     ///
-    /// Example: 'tic-tac-toe-2020-07-11.log.toml'  
-    /// - Prefix: 'tic-tac-toe'  
-    /// - StartDate: '-2020-07-11' automatically.  
-    /// - Suffix: '.log' - To be safe, include a word that  
-    ///         clearly states that you can delete the file.  
-    /// - Extention: '.toml'  
+    ///      'tic-tac-toe-2020-07-11.log.toml'
+    ///       1----------           3--------
+    ///                  2----------
+    ///
+    ///       1 Prefix              3 Extention
+    ///         接頭辞                拡張子
+    ///                  2 StartDate
+    ///                    開始日
+    ///
+    /// **StartDate** is basically today.  
+    /// If the rotation fails, it is the start date.
+    ///
+    /// **`.log`** to be safe, include a word that  
+    /// clearly states that you can delete the file.  
     ///
     /// See also: 'Log::set_file_name_important()'.  
     pub fn set_file_name(prefix: &str) {
@@ -251,14 +260,23 @@ impl Log {
     /// Set the log file name prefix. The file name cannot be changed later.  
     /// ログ・ファイル名接頭辞を設定します。ファイル名は後で変更できません。  
     ///
-    /// The policy is to associate one log file with one application.  
-    /// ポリシーは、1つのログファイルを1つのアプリケーションに関連付けることです。  
+    /// Example of Log file name:
+    /// ログ・ファイル名の例:
     ///
-    /// Example: 'tic-tac-toe-2020-07-11.log.toml'  
-    /// - Prefix: 'tic-tac-toe'  
-    /// - StartDate: '-2020-07-11' automatically.  
-    /// - Extention: '.log.toml' or '.log' - To be safe, include a word that  
-    ///         clearly states that you can delete the file.  
+    ///      'tic-tac-toe-2020-07-11.log.toml'
+    ///       1----------           3--------
+    ///                  2----------
+    ///
+    ///       1 Prefix              3 Extention
+    ///         接頭辞                拡張子
+    ///                  2 StartDate
+    ///                    開始日
+    ///
+    /// **StartDate** is basically today.  
+    /// If the rotation fails, it is the start date.
+    ///
+    /// **`.log`** to be safe, include a word that  
+    /// clearly states that you can delete the file.  
     ///
     /// See also: 'Log::set_file_name()'.  
     pub fn set_file_name_important(prefix: &str) {
