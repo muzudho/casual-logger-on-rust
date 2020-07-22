@@ -28,9 +28,9 @@ pub struct InternalTable {
     pub indent: usize,
 }
 impl InternalTable {
-    pub fn new(base_name: &str, table: &Table) -> Self {
+    pub fn new(parent_name: Option<String>, base_name: &str, table: &Table) -> Self {
         InternalTable {
-            parent_name: None,
+            parent_name: parent_name,
             base_name: base_name.to_string(),
             table: table.clone(),
             indent: 0,
@@ -78,6 +78,26 @@ impl InternalTable {
                 ));
             }
         }
+        // Sub tables.
+        // TODO Recursive.
+        if let Some(sub_tables) = &self.table.sub_tables {
+            for (_k1, i_table) in sub_tables {
+                toml.push_str(&format!(
+                    "[{}]
+",
+                    &i_table.full_name()
+                ));
+                if let Some(sorted_map) = &i_table.table.sorted_map {
+                    for (k2, formatted_v) in sorted_map {
+                        toml.push_str(&format!(
+                            "{} = {}
+",
+                            k2, formatted_v
+                        ));
+                    }
+                }
+            }
+        }
         // New line.
         toml.push_str(
             "
@@ -89,10 +109,11 @@ impl InternalTable {
 impl Default for Table {
     fn default() -> Self {
         Table {
-            sorted_map: None,
             level: Level::Trace,
             message: "".to_string(),
             message_trailing_newline: false,
+            sorted_map: None,
+            sub_tables: None,
         }
     }
 }
@@ -332,7 +353,6 @@ impl Table {
     pub fn bool<'a>(&'a mut self, key: &'a str, value: bool) -> &'a mut Self {
         self.get_sorted_map(|sorted_map| {
             sorted_map.insert(
-                // Log detail level.
                 Table::correct_key(key),
                 // Message.
                 value.to_string(),
@@ -343,16 +363,16 @@ impl Table {
     }
     /// TODO WIP.
     pub fn subt<'a>(&'a mut self, key: &str, table: &Table) -> &'a mut Self {
-        self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
-                // Log detail level.
+        self.get_sub_tables(|sub_tables| {
+            sub_tables.insert(
+                // Base name.
                 Table::correct_key(key),
                 // Message.
                 InternalTable::new(
-                    &Stringifier::create_identify_table_name(Logger::create_seq()),
+                    None, // Later.
+                    &Table::correct_key(key),
                     &table,
-                )
-                .stringify(),
+                ),
             );
         });
 
