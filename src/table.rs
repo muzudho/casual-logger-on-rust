@@ -32,12 +32,26 @@ impl InternalTable {
         }
     }
     pub fn stringify(&self) -> String {
+        let parent: Option<&str> = None;
+        let mut toml = String::new();
+        let mut indent_spaces = String::new();
         // Write as TOML.
+        // TODO Recursive.
         // Table name.
-        let mut toml = format!(
+        let path = &format!(
+            "{}{}",
+            if let Some(parent) = parent {
+                format!("{}.", parent).to_string()
+            } else {
+                "".to_string()
+            },
+            self.base_name
+        );
+        toml.push_str(&indent_spaces);
+        toml = format!(
             "[{}]
 ",
-            self.base_name
+            path
         );
         // Log level message.
         let message = if self.table.message_trailing_newline {
@@ -63,15 +77,13 @@ impl InternalTable {
             }
         }
         // Sub tables.
-        // TODO Recursive.
-        let mut indent_spaces = String::new();
         if let Some(sub_tables) = &self.table.sub_tables {
             indent_spaces.push_str("  ");
             for (_k1, i_table) in sub_tables {
                 InternalTable::stringify_sub_table(
                     &mut toml,
                     &mut indent_spaces,
-                    &self.base_name,
+                    Some(path),
                     i_table,
                 );
             }
@@ -89,14 +101,23 @@ impl InternalTable {
     pub fn stringify_sub_table(
         toml: &mut String,
         indent_spaces: &mut String,
-        path: &str,
+        parent: Option<&str>,
         i_table: &InternalTable,
     ) {
+        let path = &format!(
+            "{}{}",
+            if let Some(parent) = parent {
+                format!("{}.", parent).to_string()
+            } else {
+                "".to_string()
+            },
+            i_table.base_name
+        );
         toml.push_str(&indent_spaces);
         toml.push_str(&format!(
-            "[{}.{}]
+            "[{}]
 ",
-            path, i_table.base_name
+            path
         ));
         // Sorted map.
         if let Some(sorted_map) = &i_table.table.sorted_map {
@@ -113,7 +134,7 @@ impl InternalTable {
         if let Some(sub_tables) = &i_table.table.sub_tables {
             indent_spaces.push_str("  ");
             for (_k1, i_table) in sub_tables {
-                InternalTable::stringify_sub_table(toml, indent_spaces, path, i_table);
+                InternalTable::stringify_sub_table(toml, indent_spaces, Some(path), i_table);
             }
             indent_spaces.pop();
             indent_spaces.pop();
