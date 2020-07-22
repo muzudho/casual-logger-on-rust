@@ -13,6 +13,15 @@ lazy_static! {
     static ref RE_WHITE_SPACE: Mutex<Regex> = Mutex::new(Regex::new(r"\s").unwrap());
 }
 
+/// Kind of table.  
+/// テーブルの種類。  
+#[derive(Clone)]
+pub enum KindOfTable {
+    Table(Table),
+    /// TODO WIP.
+    ArrayOfTable(),
+}
+
 #[derive(Clone)]
 pub struct InternalTable {
     /// Base name.
@@ -20,13 +29,13 @@ pub struct InternalTable {
     /// `a=1&b=2` in `["a=1&b=2"]`.
     pub base_name: String,
     /// Clone table.
-    pub table: Table,
+    pub table: KindOfTable,
 }
 impl InternalTable {
     pub fn new(base_name: &str, table: &Table) -> Self {
         InternalTable {
             base_name: base_name.to_string(),
-            table: table.clone(),
+            table: KindOfTable::Table(table.clone()),
         }
     }
     pub fn create_log_level_kv_pair(table: &Table) -> String {
@@ -52,7 +61,13 @@ impl InternalTable {
             toml,
             indent_spaces,
             None,
-            Some(InternalTable::create_log_level_kv_pair(&self.table)),
+            match &self.table {
+                KindOfTable::Table(table) => Some(InternalTable::create_log_level_kv_pair(&table)),
+                KindOfTable::ArrayOfTable() => {
+                    // TODO
+                    None
+                }
+            },
             &self,
         );
         // End of recursive.
@@ -92,30 +107,44 @@ impl InternalTable {
             toml.push_str(&log_level_kv_pair);
         }
         // Sorted map.
-        if let Some(sorted_map) = &i_table.table.sorted_map {
-            for (k2, formatted_v) in sorted_map {
-                toml.push_str(&indent_spaces);
-                toml.push_str(&format!(
-                    "{} = {}
+        match &i_table.table {
+            KindOfTable::Table(table) => {
+                if let Some(sorted_map) = &table.sorted_map {
+                    for (k2, formatted_v) in sorted_map {
+                        toml.push_str(&indent_spaces);
+                        toml.push_str(&format!(
+                            "{} = {}
 ",
-                    k2, formatted_v
-                ));
+                            k2, formatted_v
+                        ));
+                    }
+                }
+            }
+            KindOfTable::ArrayOfTable() => {
+                // TODO
             }
         }
         // Sub tables.
-        if let Some(sub_tables) = &i_table.table.sub_tables {
-            indent_spaces.push_str("  ");
-            for (_k1, sub_i_table) in sub_tables {
-                InternalTable::stringify_sub_table(
-                    toml,
-                    indent_spaces,
-                    Some(path),
-                    None,
-                    sub_i_table,
-                );
+        match &i_table.table {
+            KindOfTable::Table(table) => {
+                if let Some(sub_tables) = &table.sub_tables {
+                    indent_spaces.push_str("  ");
+                    for (_k1, sub_i_table) in sub_tables {
+                        InternalTable::stringify_sub_table(
+                            toml,
+                            indent_spaces,
+                            Some(path),
+                            None,
+                            sub_i_table,
+                        );
+                    }
+                    indent_spaces.pop();
+                    indent_spaces.pop();
+                }
             }
-            indent_spaces.pop();
-            indent_spaces.pop();
+            KindOfTable::ArrayOfTable() => {
+                // TODO
+            }
         }
     }
 }
