@@ -1,7 +1,7 @@
 //! All features are described in one copy and paste.
 //! すべての機能が1つのコピー＆ペーストで説明されています。
 
-use casual_logger::{Extension, Level, Log, Opt, Table};
+use casual_logger::{ArrayOfTable, Extension, Level, Log, Opt, Table};
 
 fn main() {
     // Example of Log file name:
@@ -226,17 +226,37 @@ Replace the washing machine after a few years.
 数年後に洗濯機買い替え。",
             )
             .float("ShelveDepth", 46.5)
-            .bool("PaidRent", true)
-            // It is easier to see if you do
-            // not use a sub table.
-            // サブテーブルを使用しない方が
-            // 見やすいです。
+            .bool("PaidRent", true),
+    );
+
+    // The top level does not support array of table.
+    // Must be a table.
+    // トップレベルはテーブルの配列に対応していません。
+    // 必ずテーブルです。
+    Log::info_t(
+        // A message.
+        // メッセージ。
+        "I'm in trouble.",
+        // It's just a table.
+        // ただのテーブルです。
+        Table::default()
+            // Sub table.
+            // サブテーブル。
             .sub_t(
                 "RestFood",
                 Table::default()
                     .int("FrozenRamen", 2)
                     .int("BottoleOfTea", 1)
                     .int("Kimchi", 1),
+            )
+            // Sub array of table.
+            // テーブルの配列です。
+            .sub_aot(
+                "IHaveToCleanMyRoom",
+                ArrayOfTable::default()
+                    .table(Table::default().str("Name", "Kitchen").bool("Clean", false))
+                    .table(Table::default().str("Name", "Bath").bool("Wash", false))
+                    .table(Table::default().str("Name", "Toilet").bool("Brush", false)),
             ),
     );
 

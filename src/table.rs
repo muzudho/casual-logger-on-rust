@@ -491,20 +491,20 @@ impl Table {
 
         self
     }
-    /// Insert array of table recursively.
-    /// テーブルの配列を再帰的に挿入します。
+    /// Insert array of table recursively.  
+    /// テーブルの配列を再帰的に挿入します。  
     ///
     /// # Arguments
     ///
-    /// * `base_name` - Array of table name.
-    ///                 テーブルの配列名。
-    /// * `table` - Array of table.
-    ///             テーブルの配列。
+    /// * `base_name` - Array of table name.  
+    ///                 テーブルの配列名。  
+    /// * `table` - Array of table.  
+    ///             テーブルの配列。  
     ///
     /// # Returns
     ///
-    /// Main table.
-    /// メインの方のテーブル。
+    /// Main table.  
+    /// メインの方のテーブル。  
     pub fn sub_aot<'a>(&'a mut self, base_name: &str, aot: &ArrayOfTable) -> &'a mut Self {
         self.get_sub_tables(|sub_i_tables| {
             sub_i_tables.insert(

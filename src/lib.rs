@@ -1,5 +1,7 @@
-//! This logger with **few settings** to repeat practice of many programming tutorials.  
+//! What a bother. Let's logging it **without setting it**.  
 //! Not for product use.  
+//! なんて面倒だ。 **設定せず** にロギングしましょう。  
+//! 製品には向いていません。
 
 // Publish:
 //
@@ -7,6 +9,8 @@
 // (2a1) `cargo run --example example1`
 // (2a2) `cargo run --example example2`
 // (2a3) `cargo run --example example3`
+// (2a4) `cargo run --example example4`
+// (2a5) `cargo run --example example5`
 // (2c) `cargo run --example fatal`
 // (2d) `cargo run --example important`
 // (2e) `cargo run --example overall`
