@@ -73,23 +73,23 @@ key",
             ),
     );
 
-    // TODO WIP.
+    // Sub table test.
     Log::info_t(
-        "SubTableTest",
+        "Message 1.",
         Table::default()
-            .str("name", "apple")
-            // Sub table.
+            .int("a1", 1)
             .sub_t(
-                "physical",
+                "a2",
                 Table::default()
-                    .str("color", "red")
-                    .str("shape", "round")
-                    .sub_t(
-                        "Virtual",
-                        Table::default()
-                            .str("background_color", "blue")
-                            .str("boarder_shape", "rect"),
-                    ),
+                    .int("a2b1", 21)
+                    .sub_t("a2b2", Table::default().int("a2b2c1", 221))
+                    .sub_t("a2b3", Table::default().int("a2b3c1", 231)),
+            )
+            .sub_t(
+                "a3",
+                Table::default()
+                    .int("a3b1", 31)
+                    .sub_t("a3b2", Table::default().int("a3b2c1", 321)),
             ),
     );
     /*

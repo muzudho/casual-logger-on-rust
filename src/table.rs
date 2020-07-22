@@ -46,59 +46,17 @@ impl InternalTable {
         )
     }
     pub fn stringify(&self) -> String {
-        let log_level_kv_pair = Some(InternalTable::create_log_level_kv_pair(&self.table));
-        let parent: Option<&str> = None;
         let toml = &mut String::new();
         let indent_spaces = &mut String::new();
-        let i_table = &self;
         // Write as TOML.
         // TODO Recursive.
-        // Table name.
-        let path = &format!(
-            "{}{}",
-            if let Some(parent) = parent {
-                format!("{}.", parent).to_string()
-            } else {
-                "".to_string()
-            },
-            i_table.base_name
+        InternalTable::stringify_sub_table(
+            toml,
+            indent_spaces,
+            None,
+            Some(InternalTable::create_log_level_kv_pair(&self.table)),
+            &self,
         );
-        toml.push_str(&indent_spaces);
-        toml.push_str(&format!(
-            "[{}]
-",
-            path
-        ));
-        // Log level message.
-        if let Some(log_level_kv_pair) = log_level_kv_pair {
-            toml.push_str(&log_level_kv_pair);
-        }
-        // Sorted map.
-        if let Some(sorted_map) = &i_table.table.sorted_map {
-            for (k2, formatted_v) in sorted_map {
-                toml.push_str(&indent_spaces);
-                toml.push_str(&format!(
-                    "{} = {}
-",
-                    k2, formatted_v
-                ));
-            }
-        }
-        // Sub tables.
-        if let Some(sub_tables) = &i_table.table.sub_tables {
-            indent_spaces.push_str("  ");
-            for (_k1, sub_i_table) in sub_tables {
-                InternalTable::stringify_sub_table(
-                    toml,
-                    indent_spaces,
-                    Some(path),
-                    None,
-                    sub_i_table,
-                );
-            }
-            indent_spaces.pop();
-            indent_spaces.pop();
-        }
         // End of recursive.
         // New line.
         toml.push_str(

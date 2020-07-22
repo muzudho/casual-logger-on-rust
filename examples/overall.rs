@@ -195,35 +195,49 @@ fn main() {
     Log::error("(2)Error on (1)Fatal. Skip!");
     Log::fatal("(1)Fatal on (1)Fatal.");
 
-    // Suffix '_t'. TOML say a table. So-called map.
     Log::set_level(Level::Info);
+    // TOML say a table. So-called map.
+    // Use table by '_t' suffix.
+    // TOMLのテーブルは、いわゆるマップです。
+    // '_t' を末尾に付けて、テーブルを使用します。
     Log::info_t(
-        "The sky is from top to bottom!!
-上から下まで空です！！",
+        // Key is alphanumeric underscore hyphen.
+        // A-Z, a-z, 0-9, _, -.
+        // キーに使える文字は英数字下線ハイフンです。
+        "ShoppingToday",
         Table::default()
-            .str(
-                // Do not include spaces in your key.
-                "ABird",
-                "fly in the sky.",
+            // Japanese YEN.
+            // 日本円。
+            .int("FluorescentLight", -7_000)
+            .int("VacuumCleaner", -53_000)
+            // Do not validate value. Unsafe.
+            // 構文チェックされません。慎重に。
+            .literal(
+                "VacuumCleanerPricesAtOtherStores",
+                "[ -63_000, -4_000, -10_000 ]",
             )
+            .int("Rent", -40_000)
+            .uint("Salary", 190_000)
+            .char("Condition", 'A')
             .str(
-                // The wrong key will be changed
-                // automatically.
-                "Blue bird",
-                "fly in the sky.",
+                "Remark",
+                "Buy shelves in the near month.
+Replace the washing machine after a few years.
+近い月に棚。
+数年後に洗濯機買い替え。",
             )
-            // Not enclose this value in quotation marks.
-            .literal("NumberOfSwimmingFish", "2")
-            .str(
-                "ThreeMonkeys",
-                "climb
-a tall
-tree.",
-            )
-            .str(
-                // Dotted key not supported yet.
-                "W.I.P",
-                "I'm thinking of another way.",
+            .float("ShelveDepth", 46.5)
+            .bool("PaidRent", true)
+            // It is easier to see if you do
+            // not use a sub table.
+            // サブテーブルを使用しない方が
+            // 見やすいです。
+            .sub_t(
+                "RestFood",
+                Table::default()
+                    .int("FrozenRamen", 2)
+                    .int("BottoleOfTea", 1)
+                    .int("Kimchi", 1),
             ),
     );
 

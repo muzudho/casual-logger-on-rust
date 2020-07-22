@@ -62,7 +62,9 @@ fn main() {
     Log::set_file_name("today-s-plan");
     Log::remove_old_logs();
 
+    // TOML say a table. So-called map.
     // Use table by '_t' suffix.
+    // TOMLのテーブルは、いわゆるマップです。
     // '_t' を末尾に付けて、テーブルを使用します。
     Log::info_t(
         // Key is alphanumeric underscore hyphen.
@@ -82,12 +84,26 @@ fn main() {
             )
             .int("Rent", -40_000)
             .uint("Salary", 190_000)
+            .char("Condition", 'A')
             .str(
                 "Remark",
-                "Buy shelves in the near month..
-Replace the washing machine after a few years
+                "Buy shelves in the near month.
+Replace the washing machine after a few years.
 近い月に棚。
 数年後に洗濯機買い替え。",
+            )
+            .float("ShelveDepth", 46.5)
+            .bool("PaidRent", true)
+            // It is easier to see if you do
+            // not use a sub table.
+            // サブテーブルを使用しない方が
+            // 見やすいです。
+            .sub_t(
+                "RestFood",
+                Table::default()
+                    .int("FrozenRamen", 2)
+                    .int("BottoleOfTea", 1)
+                    .int("Kimchi", 1),
             ),
     );
 
@@ -95,10 +111,10 @@ Replace the washing machine after a few years
 }
 ```
 
-Output `today-s-plan-2020-07-21.log.toml` automatically generated:  
+Output `today-s-plan-2020-07-22.log.toml` automatically generated:  
 
 ```toml
-["Now=2020-07-21 08:25:26&Pid=2116&Thr=ThreadId(1)&Seq=1"]
+["Now=2020-07-22 19:03:14&Pid=1260&Thr=ThreadId(1)&Seq=1"]
 Info = 'ShoppingToday'
 FluorescentLight = -7000
 Remark = '''
@@ -111,6 +127,10 @@ Rent = -40000
 Salary = 190000
 VacuumCleaner = -53000
 VacuumCleanerPricesAtOtherStores = [ -63_000, -4_000, -10_000 ]
+  ["Now=2020-07-22 19:03:14&Pid=1260&Thr=ThreadId(1)&Seq=1".RestFood]
+  BottoleOfTea = 1
+  FrozenRamen = 2
+  Kimchi = 1
 
 
 ```
@@ -421,7 +441,10 @@ fn main() {
     Log::error("(2)Error on (1)Fatal. Skip!");
     Log::fatal("(1)Fatal on (1)Fatal.");
 
-    // Suffix '_t'. TOML say a table. So-called map.
+    // TOML say a table. So-called map.
+    // Use table by '_t' suffix.
+    // TOMLのテーブルは、いわゆるマップです。
+    // '_t' を末尾に付けて、テーブルを使用します。
     Log::set_level(Level::Info);
     Log::info_t(
         "The sky is from top to bottom!!
@@ -906,7 +929,7 @@ the program will exit before writing all the logs.
 * [ ] Error handling check.
 * [ ] Toml cover.
   * [ ] Primitive type.
-  * [ ] Dotted key support (is difficult).
+  * [x] Dotted key support (Sub table only).
 * [x] Add '_important()' method.
 
 ## Appendix
