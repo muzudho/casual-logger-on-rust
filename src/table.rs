@@ -17,9 +17,8 @@ lazy_static! {
 
 #[derive(Clone)]
 pub struct InternalTable {
-    /// `A` in `[A.B]`.
-    pub parent_table_name: Option<String>,
-    /// Table name.
+    /// Base name.
+    /// `B` in `[A.B]`.
     /// `a=1&b=2` in `["a=1&b=2"]`.
     pub base_name: String,
     /// Clone.
@@ -28,24 +27,12 @@ pub struct InternalTable {
     pub indent: usize,
 }
 impl InternalTable {
-    pub fn new(parent_table_name: Option<String>, base_name: &str, table: &Table) -> Self {
+    pub fn new(base_name: &str, table: &Table) -> Self {
         InternalTable {
-            parent_table_name: parent_table_name,
             base_name: base_name.to_string(),
             table: table.clone(),
             indent: 0,
         }
-    }
-    pub fn full_name(&self) -> String {
-        format!(
-            "{}{}",
-            if let Some(parent_table_name) = &self.parent_table_name {
-                format!("{}.", parent_table_name)
-            } else {
-                "".to_string()
-            },
-            self.base_name
-        )
     }
     pub fn stringify(&self) -> String {
         // Write as TOML.
@@ -53,7 +40,7 @@ impl InternalTable {
         let mut toml = format!(
             "[{}]
 ",
-            self.full_name()
+            self.base_name
         );
         // Log level message.
         let message = if self.table.message_trailing_newline {
@@ -83,9 +70,9 @@ impl InternalTable {
         if let Some(sub_tables) = &self.table.sub_tables {
             for (_k1, i_table) in sub_tables {
                 toml.push_str(&format!(
-                    "[{}]
+                    "[{}.{}]
 ",
-                    &i_table.full_name()
+                    self.base_name, i_table.base_name
                 ));
                 if let Some(sorted_map) = &i_table.table.sorted_map {
                     for (k2, formatted_v) in sorted_map {
@@ -366,16 +353,12 @@ impl Table {
     }
     /// TODO WIP.
     pub fn subt<'a>(&'a mut self, base_name: &str, table: &Table) -> &'a mut Self {
-        self.get_sub_tables(|sub_tables| {
-            sub_tables.insert(
+        self.get_sub_tables(|sub_i_tables| {
+            sub_i_tables.insert(
                 // Base name.
                 Table::correct_key(base_name),
                 // Message.
-                InternalTable::new(
-                    Some(table.base_name.clone()),
-                    &Table::correct_key(base_name),
-                    &table,
-                ),
+                InternalTable::new(&Table::correct_key(base_name), &table),
             );
         });
 
