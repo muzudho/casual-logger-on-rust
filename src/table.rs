@@ -251,6 +251,109 @@ impl Table {
             key.to_string()
         }
     }
+    /// Insert boolean value.  
+    /// 真理値を挿入します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    /// * `value` - A value.  
+    ///             値。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
+    pub fn bool<'a>(&'a mut self, key: &'a str, value: bool) -> &'a mut Self {
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                Table::correct_key(key),
+                // Message.
+                value.to_string(),
+            );
+        });
+
+        self
+    }
+    /// Insert character value.  
+    /// 文字を挿入します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    /// * `value` - A value.  
+    ///             値。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
+    pub fn char<'a>(&'a mut self, key: &'a str, value: char) -> &'a mut Self {
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                // Log detail level.
+                Table::correct_key(key),
+                // Message.
+                Stringifier::format_str_value(&value.to_string()).to_string(),
+            );
+        });
+
+        self
+    }
+    /// Insert float value.  
+    /// 浮動小数点数を挿入します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    /// * `value` - A value.  
+    ///             値。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
+    pub fn float<'a>(&'a mut self, key: &'a str, value: f64) -> &'a mut Self {
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                // Log detail level.
+                Table::correct_key(key),
+                // Message.
+                value.to_string(),
+            );
+        });
+
+        self
+    }
+    /// Insert integer value.  
+    /// 符号付き整数を挿入します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    /// * `value` - A value.  
+    ///             値。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
+    pub fn int<'a>(&'a mut self, key: &'a str, value: i128) -> &'a mut Self {
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                // Log detail level.
+                Table::correct_key(key),
+                // Message.
+                value.to_string(),
+            );
+        });
+
+        self
+    }
     /// Insert literal string value. Do not put in quotes.  
     /// リテラル文字列を挿入します。引用符で挟みません。  
     ///
@@ -303,53 +406,27 @@ impl Table {
 
         self
     }
-    /// Insert character value.  
-    /// 文字を挿入します。  
+    /// Insert table recursively.  
+    /// テーブルを再帰的に挿入します。  
     ///
     /// # Arguments
     ///
-    /// * `key` - A key.  
-    ///             キー。  
-    /// * `value` - A value.  
-    ///             値。  
+    /// * `base_name` - Sub table name.  
+    ///                 サブ・テーブル名。  
+    /// * `table` - Sub table.  
+    ///             サブ・テーブル。  
     ///
     /// # Returns
     ///
-    /// Table.  
-    /// テーブル。  
-    pub fn char<'a>(&'a mut self, key: &'a str, value: char) -> &'a mut Self {
-        self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
-                // Log detail level.
-                Table::correct_key(key),
+    /// Main table.  
+    /// メインの方のテーブル。  
+    pub fn sub_t<'a>(&'a mut self, base_name: &str, sub_table: &Table) -> &'a mut Self {
+        self.get_sub_tables(|sub_i_tables| {
+            sub_i_tables.insert(
+                // Base name.
+                Table::correct_key(base_name),
                 // Message.
-                Stringifier::format_str_value(&value.to_string()).to_string(),
-            );
-        });
-
-        self
-    }
-    /// Insert integer value.  
-    /// 符号付き整数を挿入します。  
-    ///
-    /// # Arguments
-    ///
-    /// * `key` - A key.  
-    ///             キー。  
-    /// * `value` - A value.  
-    ///             値。  
-    ///
-    /// # Returns
-    ///
-    /// Table.  
-    /// テーブル。  
-    pub fn int<'a>(&'a mut self, key: &'a str, value: i128) -> &'a mut Self {
-        self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
-                // Log detail level.
-                Table::correct_key(key),
-                // Message.
-                value.to_string(),
+                InternalTable::new(&Table::correct_key(base_name), &sub_table),
             );
         });
 
@@ -376,83 +453,6 @@ impl Table {
                 Table::correct_key(key),
                 // Message.
                 value.to_string(),
-            );
-        });
-
-        self
-    }
-    /// Insert float value.  
-    /// 浮動小数点数を挿入します。  
-    ///
-    /// # Arguments
-    ///
-    /// * `key` - A key.  
-    ///             キー。  
-    /// * `value` - A value.  
-    ///             値。  
-    ///
-    /// # Returns
-    ///
-    /// Table.  
-    /// テーブル。  
-    pub fn float<'a>(&'a mut self, key: &'a str, value: f64) -> &'a mut Self {
-        self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
-                // Log detail level.
-                Table::correct_key(key),
-                // Message.
-                value.to_string(),
-            );
-        });
-
-        self
-    }
-    /// Insert boolean value.  
-    /// 真理値を挿入します。  
-    ///
-    /// # Arguments
-    ///
-    /// * `key` - A key.  
-    ///             キー。  
-    /// * `value` - A value.  
-    ///             値。  
-    ///
-    /// # Returns
-    ///
-    /// Table.  
-    /// テーブル。  
-    pub fn bool<'a>(&'a mut self, key: &'a str, value: bool) -> &'a mut Self {
-        self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
-                Table::correct_key(key),
-                // Message.
-                value.to_string(),
-            );
-        });
-
-        self
-    }
-    /// Insert table recursively.  
-    /// テーブルを再帰的に挿入します。  
-    ///
-    /// # Arguments
-    ///
-    /// * `base_name` - Sub table name.  
-    ///                 サブ・テーブル名。  
-    /// * `table` - Sub table.  
-    ///             サブ・テーブル。  
-    ///
-    /// # Returns
-    ///
-    /// Main table.  
-    /// メインの方のテーブル。  
-    pub fn sub_t<'a>(&'a mut self, base_name: &str, sub_table: &Table) -> &'a mut Self {
-        self.get_sub_tables(|sub_i_tables| {
-            sub_i_tables.insert(
-                // Base name.
-                Table::correct_key(base_name),
-                // Message.
-                InternalTable::new(&Table::correct_key(base_name), &sub_table),
             );
         });
 

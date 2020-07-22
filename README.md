@@ -41,6 +41,59 @@ Info = 'Hello, world!!'
 
 ## Example 2
 
+Code:  
+
+```rust
+//! There are 7 log levels.  
+//! ログレベルは７段階です。  
+
+use casual_logger::{Level, Log};
+
+fn main() {
+    Log::remove_old_logs();
+    Log::set_level(Level::Notice); // Set.
+
+    Log::trace("Stain on the wall of the room."); // Ignore it.
+    Log::debug("There is no place to store clothes."); // Ignore it.
+    Log::info("I turned on the air conditioner."); // Ignore it.
+    Log::notice("The bath temperature is 44 degrees."); // Write.
+    Log::warn("The refrigerator is empty."); // Write.
+    Log::error("Where did you put my train pass?"); // Write.
+    panic!(Log::fatal("I haven't set an alarm clock.")); // Write.
+
+    // Log::flush();
+}
+```
+
+Output `default-2020-07-23.log.toml` automatically generated:  
+
+```toml
+["Now=2020-07-23T01:23:41+0900&Pid=5928&Thr=ThreadId(1)&Seq=1"]
+Notice = 'The bath temperature is 44 degrees.'
+
+["Now=2020-07-23T01:23:41+0900&Pid=5928&Thr=ThreadId(1)&Seq=2"]
+Warn = 'The refrigerator is empty.'
+
+["Now=2020-07-23T01:23:41+0900&Pid=5928&Thr=ThreadId(1)&Seq=3"]
+Error = 'Where did you put my train pass?'
+
+["Now=2020-07-23T01:23:41+0900&Pid=5928&Thr=ThreadId(1)&Seq=4"]
+Fatal = "I haven't set an alarm clock."
+
+
+```
+
+Terminal:  
+
+```plain
+thread 'main' panicked at 'I haven't set an alarm clock.', examples\example2.rs:16:5
+stack backtrace:
+   0: backtrace::backtrace::trace_unsynchronized
+...omitted...
+```
+
+## Example 3
+
 Using TOML for log file is not bad except for production use.  
 It's painful to spend 1.5 times as much time searching the tree in the game,  
 but what you really want is to fix a bug.  
@@ -117,7 +170,7 @@ VacuumCleanerPricesAtOtherStores = [ -63_000, -4_000, -10_000 ]
 
 ```
 
-## Example 3
+## Example 4
 
 For practical purposes, specify the file retention days and log level.  
 Specify important to force the file name.  
@@ -146,19 +199,23 @@ fn main() {
     // 重要を指定することで、設定は早い者勝ちで有効になります。
     // いつでも important にできるので、
     // 迷ったら常に important を省きましょう……
-    Log::set_file_name_important("lesson1"); // For app use.
-    Log::set_file_name("mischief1"); // For library use.
+    Log::set_file_name_important("lesson1"); // Ok.
+    Log::set_file_name("mischief1"); // Ignore it.
 
-    Log::set_file_ext_important(Extension::LogToml);
-    Log::set_file_ext(Extension::Log);
+    Log::set_file_ext_important(Extension::LogToml); // Ok.
+    Log::set_file_ext(Extension::Log); // Ignore it.
 
-    Log::set_retention_days_important(2);
-    Log::set_retention_days(31);
+    Log::set_retention_days_important(2); // Ok.
+    Log::set_retention_days(31); // Ignore it.
 
-    Log::set_level_important(Level::Info);
-    Log::set_level(Level::Notice);
-
+    // Delete the old log after setting the file name
+    // and extension.
+    // ファイル名、拡張子を設定したあとで、古いログを
+    // 削除しましょう。
     Log::remove_old_logs();
+
+    Log::set_level_important(Level::Info); // Ok.
+    Log::set_level(Level::Notice); // Ignore it.
 
     // If there are more arguments, make a pre-judgment.
     // 引数が増えたら前判定しましょう。
@@ -896,13 +953,19 @@ Code:
 
 | Instance method        | Description                    |
 | ---------------------- | ------------------------------ |
-| `.str(key, value)`     | Insert a string.               |
-|                        | Multi-line string are          |
-|                        | output with multiple lines.    |
+| `.bool(key, value)`    | Insert a boolean.              |
+| `.char(key, value)`    | Insert a character.            |
+| `.float(key, value)`   | Insert a float.                |
+| `.int(key, value)`     | Insert a signed integer.       |
 | `.literal(key, value)` | Not enclose this value in      |
 |                        | quotation marks.               |
 |                        | You can break the toml format. |
 |                        | Do not validate.               |
+| `.str(key, value)`     | Insert a string.               |
+|                        | Multi-line string are          |
+|                        | output with multiple lines.    |
+| `.sub_t(key, table)`   | Insert a sub table.            |
+| `.uint(key, value)`    | Insert a unsigned integer.     |
 
 Do not include spaces in the **key**. TOML collapses.  
 
