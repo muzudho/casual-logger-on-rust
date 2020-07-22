@@ -1,7 +1,5 @@
-//! If someone used "casual_logger" in some library,  
-//! see how to override the settings.  
-//! もし他のライブラリで誰かが 'casual_logger' を使って  
-//! いたなら、設定を上書きする方法を確認してください。  
+//! See how to override the settings.  
+//! 設定を上書きする方法を確認してください。  
 
 use casual_logger::{Extension, Level, Log, Table};
 
@@ -31,7 +29,9 @@ fn main() {
     Log::set_level_important(Level::Info); // Ok.
     Log::set_level(Level::Notice); // Ignore it.
 
+    // Now for confirmation. Just use the log.
     // If there are more arguments, make a pre-judgment.
+    // さあ確認です。ちょうどログが使えます。
     // 引数が増えたら前判定しましょう。
     if Log::enabled(Level::Info) {
         Log::info_t(

@@ -172,22 +172,15 @@ VacuumCleanerPricesAtOtherStores = [ -63_000, -4_000, -10_000 ]
 
 ## Example 4
 
-For practical purposes, specify the file retention days and log level.  
-Specify important to force the file name.  
-This is important when using 'casual_logger' in multiple libraries.  
-Important designation is on a first-come-first-served basis.  
-実際には、ファイルの保存日数とログレベルを指定します。  
-重要を指定して、ファイル名を強制します。  
-これは、複数のライブラリで 'カジュアル・ロガー' を使用する場合に重要です。  
-重要指定は、先着順です。  
+What if someone else used 'casual_logger' in another library?  
+もし他のライブラリで誰かが 'casual_logger' を使っていたなら、  
+どうなるでしょうか？  
 
 Code:  
 
 ```rust
-//! If someone used "casual_logger" in some library,  
-//! see how to override the settings.  
-//! もし他のライブラリで誰かが 'casual_logger' を使って  
-//! いたなら、設定を上書きする方法を確認してください。  
+//! See how to override the settings.  
+//! 設定を上書きする方法を確認してください。  
 
 use casual_logger::{Extension, Level, Log, Table};
 
@@ -217,7 +210,9 @@ fn main() {
     Log::set_level_important(Level::Info); // Ok.
     Log::set_level(Level::Notice); // Ignore it.
 
+    // Now for confirmation. Just use the log.
     // If there are more arguments, make a pre-judgment.
+    // さあ確認です。ちょうどログが使えます。
     // 引数が増えたら前判定しましょう。
     if Log::enabled(Level::Info) {
         Log::info_t(
