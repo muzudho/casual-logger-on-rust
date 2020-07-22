@@ -176,17 +176,19 @@ fn main() {
     Log::set_file_name("complex-toml");
     Log::remove_old_logs();
 
-    // WIP. The top level does not support array of table.
-    // 作業中。トップレベルはテーブルの配列に対応していません。
+    // The top level does not support array of table.
+    // Must be a table.
+    // トップレベルはテーブルの配列に対応していません。
+    // 必ずテーブルです。
     Log::info_t(
-        "ImInTrouble",
+        // A message.
+        // メッセージ。
+        "I'm in trouble.",
         // It's just a table.
         // ただのテーブルです。
         Table::default()
-            // It is easier to see if you do
-            // not use a sub table.
-            // サブテーブルを使用しない方が
-            // 見やすいです。
+            // Sub table.
+            // サブテーブル。
             .sub_t(
                 "RestFood",
                 Table::default()
@@ -194,6 +196,8 @@ fn main() {
                     .int("BottoleOfTea", 1)
                     .int("Kimchi", 1),
             )
+            // Sub array of table.
+            // テーブルの配列です。
             .sub_aot(
                 "IHaveToCleanMyRoom",
                 ArrayOfTable::default()
