@@ -1,9 +1,9 @@
 # casual_logger
 
-This logger with **few settings** to repeat practice of many programming tutorials.  
+What a bother. Let's logging it **without setting it**.  
 Not for product use.  
-このロガーは、多くのプログラミングチュートリアルの練習を  
-繰り返したい人向けに、設定の手間が少ないようにしています。  
+なんて面倒だ。 **設定せず** にロギングしましょう。  
+製品には向いていません。  
 
 Japanese before machine translation is attached.  
 機械翻訳する前の日本語を添えます。  
@@ -30,7 +30,7 @@ fn main() {
 }
 ```
 
-Output `default-2020-07-22.log.toml` automatically generated:  
+Output `./default-2020-07-22.log.toml` automatically generated:  
 
 ```toml
 ["Now=2020-07-22T22:53:40+0900&Pid=13728&Thr=ThreadId(1)&Seq=1"]
@@ -68,7 +68,7 @@ fn main() {
 }
 ```
 
-Output `default-2020-07-23.log.toml` automatically generated:  
+Output `./default-2020-07-23.log.toml` automatically generated:  
 
 ```toml
 ["Now=2020-07-23T01:23:41+0900&Pid=5928&Thr=ThreadId(1)&Seq=1"]
@@ -153,7 +153,7 @@ Replace the washing machine after a few years.
 }
 ```
 
-Output `today-s-plan-2020-07-22.log.toml` automatically generated:  
+Output `./today-s-plan-2020-07-22.log.toml` automatically generated:  
 
 ```toml
 ["Now=2020-07-22T23:06:11+0900&Pid=13696&Thr=ThreadId(1)&Seq=1"]
@@ -255,7 +255,7 @@ fn main() {
 }
 ```
 
-Output `lesson1-2020-07-23.log.toml` automatically generated:  
+Output `./lesson1-2020-07-23.log.toml` automatically generated:  
 
 ```toml
 ["Now=2020-07-23T00:05:03+0900&Pid=6316&Thr=ThreadId(1)&Seq=1"]
@@ -563,7 +563,7 @@ Replace the washing machine after a few years.
 }
 ```
 
-Output `./tic-tac-toe-2020-07-22.log.toml` auto generated:  
+Output `./tic-tac-toe-2020-07-22.log.toml` automatically generated:  
 
 ```toml
 ["Now=2020-07-22T22:58:07+0900&Pid=10388&Thr=ThreadId(1)&Seq=1"]
