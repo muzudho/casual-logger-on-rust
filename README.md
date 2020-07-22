@@ -164,6 +164,73 @@ VacuumCleanerPricesAtOtherStores = [ -63_000, -4_000, -10_000 ]
 
 ## Example 4
 
+Your code:  
+
+```rust
+//! Tables are easier to see if they are not nested..  
+//! テーブルは入れ子にしない方が見やすいです。  
+
+use casual_logger::{ArrayOfTable, Log, Table};
+
+fn main() {
+    Log::set_file_name("complex-toml");
+    Log::remove_old_logs();
+
+    // WIP. The top level does not support array of table.
+    // 作業中。トップレベルはテーブルの配列に対応していません。
+    Log::info_t(
+        "ImInTrouble",
+        // It's just a table.
+        // ただのテーブルです。
+        Table::default()
+            // It is easier to see if you do
+            // not use a sub table.
+            // サブテーブルを使用しない方が
+            // 見やすいです。
+            .sub_t(
+                "RestFood",
+                Table::default()
+                    .int("FrozenRamen", 2)
+                    .int("BottoleOfTea", 1)
+                    .int("Kimchi", 1),
+            )
+            .sub_aot(
+                "IHaveToCleanMyRoom",
+                ArrayOfTable::default()
+                    .table(Table::default().str("Name", "Kitchen").bool("Clean", false))
+                    .table(Table::default().str("Name", "Bath").bool("Wash", false))
+                    .table(Table::default().str("Name", "Toilet").bool("Brush", false)),
+            ),
+    );
+
+    Log::flush();
+}
+```
+
+Output `./complex-toml-2020-07-23.log.toml` automatically generated:  
+
+```toml
+["Now=2020-07-23T04:05:02+0900&Pid=9976&Thr=ThreadId(1)&Seq=1"]
+Info = 'ImInTrouble'
+  [["Now=2020-07-23T04:05:02+0900&Pid=9976&Thr=ThreadId(1)&Seq=1".IHaveToCleanMyRoom]]
+  Clean = false
+  Name = 'Kitchen'
+  [["Now=2020-07-23T04:05:02+0900&Pid=9976&Thr=ThreadId(1)&Seq=1".IHaveToCleanMyRoom]]
+  Name = 'Bath'
+  Wash = false
+  [["Now=2020-07-23T04:05:02+0900&Pid=9976&Thr=ThreadId(1)&Seq=1".IHaveToCleanMyRoom]]
+  Brush = false
+  Name = 'Toilet'
+  ["Now=2020-07-23T04:05:02+0900&Pid=9976&Thr=ThreadId(1)&Seq=1".RestFood]
+  BottoleOfTea = 1
+  FrozenRamen = 2
+  Kimchi = 1
+
+
+```
+
+## Example 5
+
 What if someone else used 'casual_logger' in another library?  
 もし他のライブラリで誰かが 'casual_logger' を使っていたなら、  
 どうなるでしょうか？  

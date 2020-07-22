@@ -93,31 +93,54 @@ key",
             ),
     );
 
-    // TODO WIP. Delete. Array of Table.
+    // Array of Table test. (Sub only)
     Log::trace_t(
         "TestArrayOfTable",
-        Table::default().sub_aot(
-            "z1",
-            &ArrayOfTable::default()
-                .table(
-                    &Table::default()
-                        .int("Apple", 1)
-                        .int("Alice", 18)
-                        .int("Alpha", 100),
-                )
-                .table(
-                    &Table::default()
-                        .int("Banana", 2)
-                        .int("Bob", 19)
-                        .int("Beta", 200),
-                )
-                .table(
-                    &Table::default()
-                        .int("Cherry", 3)
-                        .int("Charley", 20)
-                        .int("Gamma", 300),
-                ),
-        ),
+        Table::default()
+            .sub_aot(
+                "z1",
+                &ArrayOfTable::default()
+                    .table(
+                        &Table::default()
+                            .int("Apple", 1)
+                            .int("Alice", 18)
+                            .int("Alpha", 100),
+                    )
+                    .table(
+                        &Table::default()
+                            .int("Banana", 2)
+                            .int("Bob", 19)
+                            .int("Beta", 200),
+                    )
+                    .table(
+                        &Table::default()
+                            .int("Cherry", 3)
+                            .int("Charley", 20)
+                            .int("Gamma", 300),
+                    ),
+            )
+            .sub_aot(
+                "z2",
+                &ArrayOfTable::default()
+                    .table(
+                        &Table::default()
+                            .int("The Apple", -1)
+                            .int("The Alice", -18)
+                            .int("The Alpha", -100),
+                    )
+                    .table(
+                        &Table::default()
+                            .int("The Banana", -2)
+                            .int("The Bob", -19)
+                            .int("The Beta", -200),
+                    )
+                    .table(
+                        &Table::default()
+                            .int("The Cherry", -3)
+                            .int("The Charley", -20)
+                            .int("The Gamma", -300),
+                    ),
+            ),
     );
 
     Log::flush();
