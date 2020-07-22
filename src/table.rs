@@ -23,15 +23,12 @@ pub struct InternalTable {
     pub base_name: String,
     /// Clone.
     pub table: Table,
-    /// Indent level.
-    pub indent: usize,
 }
 impl InternalTable {
     pub fn new(base_name: &str, table: &Table) -> Self {
         InternalTable {
             base_name: base_name.to_string(),
             table: table.clone(),
-            indent: 0,
         }
     }
     pub fn stringify(&self) -> String {
@@ -60,15 +57,18 @@ impl InternalTable {
             for (k, formatted_v) in sorted_map {
                 toml.push_str(&format!(
                     "{} = {}
-    ",
+",
                     k, formatted_v
                 ));
             }
         }
         // Sub tables.
         // TODO Recursive.
+        let mut indent_spaces = String::new();
         if let Some(sub_tables) = &self.table.sub_tables {
+            indent_spaces.push_str("  ");
             for (_k1, i_table) in sub_tables {
+                toml.push_str(&indent_spaces);
                 toml.push_str(&format!(
                     "[{}.{}]
 ",
@@ -76,6 +76,7 @@ impl InternalTable {
                 ));
                 if let Some(sorted_map) = &i_table.table.sorted_map {
                     for (k2, formatted_v) in sorted_map {
+                        toml.push_str(&indent_spaces);
                         toml.push_str(&format!(
                             "{} = {}
 ",
@@ -84,6 +85,8 @@ impl InternalTable {
                     }
                 }
             }
+            indent_spaces.pop();
+            indent_spaces.pop();
         }
         // New line.
         toml.push_str(
