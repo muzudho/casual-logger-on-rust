@@ -80,31 +80,30 @@ pub const DEFAULT_OPTIMIZATION: Opt = Opt::BeginnersSupport;
 /// | Fatal < Error < Warn < Notice < Info < Debug < Trace |  
 #[derive(Clone, Copy, Debug)]
 pub enum Level {
-    /// If the program cannot continue.
-    #[allow(dead_code)]
+    /// If the program cannot continue.  
     Fatal,
-    /// I didn't get the expected result, so I'll continue with the other method.
+    /// I didn't get the expected result, so I'll continue with the other method.  
     Error,
-    /// It will be abnormal soon, but there is no problem and you can ignore it.
-    /// For example:
-    ///     * He reported that it took longer to access than expected.
-    ///     * Report that capacity is approaching the limit.
+    /// It will be abnormal soon, but there is no problem and you can ignore it.  
+    /// For example:  
+    /// * He reported that it took longer to access than expected.
+    /// * Report that capacity is approaching the limit.
     Warn,
-    /// It must be enabled in the server production environment.
-    /// Record of passing important points correctly.
-    /// We are monitoring that it is working properly.
+    /// It must be enabled in the server production environment.  
+    /// Record of passing important points correctly.  
+    /// We are monitoring that it is working properly.  
     Notice,
-    /// Report highlights.
-    /// Everything that needs to be reported regularly in the production environment.
+    /// Report highlights.  
+    /// Everything that needs to be reported regularly in the production environment.  
     Info,
-    /// It should be in a place with many accidents.
-    /// This level is disabled in production environments.
-    /// Leave it in the source and enable it for troubleshooting.
-    /// Often, this is the production level of a desktop operating environment.
+    /// It should be in a place with many accidents.  
+    /// This level is disabled in production environments.  
+    /// Leave it in the source and enable it for troubleshooting.  
+    /// Often, this is the production level of a desktop operating environment.  
     Debug,
-    /// Not included in the distribution.
-    /// Remove this level from the source after using it for debugging.
-    /// If you want to find a bug in the program, write a lot.
+    /// Not included in the distribution.  
+    /// Remove this level from the source after using it for debugging.  
+    /// If you want to find a bug in the program, write a lot.  
     Trace,
 }
 impl Level {
@@ -522,7 +521,7 @@ impl Log {
             // Do not call 'Log::xxxxx()' in this code block.
             match opt {
                 Opt::Development => {
-                    eprintln!("casual_logger: {} sec(s). {}", secs, message,);
+                    println!("casual_logger: {} sec(s). {}", secs, message,);
                 }
                 _ => {}
             }
@@ -634,7 +633,6 @@ impl Log {
     }
 
     /// Trace level. No trailing newline.
-    #[allow(dead_code)]
     pub fn trace(message: &str) {
         if Log::enabled(Level::Trace) {
             let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -646,7 +644,6 @@ impl Log {
     }
 
     /// Trace level. There is a trailing newline.
-    #[allow(dead_code)]
     pub fn traceln(message: &str) {
         if Log::enabled(Level::Trace) {
             let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -658,7 +655,6 @@ impl Log {
     }
 
     /// Trace level. No trailing newline. Use table.
-    #[allow(dead_code)]
     pub fn trace_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Trace) {
             table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());
@@ -670,7 +666,6 @@ impl Log {
     }
 
     /// Trace level. There is a trailing newline. Use table.
-    #[allow(dead_code)]
     pub fn traceln_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Trace) {
             table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());
@@ -682,7 +677,6 @@ impl Log {
     }
 
     /// Debug level. No trailing newline.
-    #[allow(dead_code)]
     pub fn debug(message: &str) {
         if Log::enabled(Level::Debug) {
             let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -694,7 +688,6 @@ impl Log {
     }
 
     /// Debug level. There is a trailing newline.
-    #[allow(dead_code)]
     pub fn debugln(message: &str) {
         if Log::enabled(Level::Debug) {
             let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -706,7 +699,6 @@ impl Log {
     }
 
     /// Debug level. No trailing newline. Use table.
-    #[allow(dead_code)]
     pub fn debug_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Debug) {
             table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());
@@ -718,7 +710,6 @@ impl Log {
     }
 
     /// Debug level. There is a trailing newline. Use table.
-    #[allow(dead_code)]
     pub fn debugln_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Debug) {
             table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());
@@ -730,7 +721,6 @@ impl Log {
     }
 
     /// Info level. No trailing newline.
-    #[allow(dead_code)]
     pub fn info(message: &str) {
         if Log::enabled(Level::Info) {
             let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -742,7 +732,6 @@ impl Log {
     }
 
     /// Info level. There is a trailing newline.
-    #[allow(dead_code)]
     pub fn infoln(message: &str) {
         if Log::enabled(Level::Info) {
             let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -754,7 +743,6 @@ impl Log {
     }
 
     /// Info level. No trailing newline. Use table.
-    #[allow(dead_code)]
     pub fn info_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Info) {
             table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());
@@ -766,7 +754,6 @@ impl Log {
     }
 
     /// Info level. There is a trailing newline. Use table.
-    #[allow(dead_code)]
     pub fn infoln_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Info) {
             table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());
@@ -777,7 +764,6 @@ impl Log {
         }
     }
     /// Notice level. No trailing newline.
-    #[allow(dead_code)]
     pub fn notice(message: &str) {
         if Log::enabled(Level::Notice) {
             let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -789,7 +775,6 @@ impl Log {
     }
 
     /// Notice level. There is a trailing newline.
-    #[allow(dead_code)]
     pub fn noticeln(message: &str) {
         if Log::enabled(Level::Notice) {
             let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -800,7 +785,6 @@ impl Log {
         }
     }
     /// Notice level. No trailing newline. Use table.
-    #[allow(dead_code)]
     pub fn notice_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Notice) {
             table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());
@@ -812,7 +796,6 @@ impl Log {
     }
 
     /// Notice level. There is a trailing newline. Use table.
-    #[allow(dead_code)]
     pub fn noticeln_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Notice) {
             table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());
@@ -824,7 +807,6 @@ impl Log {
     }
 
     /// Warning level. No trailing newline.
-    #[allow(dead_code)]
     pub fn warn(message: &str) {
         if Log::enabled(Level::Warn) {
             let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -836,7 +818,6 @@ impl Log {
     }
 
     /// Warning level. There is a trailing newline.
-    #[allow(dead_code)]
     pub fn warnln(message: &str) {
         if Log::enabled(Level::Warn) {
             let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -848,7 +829,6 @@ impl Log {
     }
 
     /// Warning level. No trailing newline. Use table.
-    #[allow(dead_code)]
     pub fn warn_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Warn) {
             table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());
@@ -860,7 +840,6 @@ impl Log {
     }
 
     /// Warning level. There is a trailing newline. Use table.
-    #[allow(dead_code)]
     pub fn warnln_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Warn) {
             table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());
@@ -872,7 +851,6 @@ impl Log {
     }
 
     /// Error level. No trailing newline.
-    #[allow(dead_code)]
     pub fn error(message: &str) {
         if Log::enabled(Level::Error) {
             let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -884,7 +862,6 @@ impl Log {
     }
 
     /// Error level. There is a trailing newline.
-    #[allow(dead_code)]
     pub fn errorln(message: &str) {
         if Log::enabled(Level::Error) {
             let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -896,7 +873,6 @@ impl Log {
     }
 
     /// Error level. No trailing newline. Use table.
-    #[allow(dead_code)]
     pub fn error_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Error) {
             table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());
@@ -908,7 +884,6 @@ impl Log {
     }
 
     /// Error level. There is a trailing newline. Use table.
-    #[allow(dead_code)]
     pub fn errorln_t(message: &str, table: &mut Table) {
         if Log::enabled(Level::Error) {
             table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());
@@ -920,7 +895,6 @@ impl Log {
     }
     /// Fatal level. No trailing newline.
     /// Fatal is Panic! Can be used as the first argument of.
-    #[allow(dead_code)]
     pub fn fatal(message: &str) -> String {
         // Fatal runs at any level.
         let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -934,7 +908,6 @@ impl Log {
     }
     /// Fatal level. There is a trailing newline.
     /// Fatal is Panic! Can be used as the first argument of.
-    #[allow(dead_code)]
     pub fn fatalln(message: &str) -> String {
         // Fatal runs at any level.
         let base_name = &Stringifier::create_identify_table_name(Logger::create_seq());
@@ -950,7 +923,6 @@ impl Log {
 
     /// Fatal level. No trailing newline.
     /// Fatal is Panic! Can be used as the first argument of.
-    #[allow(dead_code)]
     pub fn fatal_t(message: &str, table: &mut Table) -> String {
         // Fatal runs at any level.
         table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());
@@ -964,7 +936,6 @@ impl Log {
     }
     /// Fatal level. There is a trailing newline.
     /// Fatal is Panic! Can be used as the first argument of.
-    #[allow(dead_code)]
     pub fn fatalln_t(message: &str, table: &mut Table) -> String {
         // Fatal runs at any level.
         table.base_name = Stringifier::create_identify_table_name(Logger::create_seq());

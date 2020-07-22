@@ -1,4 +1,5 @@
-//! Escape control characters.
+//! Escape control characters.  
+//! 制御文字をエスケープします。  
 
 use chrono::Local;
 use regex::Regex;
@@ -8,10 +9,12 @@ use std::thread;
 
 lazy_static! {
     /// Triple single quotation.
+    /// ３連シングル・クォーテーション。
     static ref RE_TRIPLE_SINGLE_QUOTE: Mutex<Regex> = Mutex::new(Regex::new(r"'''").unwrap());
 }
 
 // For multi-platform. Windows, or not.
+// マルチプラットフォーム対応。Windowsか、それ以外か。
 #[cfg(windows)]
 const NEW_LINE_SEQUENCE: &'static str = "\\r\\n";
 #[cfg(windows)]
@@ -21,12 +24,16 @@ const NEW_LINE_SEQUENCE: &'static str = "\\n";
 #[cfg(not(windows))]
 const NEW_LINE_CHARS: &'static [char; 1] = &['\n'];
 
-/// Unstable.
-/// Escape control characters.
+/// Unstable.  
+/// Escape control characters.  
+/// 仕様は変わることがあります。  
+/// 制御文字をエスケープします。  
 pub struct Stringifier {}
 impl Stringifier {
-    /// Table name to keep for ordering.
-    /// For example, you can parse it easily by writing the table name like a GET query.
+    /// Table name to keep for ordering.  
+    /// You can parse it easily by writing the table name like a GET query.  
+    /// テーブル名は順を保ってください。  
+    /// GETクエリのようにテーブル名を記述することで、簡単に解析できます。  
     pub fn create_identify_table_name(seq: u128) -> String {
         format!(
             "\"Now={}&Pid={}&Thr={}&Seq={}\"",
@@ -38,7 +45,8 @@ impl Stringifier {
         )
         .to_string()
     }
-    /// Automatic. Thread ID. However, Note that you are not limited to numbers.
+    /// Automatic. Thread ID. However, Note that you are not limited to numbers.  
+    /// 自動。スレッドID。ただし、数値に限定されないことに注意してください。  
     pub fn thread_id() -> String {
         format!("{:?}", thread::current().id())
     }
@@ -100,19 +108,23 @@ impl Stringifier {
         }
     }
 
-    /// Escape back slash.
+    /// Escape back slash.  
+    /// バック・スラッシュをエスケープします。  
     pub fn escape_back_slash(text: &str) -> String {
         text.replace("\\", "\\\\")
     }
-    /// Escape double quotation.
+    /// Escape double quotation.  
+    /// 二重引用符をエスケープします。  
     pub fn escape_double_quotation(text: &str) -> String {
         text.replace("\"", "\\\"")
     }
-    /// Escape trailing newline.
+    /// Escape trailing newline.  
+    /// 末尾の改行をエスケープします。  
     ///
     /// # Returns
     ///
-    /// Escaped string or None.
+    /// Escaped string or None.  
+    /// エスケープした文字列か、あるいは None です。  
     pub fn escape_trailing_newline(value: &str) -> Option<String> {
         let ch_vec: Vec<char> = value.chars().collect();
         if NEW_LINE_CHARS.len() == 2 && 1 < ch_vec.len() {

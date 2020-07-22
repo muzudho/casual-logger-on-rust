@@ -11,10 +11,8 @@ fn main() {
     Log::set_file_name("performance-check");
     Log::set_file_ext(Extension::Log);
     Log::set_retention_days(2);
-    // Log::set_opt(Opt::Development); // 12477 ms.
-    // Log::set_opt(Opt::BeginnersSupport); // 7657 ms. --> 9589 ms.
-    Log::set_opt(Opt::Release); // 10998 ms. --> 10409 ms. --> 14035 ms. --> 13975 ms.
     Log::remove_old_logs();
+    Log::set_opt(Opt::Development);
     println!("Notice  | Start!");
 
     // Multi thread test.
