@@ -440,7 +440,9 @@ impl Log {
     pub fn remove_old_logs() -> usize {
         let remove_num = if let Ok(logger) = LOGGER.lock() {
             // Do not call 'Log::xxxxx()' in this code block.
+
             let remove_num = logger.remove_old_logs();
+
             match Logger::get_optimization() {
                 Opt::Development => {
                     if 0 < remove_num {

@@ -104,53 +104,6 @@ impl Logger {
         false
     }
 
-    /// Example:  
-    ///
-    /// If 'tic-tac-toe-2020-07-11.log.toml', This is 'tic-tac-toe'.  
-    #[deprecated(
-        since = "0.5.2",
-        note = "Please use the casual_logger::Log::get_file_name() method instead"
-    )]
-    #[allow(dead_code)]
-    pub fn get_file_prefix(&self) -> &str {
-        &self.file_prefix
-    }
-
-    /// Example:  
-    ///
-    /// If 'tic-tac-toe-2020-07-11.log.toml', This is '.log'.  
-    #[allow(dead_code)]
-    pub fn get_file_suffix(&self) -> &str {
-        &self.file_suffix
-    }
-    /// Example:  
-    ///
-    /// If 'tic-tac-toe-2020-07-11.log.toml', This is '.toml'.  
-    #[allow(dead_code)]
-    pub fn get_file_extension(&self) -> &str {
-        &self.file_extension
-    }
-    /// Set name except StartDate.  
-    ///
-    /// Example: 'tic-tac-toe-2020-07-11.log.toml'  
-    /// - Prefix: 'tic-tac-toe'  
-    /// - StartDate: '-2020-07-11'  
-    /// - Suffix: '.log'  
-    /// - Extention: '.toml'  
-    #[deprecated(
-        since = "0.3.6",
-        note = "Please use the casual_logger::Log::set_file_name() or casual_logger::Log::set_toml_ext() method instead"
-    )]
-    #[allow(dead_code)]
-    pub fn set_file_name(&mut self, prefix: &str, suffix: &str, extension: &str) {
-        if !self.file_name_important {
-            self.file_prefix = prefix.to_string();
-        }
-        if !self.file_ext_important {
-            self.file_suffix = suffix.to_string();
-            self.file_extension = extension.to_string();
-        }
-    }
     /// Create new file, or get exists file.  
     fn new_today_file(
         file_prefix: &str,
@@ -173,10 +126,7 @@ impl Logger {
         (start_date, file)
     }
     /// For log rotation.
-    #[deprecated(
-        since = "0.3.3",
-        note = "Please use the casual_logger::Log::remove_old_logs() method instead"
-    )]
+    /// Please use the casual_logger::Log::remove_old_logs() method.
     pub fn remove_old_logs(&self) -> usize {
         // Removed files count.
         let mut count = 0;
