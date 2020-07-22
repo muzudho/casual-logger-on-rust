@@ -183,6 +183,32 @@ impl Table {
         }
     }
 }
+/// TODO WIP.
+pub struct Separation {
+    tables: BTreeMap<String, Table>,
+}
+impl Default for Separation {
+    fn default() -> Self {
+        Separation {
+            tables: BTreeMap::default(),
+        }
+    }
+}
+impl Separation {
+    /// TODO WIP.
+    pub fn table(&mut self, name: &str, table: &Table) -> &mut Self {
+        self.tables.insert(name.to_string(), table.clone());
+        self
+    }
+    /// TODO WIP.
+    fn log(&self) {
+        let mut table = Table::default();
+        for (name, _sub_table) in &self.tables {
+            table.literal(name, "WIP.");
+        }
+        Log::reserve(&table);
+    }
+}
 
 /// Easy to use logging.
 pub struct Log {}
@@ -619,6 +645,13 @@ impl Log {
             table.message = message.to_string();
             table.message_trailing_newline = false;
             Log::reserve(table);
+        }
+    }
+    /// TODO WIP.
+    #[allow(dead_code)]
+    pub fn trace_s(separation: &Separation) {
+        if Log::enabled(Level::Trace) {
+            separation.log();
         }
     }
 
