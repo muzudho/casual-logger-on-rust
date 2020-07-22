@@ -15,5 +15,5 @@ fn main() {
     Log::error("Where did you put my train pass?"); // Write.
     panic!(Log::fatal("I haven't set an alarm clock.")); // Write.
 
-    // Log::flush();
+    // Log::flush(); // Log::Fatal() will flushes instead.
 }
