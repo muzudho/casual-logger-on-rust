@@ -1,9 +1,5 @@
 use crate::stringifier::Stringifier;
-use crate::Level;
-use crate::Logger;
-use crate::Opt;
-use crate::Table;
-use crate::NEW_LINE;
+use crate::{ArrayOfTable, Level, Logger, Opt, Table, NEW_LINE};
 use regex::Regex;
 use std::sync::Mutex;
 
@@ -19,7 +15,7 @@ lazy_static! {
 pub enum KindOfTable {
     Table(Table),
     /// TODO WIP.
-    ArrayOfTable(),
+    ArrayOfTable(ArrayOfTable),
 }
 
 #[derive(Clone)]
@@ -42,6 +38,12 @@ impl InternalTable {
         InternalTable {
             base_name: name.to_string(),
             table: KindOfTable::Table(sub_table.clone()),
+        }
+    }
+    pub fn from_aot(name: &str, aot: &ArrayOfTable) -> Self {
+        InternalTable {
+            base_name: name.to_string(),
+            table: KindOfTable::ArrayOfTable(aot.clone()),
         }
     }
     pub fn create_log_level_kv_pair(table: &Table) -> String {
@@ -69,10 +71,7 @@ impl InternalTable {
             None,
             match &self.table {
                 KindOfTable::Table(table) => Some(InternalTable::create_log_level_kv_pair(&table)),
-                KindOfTable::ArrayOfTable() => {
-                    // TODO
-                    None
-                }
+                KindOfTable::ArrayOfTable(_) => None,
             },
             &self,
         );
@@ -102,12 +101,19 @@ impl InternalTable {
             },
             i_table.base_name
         );
-        toml.push_str(&indent_spaces);
-        toml.push_str(&format!(
-            "[{}]
+        match &i_table.table {
+            KindOfTable::Table(_) => {
+                toml.push_str(&indent_spaces);
+                toml.push_str(&format!(
+                    "[{}]
 ",
-            path
-        ));
+                    path
+                ));
+            }
+            KindOfTable::ArrayOfTable(aot) => {
+                // TODO
+            }
+        }
         // Log level message.
         if let Some(log_level_kv_pair) = log_level_kv_pair {
             toml.push_str(&log_level_kv_pair);
@@ -126,8 +132,28 @@ impl InternalTable {
                     }
                 }
             }
-            KindOfTable::ArrayOfTable() => {
-                // TODO
+            KindOfTable::ArrayOfTable(aot) => {
+                // TODO WIP.
+                for sibling_table in &aot.tables {
+                    // TODO Table header.
+                    toml.push_str(&indent_spaces);
+                    toml.push_str(&format!(
+                        "[[{}]]
+",
+                        path
+                    ));
+                    // Body.
+                    if let Some(sorted_map) = &sibling_table.sorted_map {
+                        for (k2, formatted_v) in sorted_map {
+                            toml.push_str(&indent_spaces);
+                            toml.push_str(&format!(
+                                "{} = {}
+",
+                                k2, formatted_v
+                            ));
+                        }
+                    }
+                }
             }
         }
         // Sub tables.
@@ -148,8 +174,32 @@ impl InternalTable {
                     indent_spaces.pop();
                 }
             }
-            KindOfTable::ArrayOfTable() => {
-                // TODO
+            KindOfTable::ArrayOfTable(aot) => {
+                // TODO WIP.
+                for sibling_table in &aot.tables {
+                    // TODO Table header.
+                    toml.push_str(&indent_spaces);
+                    toml.push_str(&format!(
+                        "[[{}]]
+",
+                        path
+                    ));
+                    // Body.
+                    if let Some(sub_tables) = &sibling_table.sub_tables {
+                        indent_spaces.push_str("  ");
+                        for (_k1, sub_i_table) in sub_tables {
+                            InternalTable::stringify_sub_table(
+                                toml,
+                                indent_spaces,
+                                Some(path),
+                                None,
+                                sub_i_table,
+                            );
+                        }
+                        indent_spaces.pop();
+                        indent_spaces.pop();
+                    }
+                }
             }
         }
     }
@@ -192,11 +242,6 @@ impl InternalArrayOfTable {
 }
 */
 
-/// TODO Array of Table.  
-/// テーブルの配列。  
-pub struct ArrayOfTable {
-    tables: Vec<Table>,
-}
 impl Default for ArrayOfTable {
     fn default() -> Self {
         ArrayOfTable { tables: Vec::new() }
@@ -468,7 +513,6 @@ impl Table {
 
         self
     }
-    /* TODO WIP.
     /// Insert array of table recursively.
     /// テーブルの配列を再帰的に挿入します。
     ///
@@ -489,13 +533,12 @@ impl Table {
                 // Base name.
                 Table::correct_key(base_name),
                 // Message.
-                InternalTable::new(&Table::correct_key(base_name), &sub_table),
+                InternalTable::from_aot(&Table::correct_key(base_name), &aot),
             );
         });
 
         self
     }
-    */
     /// Insert unsigned integer value.  
     /// 符号無し整数を挿入します。  
     ///

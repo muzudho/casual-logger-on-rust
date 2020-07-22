@@ -1,7 +1,7 @@
 //! Toml cover check.
 //! [TOML v1.0.0-rc.1](https://toml.io/en/v1.0.0-rc.1)
 
-use casual_logger::{Log, Opt, Table};
+use casual_logger::{ArrayOfTable, Log, Opt, Table};
 
 fn main() {
     Log::set_file_name("toml-cover");
@@ -93,18 +93,32 @@ key",
             ),
     );
 
-    /*
     // TODO WIP. Delete. Array of Table.
     Log::trace_t(
         "TestArrayOfTable",
         Table::default().sub_aot(
+            "z1",
             &ArrayOfTable::default()
-                .table(&Table::default().int("Apple", 1))
-                .table(&Table::default().int("Banana", 2))
-                .table(&Table::default().int("Cherry", 3)),
+                .table(
+                    &Table::default()
+                        .int("Apple", 1)
+                        .int("Alice", 18)
+                        .int("Alpha", 100),
+                )
+                .table(
+                    &Table::default()
+                        .int("Banana", 2)
+                        .int("Bob", 19)
+                        .int("Beta", 200),
+                )
+                .table(
+                    &Table::default()
+                        .int("Cherry", 3)
+                        .int("Charley", 20)
+                        .int("Gamma", 300),
+                ),
         ),
     );
-    */
 
     Log::flush();
 }

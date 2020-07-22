@@ -166,6 +166,13 @@ thread_local!(static SEQ: RefCell<u128> = {
     RefCell::new(1)
 });
 
+/// TODO Array of Table.  
+/// テーブルの配列。  
+#[derive(Clone)]
+pub struct ArrayOfTable {
+    tables: Vec<Table>,
+}
+
 /// TOML table included in the log file. The form is not validated.  
 /// However, if "Log::set_opt(Opt::BeginnersSupport)" is set,  
 /// it will intervene with some automatic correction.  
