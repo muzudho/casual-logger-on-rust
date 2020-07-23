@@ -182,6 +182,20 @@ By file name, not by timestamp.
 デフォルトで７日前の日付まで残ります。  
 タイムスタンプではなく、ファイル名によって。  
 
+Before test:  
+
+```plain
+./default-2020-07-15.log.toml
+./default-2020-07-16.log.toml
+./default-2020-07-17.log.toml
+./default-2020-07-18.log.toml
+./default-2020-07-19.log.toml
+./default-2020-07-20.log.toml
+./default-2020-07-21.log.toml
+./default-2020-07-22.log.toml
+./default-2020-07-23.log.toml
+```
+
 Your code:  
 
 ```rust
@@ -206,6 +220,28 @@ fn main() {
 
     Log::flush();
 }
+```
+
+Output `./default-2020-07-23.log.toml` automatically generated:  
+
+```toml
+["Now=2020-07-23T20:07:50+0900&Pid=19172&Thr=ThreadId(1)&Seq=1"]
+Info = 'Hooray!'
+
+
+```
+
+Terminal:  
+
+```plain
+casual_logger   | Remove 9 log file(s).
+                | If you don't want this message, set `Log::set_opt(Opt::Release);`.
+```
+
+After test:  
+
+```plain
+./default-2020-07-23.log.toml
 ```
 
 ## Example 5
