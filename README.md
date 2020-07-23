@@ -200,7 +200,7 @@ We do not recommend making it complicated.
 Your code:  
 
 ```rust
-//! Tables are easier to see if they are not nested..  
+//! Tables are easier to see if they are not nested.  
 //! テーブルは入れ子にしない方が見やすいです。  
 
 use casual_logger::{ArrayOfTable, Log, Table};
@@ -368,10 +368,28 @@ Fail faster and improve faster.
 
 ### 1. casual_logger is entry model
 
-No settings, use immediately.  
-Used in one example, throw away.  
-設定なし、すぐに使用。  
-エグザンプルを1つ終われば、捨てるだけです。  
+Don't know how to log well? That's right. Rest assured. 　
+You can't find it even if You look it up because logging is ad hoc.  
+うまくログを取る方法が分かりませんか？ ですよね。 安心してください。  
+調べても見つからないのはロギングが場当たり的だからです。  
+
+Some shoes don't fit your size. There are differences.  
+What makes loggers hard is finding the right one for the job.  
+自分のサイズに合わない靴もある程度の違いです。  
+ロガーを困難にするのは、その仕事に適したロガーを見つけることです。  
+
+More specifically, it is difficult to adjust.  
+`casual_logger` aims to be a logger with little flexibility.  
+もっと言えば、調整が難しいのです。  
+`casual_logger` は、ほとんど調整できないロガーを目指します。  
+
+Since the hammer is fixed, please look for a nail that is easy to hit.  
+ハンマーの方を固定するので、叩きやすい釘を探してください。  
+
+" No settings, use immediately.  
+Used in one example, throw away. "  
+「 設定なし、すぐに使用。  
+エグザンプルを1つ終われば、捨てるだけです 」  
 
 * **There is no** configuration file.  
     設定ファイルはありません。
@@ -387,6 +405,8 @@ Used in one example, throw away.
         優先順位１: 最初に重要指定したログ・ファイル。
     * Priority 2: Last specified log file.  
         優先順位２: 最後に指定したログ・ファイル。
+* Learn while using.  
+    使いながら覚えます。
 
 ### 2. Connect to the competition
 
@@ -403,20 +423,17 @@ When you see a tournament, you'll want to try it with an entry model.
     標準出力、エラー出力にメッセージを出しません。  
     大会で反則になる可能性があるからです。
 
-## Abstract
+### 3. Encourage you
 
-The concept used by beginners.
+You want to get more and more logs.  
+あなたは どんどん ログを取りたくなる。  
 
-### 2. Human readable log
+* Human readable log. TOML does not spoil it.  
+    人間が読めるログ。 TOMLはそれを台無しにしません。
+* Write the log as a TOML table, it can be **easily parsed**.  
+    ログをTOMLテーブルとして書き込みます。**解析しやすい**です。
 
-* TOML does not spoil it.
-
-### 3. Possibility as a tutorial
-
-* **Short introduction**.
-* Write the log as a TOML table, it can be **easily parsed**.
-
-### Disclaim
+## Disclaim
 
 * (1) In trade off for processing speed:
   * **Don't forget `Log::flush()`** for logging to complete at **end of program**.

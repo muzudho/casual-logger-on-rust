@@ -1,4 +1,4 @@
-//! Tables are easier to see if they are not nested..  
+//! Tables are easier to see if they are not nested.  
 //! テーブルは入れ子にしない方が見やすいです。  
 
 use casual_logger::{ArrayOfTable, Log, Table};
