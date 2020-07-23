@@ -471,8 +471,8 @@ Used in one example, throw away. "
         優先順位１: 最初に重要指定したログ・ファイル。
     * Priority 2: Last specified log file.  
         優先順位２: 最後に指定したログ・ファイル。
-* Learn while using.  
-    使いながら覚えます。
+* It is for those who want to learn while using it.  
+    使いながら覚える人向けです。
 
 ### 2. Connect to the competition
 
