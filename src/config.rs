@@ -90,7 +90,7 @@ impl Logger {
         if let Ok(opt_state) = OPT_STATE.lock() {
             opt_state.get()
         } else {
-            // Error
+            // TODO Error
             Opt::BeginnersSupport
         }
     }

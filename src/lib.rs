@@ -28,6 +28,7 @@ extern crate chrono;
 extern crate regex;
 // extern crate sys_info;
 
+mod auto_correct;
 mod config;
 mod log_file;
 mod stringifier;
@@ -531,10 +532,11 @@ impl Log {
         Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
             // Do not call 'Log::xxxxx()' in this code block.
             match opt {
-                Opt::BeginnersSupport | Opt::Development => {
+                Opt::Development => {
+                    // Running background.
                     println!("casual_logger   | {} sec(s). {}", secs, message,);
                 }
-                Opt::Release => {}
+                Opt::Release | Opt::BeginnersSupport => {}
             }
         });
     }

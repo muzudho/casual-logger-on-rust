@@ -1,13 +1,6 @@
+use crate::auto_correct::AutoCorrect;
 use crate::stringifier::Stringifier;
-use crate::{ArrayOfTable, Level, Logger, Opt, Table, NEW_LINE};
-use regex::Regex;
-use std::sync::Mutex;
-
-lazy_static! {
-    /// Without dot.
-    static ref RE_TOML_KEY: Mutex<Regex> = Mutex::new(Regex::new(r"^[A-Za-z0-9_-]+$").unwrap());
-    static ref RE_WHITE_SPACE: Mutex<Regex> = Mutex::new(Regex::new(r"\s").unwrap());
-}
+use crate::{ArrayOfTable, Level, Table, NEW_LINE};
 
 /// Kind of table.  
 /// テーブルの種類。  
@@ -270,46 +263,6 @@ impl Table {
         converted
     }
     */
-    /// Correct the key automatically.  
-    /// キーを補正します。  
-    ///
-    /// # Arguments
-    ///
-    /// * `key` - A key.  
-    ///             キー。  
-    ///
-    /// # Returns
-    ///
-    /// Table.  
-    /// テーブル。  
-    fn correct_key(key: &str) -> String {
-        match Logger::get_optimization() {
-            Opt::Release => {
-                return key.to_string();
-            }
-            _ => {}
-        }
-
-        // Check
-        // TODO Dotted key support is difficult.
-        if let Ok(re_toml_key) = RE_TOML_KEY.lock() {
-            if re_toml_key.is_match(key) {
-                // Ok.
-                return key.to_string();
-            }
-        }
-
-        // TODO Auto correct
-        if let Ok(re_white_space) = RE_WHITE_SPACE.lock() {
-            format!(
-                "\"{}\"",
-                Stringifier::escape_double_quotation(&re_white_space.replace_all(key, " "))
-            )
-        } else {
-            // TODO Error
-            key.to_string()
-        }
-    }
     /// Insert boolean value.  
     /// 真理値を挿入します。  
     ///
@@ -327,7 +280,7 @@ impl Table {
     pub fn bool<'a>(&'a mut self, key: &'a str, value: bool) -> &'a mut Self {
         self.get_sorted_map(|sorted_map| {
             sorted_map.insert(
-                Table::correct_key(key),
+                AutoCorrect::correct_key(key),
                 // Message.
                 value.to_string(),
             );
@@ -353,7 +306,7 @@ impl Table {
         self.get_sorted_map(|sorted_map| {
             sorted_map.insert(
                 // Log detail level.
-                Table::correct_key(key),
+                AutoCorrect::correct_key(key),
                 // Message.
                 Stringifier::format_str_value(&value.to_string()).to_string(),
             );
@@ -379,7 +332,7 @@ impl Table {
         self.get_sorted_map(|sorted_map| {
             sorted_map.insert(
                 // Log detail level.
-                Table::correct_key(key),
+                AutoCorrect::correct_key(key),
                 // Message.
                 value.to_string(),
             );
@@ -405,7 +358,7 @@ impl Table {
         self.get_sorted_map(|sorted_map| {
             sorted_map.insert(
                 // Log detail level.
-                Table::correct_key(key),
+                AutoCorrect::correct_key(key),
                 // Message.
                 value.to_string(),
             );
@@ -431,7 +384,7 @@ impl Table {
         self.get_sorted_map(|sorted_map| {
             sorted_map.insert(
                 // Log detail level.
-                Table::correct_key(key),
+                AutoCorrect::correct_key(key),
                 // Message.
                 value.to_string(),
             );
@@ -457,7 +410,7 @@ impl Table {
         self.get_sorted_map(|sorted_map| {
             sorted_map.insert(
                 // Log detail level.
-                Table::correct_key(key),
+                AutoCorrect::correct_key(key),
                 // Message.
                 Stringifier::format_str_value(value).to_string(),
             );
@@ -483,9 +436,9 @@ impl Table {
         self.get_sub_tables(|sub_i_tables| {
             sub_i_tables.insert(
                 // Base name.
-                Table::correct_key(base_name),
+                AutoCorrect::correct_key(base_name),
                 // Message.
-                InternalTable::from_sub_table(&Table::correct_key(base_name), &sub_table),
+                InternalTable::from_sub_table(&AutoCorrect::correct_key(base_name), &sub_table),
             );
         });
 
@@ -509,9 +462,9 @@ impl Table {
         self.get_sub_tables(|sub_i_tables| {
             sub_i_tables.insert(
                 // Base name.
-                Table::correct_key(base_name),
+                AutoCorrect::correct_key(base_name),
                 // Message.
-                InternalTable::from_aot(&Table::correct_key(base_name), &aot),
+                InternalTable::from_aot(&AutoCorrect::correct_key(base_name), &aot),
             );
         });
 
@@ -535,7 +488,7 @@ impl Table {
         self.get_sorted_map(|sorted_map| {
             sorted_map.insert(
                 // Log detail level.
-                Table::correct_key(key),
+                AutoCorrect::correct_key(key),
                 // Message.
                 value.to_string(),
             );

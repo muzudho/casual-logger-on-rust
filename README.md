@@ -503,6 +503,7 @@ fn main() {
     //
     // Opt::BeginnersSupport
     // Corrects TOML format errors automatically.
+    // Displays the auto correct to standard output.
     // Default. so you probably don't need to set it.
     //
     // Opt::Release

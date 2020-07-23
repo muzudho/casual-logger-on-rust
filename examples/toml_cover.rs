@@ -1,12 +1,11 @@
 //! Toml cover check.
 //! [TOML v1.0.0-rc.1](https://toml.io/en/v1.0.0-rc.1)
 
-use casual_logger::{ArrayOfTable, Log, Opt, Table};
+use casual_logger::{ArrayOfTable, Log, Table};
 
 fn main() {
     Log::set_file_name("toml-cover");
     Log::set_retention_days(2);
-    Log::set_opt(Opt::Development);
     Log::remove_old_logs();
 
     // String.
@@ -57,7 +56,10 @@ fn main() {
                 "Apple . Banana",
                 "Space quoted dot. I don't recommend it, but it's okay.",
             )
-            .str("Dotted.Key", "Correct."),
+            .str(
+                "Dotted.Key",
+                "Dotted key unsupported. Please use sub-table.",
+            ),
     );
 
     // Illegal keys. Auto correct check.
