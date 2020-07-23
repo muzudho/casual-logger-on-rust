@@ -1,24 +1,16 @@
 # casual_logger
 
-What a bother. Let's logging it **without setting it**.  
-Not for product use.  
-なんて面倒だ。 **設定せず** にロギングしましょう。  
-製品には向いていません。  
-
-Japanese before machine translation is attached.  
-機械翻訳する前の日本語を添えます。  
+What a bother. I want to logging it **without setting it**. Not a product.  
+なんて面倒だ。 **設定せず** にロギングしたい。 製品じゃないし。  
 
 ## Example 1
 
-Can it be used without reading Example 2 and later?  
-Example 2 以降を読まなくても使えるかも？  
+You can copy and paste and use immediately.  
+コピー＆ペーストしてすぐに使用できます。  
 
 Your code:  
 
 ```rust
-//! You can copy and paste and use immediately.  
-//! コピー＆ペーストしてすぐに使用できます。  
-
 use casual_logger::Log;
 
 fn main() {

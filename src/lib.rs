@@ -1,7 +1,5 @@
-//! What a bother. Let's logging it **without setting it**.  
-//! Not for product use.  
-//! なんて面倒だ。 **設定せず** にロギングしましょう。  
-//! 製品には向いていません。
+//! What a bother. I want to logging it **without setting it**. Not a product.  
+//! なんて面倒だ。 **設定せず** にロギングしたい。 製品じゃないし。  
 
 // Publish:
 //

@@ -4,8 +4,7 @@ version = "0.6.1"
 authors = ["むずでょ <muzudho1@gmail.com>"]
 edition = "2018"
 description = """
-This logger with **few settings** to repeat practice of many programming tutorials.  
-Not for product use.  
+What a bother. I want to logging it without setting it.  
 """
 readme = "README.md"
 repository = "https://github.com/muzudho/casual-logger-on-rust"
