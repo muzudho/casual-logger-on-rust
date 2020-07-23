@@ -434,7 +434,7 @@ Fail faster and improve faster.
 
 ### 1. casual_logger is entry model
 
-Don't know how to log well? That's right. Rest assured. 　
+Don't know how to log well? That's right. Rest assured.  
 You can't find it even if You look it up because logging is ad hoc.  
 うまくログを取る方法が分かりませんか？ ですよね。 安心してください。  
 調べても見つからないのはロギングが場当たり的だからです。  
