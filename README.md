@@ -445,7 +445,7 @@ What makes loggers hard is finding the right one for the job.
 ロガーを困難にするのは、その仕事に適したロガーを見つけることです。  
 
 More specifically, it is difficult to adjust.  
-`casual_logger` aims to be a logger with little flexibility.  
+`casual_logger` aims to be a logger with almost inflexible.  
 もっと言えば、調整が難しいのです。  
 `casual_logger` は、ほとんど調整できないロガーを目指します。  
 
