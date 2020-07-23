@@ -46,7 +46,7 @@ fn main() {
         Log::get_timeout_secs().unwrap_or_else(|_| DEFAULT_TIMEOUT_SECS)
     ));
 
-    // TODO Optimize.
+    // Optimize.
     Log::set_opt_important(Opt::Release);
     Log::set_opt(Opt::Development);
     Log::debug(&format!(

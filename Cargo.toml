@@ -1,6 +1,6 @@
 [package]
 name = "casual_logger"
-version = "0.6.1"
+version = "0.6.2"
 authors = ["むずでょ <muzudho1@gmail.com>"]
 edition = "2018"
 description = """

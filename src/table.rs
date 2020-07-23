@@ -6,8 +6,11 @@ use crate::{ArrayOfTable, Level, Table, NEW_LINE};
 /// テーブルの種類。  
 #[derive(Clone)]
 pub enum KindOfTable {
+    /// Sub table.  
+    /// ただのサブ・テーブル。
     Table(Table),
-    /// TODO WIP.
+    /// Array of table.  
+    /// テーブルの配列。
     ArrayOfTable(ArrayOfTable),
 }
 
@@ -135,9 +138,8 @@ impl InternalTable {
                 }
             }
             KindOfTable::ArrayOfTable(k_aot) => {
-                // TODO WIP.
                 for sibling_table in &k_aot.tables {
-                    // TODO Table header.
+                    // Table header.
                     toml.push_str(&indent_spaces);
                     toml.push_str(&format!(
                         "[[{}]]
@@ -176,52 +178,14 @@ impl InternalTable {
     }
 }
 
-/*
-/// TODO WIP. Delete. Array of Table.
-pub struct InternalArrayOfTable {
-    tables: Vec<InternalTable>,
-}
-impl Default for InternalArrayOfTable {
-    fn default() -> Self {
-        InternalArrayOfTable { tables: Vec::new() }
-    }
-}
-impl InternalArrayOfTable {
-    /// TODO WIP.
-    pub fn table(&mut self, base_name: &str, table: &Table) -> &mut Self {
-        self.tables.push(InternalTable::new(base_name, table));
-        self
-    }
-    /// TODO WIP.
-    fn log(&self, indent_level: usize) {
-        let mut indent_space = String::new();
-        for i in 0..indent_level {
-            indent_space.push_str("  ");
-        }
-
-        let mut table = Table::default();
-        for (name, i_table) in &self.tables {
-            // TODO Stringify.
-            table.literal(name, &format!("{}{}", indent_space, i_table.stringify()));
-        }
-
-        Log::reserve(&InternalTable::new(
-            &Stringifier::create_identify_table_name(Logger::create_seq()),
-            &table,
-        ));
-    }
-}
-*/
-
 impl Default for ArrayOfTable {
     fn default() -> Self {
         ArrayOfTable { tables: Vec::new() }
     }
 }
 impl ArrayOfTable {
-    /// TODO
     /// Push a table.  
-    /// テーブルを追加します。  
+    /// テーブルを追加します。
     pub fn table(&mut self, table: &Table) -> &mut Self {
         self.tables.push(table.clone());
         self

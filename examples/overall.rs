@@ -7,14 +7,16 @@ fn main() {
     // Example of Log file name:
     // ログ・ファイル名の例:
     //
-    //      'tic-tac-toe-2020-07-11.log.toml'
-    //       1----------           3--------
-    //                  2----------
-    //
-    //       1 Prefix              3 Extention
-    //         接頭辞                拡張子
-    //                  2 StartDate
-    //                    開始日
+    // +
+    // | tic-tac-toe-2020-07-11.log.toml
+    // | 1----------           3--------
+    // |            2----------
+    // |
+    // | 1 Prefix              3 Extention
+    // |   接頭辞                拡張子
+    // |            2 StartDate
+    // |              開始日
+    // +
     //
     // - StartDate is automatically added.
     //   開始日は自動で付きます。

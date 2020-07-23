@@ -13,7 +13,7 @@ fn main() {
     Log::set_retention_days(2);
     Log::remove_old_logs();
     Log::set_opt(Opt::Development);
-    println!("Notice  | Start!");
+    println!("Notice          | Start!");
 
     // Multi thread test.
     let size = 100_000;
@@ -90,7 +90,7 @@ fn main() {
     */
 
     println!(
-        "Performance: |{}|{}|{}|{}| records, {} ms.",
+        "Performance     |{}|{}|{}|{}| records, {} ms.",
         count_0,
         count_1,
         count_2,

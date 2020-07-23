@@ -20,14 +20,16 @@ lazy_static! {
 /// Example of Log file name:  
 /// ログ・ファイル名の例:  
 ///
-///       tic-tac-toe-2020-07-11.log.toml  
-///       1----------           3--------  
-///                  2----------  
-///
-///       1 Prefix              3 Extention  
-///         接頭辞                拡張子  
-///                  2 StartDate  
-///                    開始日  
+/// +  
+/// | tic-tac-toe-2020-07-11.log.toml  
+/// | 1----------           3--------  
+/// |            2----------  
+/// |  
+/// | 1 Prefix              3 Extention  
+/// |   接頭辞                拡張子  
+/// |            2 StartDate  
+/// |              開始日  
+/// +  
 ///
 /// If you don't like the .toml extension, leave the suffix empty and the .log extension.  
 pub struct Logger {
