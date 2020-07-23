@@ -489,12 +489,14 @@ impl Log {
             let remove_num = logger.remove_old_logs();
 
             match Logger::get_optimization() {
-                Opt::Development => {
-                    if 0 < remove_num {
-                        println!("casual_logger: Remove {} log file(s).", remove_num);
-                    }
+                Opt::BeginnersSupport | Opt::Development => {
+                    println!(
+                        "casual_logger   | Remove {} log file(s).
+                | If you don't want this message, set `Log::set_opt(Opt::Release);`.",
+                        remove_num
+                    );
                 }
-                _ => {}
+                Opt::Release => {}
             }
             remove_num
         } else {
@@ -529,10 +531,10 @@ impl Log {
         Log::wait_for_logging_to_complete(timeout_secs, |secs, message| {
             // Do not call 'Log::xxxxx()' in this code block.
             match opt {
-                Opt::Development => {
-                    println!("casual_logger: {} sec(s). {}", secs, message,);
+                Opt::BeginnersSupport | Opt::Development => {
+                    println!("casual_logger   | {} sec(s). {}", secs, message,);
                 }
-                _ => {}
+                Opt::Release => {}
             }
         });
     }

@@ -361,22 +361,51 @@ RetentionDays = 2
 
 ```
 
-## Abstract
+## Quality policy
 
-The concept used by beginners.
+Fail faster and improve faster.  
+失敗するなら早い方がいい。  
 
-### 1. Used in one example, throw away
+### 1. casual_logger is entry model
 
-* **There is no** configuration file.
-* **Rotate** log by date automatically.
-* **Delete** old log files. (semi-automatic)
-* Log files can **only be placed** in the working directory.
+No settings, use immediately.  
+Used in one example, throw away.  
+設定なし、すぐに使用。  
+エグザンプルを1つ終われば、捨てるだけです。  
+
+* **There is no** configuration file.  
+    設定ファイルはありません。
+* Log files can **only be placed** in the working directory.  
+    ログファイルは作業ディレクトリに置きます。
+* **Rotate** log by date automatically.  
+    ログファイルは日付で順繰りに作られます。
+* **Delete** old log files. (semi-automatic)  
+    半自動でログファイルを削除します。
 * Write policy is **one application, one log file**.  
     書込み方針は、 **１アプリケーション１ログファイル** です。  
     * Priority 1: First important log file.  
         優先順位１: 最初に重要指定したログ・ファイル。
     * Priority 2: Last specified log file.  
         優先順位２: 最後に指定したログ・ファイル。
+
+### 2. Connect to the competition
+
+When you see a tournament, you'll want to try it with an entry model.  
+大会を見たら、エントリーモデルでもあなたは試したくなる。  
+
+* If the log level is set to fatal, there will be little  
+    performance degradation. Good luck.  
+    ログレベルをファータルにしてしまえば性能劣化はあんまりない。
+* While setting to `Opt::Release`,  
+    No message is output to standard output or error output.  
+    Because there is a possibility that it will be a foul at the competition.  
+    `Opt::Release`, に設定中は、  
+    標準出力、エラー出力にメッセージを出しません。  
+    大会で反則になる可能性があるからです。
+
+## Abstract
+
+The concept used by beginners.
 
 ### 2. Human readable log
 
