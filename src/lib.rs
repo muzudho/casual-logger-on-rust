@@ -62,7 +62,7 @@ pub const DEFAULT_LOG_LEVEL: Level = Level::Trace;
 
 /// The file retention period is 7 days by default.  
 /// ファイルの保存期間は、デフォルトで7日です。  
-pub const DEFAULT_RETENTION_DAYS: u32 = 7;
+pub const DEFAULT_RETENTION_DAYS: i64 = 7;
 
 /// The default timeout is 30 seconds.  
 /// Used for Log::flush() wait time.  
@@ -392,7 +392,7 @@ impl Log {
 
     /// You probably don't need to set this. Default: 7.  
     /// Check the StartDate in the file name and delete it if it is old.  
-    pub fn set_retention_days(days: u32) {
+    pub fn set_retention_days(days: i64) {
         if let Ok(mut logger) = LOGGER.lock() {
             if !logger.retention_days_important {
                 logger.retention_days = days;
@@ -404,7 +404,7 @@ impl Log {
     /// ファイル保持日数は後で変更できません。  
     ///
     /// See also: `Log::set_retention_days()`.  
-    pub fn set_retention_days_important(retention_days: u32) {
+    pub fn set_retention_days_important(retention_days: i64) {
         Log::set_retention_days(retention_days);
         if let Ok(mut logger) = LOGGER.lock() {
             logger.retention_days_important = true;
@@ -413,9 +413,9 @@ impl Log {
 
     /// The file retention days.  
     /// ファイル保持日数。  
-    pub fn get_retention_days() -> Result<u32, String> {
+    pub fn get_retention_days() -> Result<i64, String> {
         match LOGGER.lock() {
-            Ok(logger) => Ok(logger.retention_days as u32),
+            Ok(logger) => Ok(logger.retention_days),
             Err(e) => Err(e.to_string()),
         }
     }

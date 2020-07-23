@@ -50,7 +50,7 @@ pub struct Logger {
     /// ファイル保持日数は後で変更できません。  
     pub retention_days_important: bool,
     /// File retention days. Delete the file after day from StartDate.
-    pub retention_days: u32,
+    pub retention_days: i64,
     /// The timeout seconds cannot be changed later.  
     /// タイムアウト秒は後で変更できません。  
     pub timeout_secs_important: bool,
@@ -121,7 +121,6 @@ impl Logger {
         (start_date, file)
     }
     /// For log rotation.
-    /// Please use the casual_logger::Log::remove_old_logs() method.
     pub fn remove_old_logs(&self) -> usize {
         // Removed files count.
         let mut count = 0;
@@ -184,13 +183,27 @@ impl Logger {
                     let file_date = Local.ymd(year, month, day);
 
                     // Over the retention days.
-                    if file_date.add(Duration::days(self.retention_days as i64)) < Local::today() {
-                        // Remove file.
-                        if let Ok(_why) = fs::remove_file(name) {
-                            // Nothing is output even if log writing fails.
-                            // Submitting a message to the competition can result in fouls.
-                            // println!("! {:?}", why.kind());
-                            count += 1;
+                    if self.retention_days < 1 {
+                        if file_date.add(Duration::days(self.retention_days)) < Local::today() {
+                            // Delete dates older than today.
+                            // 今日より古い日付を削除します。
+                            if let Ok(_why) = fs::remove_file(name) {
+                                // Nothing is output even if log writing fails.
+                                // Submitting a message to the competition can result in fouls.
+                                // println!("! {:?}", why.kind());
+                                count += 1;
+                            }
+                        }
+                    } else {
+                        if file_date < Local::today().add(Duration::days(-self.retention_days)) {
+                            // Delete all dates older than today and dates newer than today.
+                            // 今日より古い日付すべてと、今日より新しい日付を削除します。
+                            if let Ok(_why) = fs::remove_file(name) {
+                                // Nothing is output even if log writing fails.
+                                // Submitting a message to the competition can result in fouls.
+                                // println!("! {:?}", why.kind());
+                                count += 1;
+                            }
                         }
                     }
                 }

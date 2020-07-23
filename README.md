@@ -156,6 +156,44 @@ VacuumCleanerPricesAtOtherStores = [ -63_000, -4_000, -10_000 ]
 
 ## Example 4
 
+When will the log file disappear?  
+ログファイルはいつ消えるの？  
+
+This is when someone execute `Log::remove_old_logs();`.  
+By default, it keeps files up to 7 days old.  
+By file name, not by timestamp.  
+`Log::remove_old_logs()` を実行したときです。  
+デフォルトで７日前の日付まで残ります。  
+タイムスタンプではなく、ファイル名によって。  
+
+Your code:  
+
+```rust
+use casual_logger::Log;
+
+fn main() {
+    // If set to 1, it will remain until yesterday.
+    // If set to 0, it will remain until today.
+    // If set to -1, it will be deleted until today.
+    // If set to -2, it will be deleted until tomorrow.
+    // 1 にすると昨日の分まで残る。
+    // 0 にすると今日の分まで残る。
+    // -1 にすると今日の分まで消える。
+    // -2 にすると明日の分まで消える。
+    Log::set_retention_days(-1);
+
+    // Execute the deletion.
+    // 削除を実行します。
+    Log::remove_old_logs();
+
+    Log::info("Hooray!");
+
+    Log::flush();
+}
+```
+
+## Example 5
+
 We do not recommend making it complicated.  
 複雑にすることはお勧めしません。  
 
@@ -228,7 +266,7 @@ Info = 'ImInTrouble'
 
 ```
 
-## Example 5
+## Example 6
 
 What if someone else used 'casual_logger' in another library?  
 もし他のライブラリで誰かが 'casual_logger' を使っていたなら、  
