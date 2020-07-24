@@ -1,5 +1,5 @@
-use crate::auto_correct::AutoCorrect;
 use crate::stringifier::Stringifier;
+use crate::toml::auto_correct::AutoCorrect;
 use crate::{ArrayOfTable, Level, Table, NEW_LINE};
 
 /// Kind of table.  

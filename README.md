@@ -98,6 +98,62 @@ stack backtrace:
 
 ## Example 3
 
+Isn't it possible to take a variable length argument using a macro?  
+マクロを使って可変長引数を取れるようにしないのですか？  
+
+Question:  
+
+```rust
+    let key = "YourWeight";
+    let value = 97.0;
+
+    // Macro.
+    println!("key={} value={}", key, value);
+
+    // What a bother.
+    Log::info(&format!("key={} value={}", key, value));
+```
+
+There is an alternative. Do the following:  
+代替案があります。次のようにしてください:  
+
+Your code:  
+
+```rust
+use casual_logger::{Log, Table};
+
+fn main() {
+    Log::remove_old_logs();
+
+    let key = "YourWeight";
+    let value = 97.0;
+
+    Log::info_t("", Table::default().str("key", key).float("value", value));
+
+    Log::flush();
+}
+```
+
+Output `./default-2020-07-25.log.toml` automatically generated:  
+
+```toml
+["Now=2020-07-25T04:37:30+0900&Pid=6500&Thr=ThreadId(1)&Seq=1"]
+Info = ''
+key = 'YourWeight'
+value = 97
+
+
+```
+
+Terminal:  
+
+```plain
+casual_logger   | Remove 0 log file(s).
+                | If you don't want this message, set `Log::set_opt(Opt::Release);`.
+```
+
+## Example 4
+
 Is the log file TOML?  
 ログファイルはTOMLですか？  
 
@@ -170,7 +226,7 @@ casual_logger   | Remove 0 log file(s).
                 | If you don't want this message, set `Log::set_opt(Opt::Release);`.
 ```
 
-## Example 4
+## Example 5
 
 When will the log file disappear?  
 ログファイルはいつ消えるの？  
@@ -244,7 +300,7 @@ After test:
 ./default-2020-07-23.log.toml
 ```
 
-## Example 5
+## Example 6
 
 We do not recommend making it complicated.  
 複雑にすることはお勧めしません。  
@@ -325,7 +381,7 @@ casual_logger   | Remove 0 log file(s).
                 | If you don't want this message, set `Log::set_opt(Opt::Release);`.
 ```
 
-## Example 6
+## Example 7
 
 What if someone else used 'casual_logger' in another library?  
 もし他のライブラリで誰かが 'casual_logger' を使っていたなら、  

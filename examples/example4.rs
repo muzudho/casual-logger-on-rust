@@ -1,21 +1,37 @@
-use casual_logger::Log;
+//! TOML tables are typed maps.  
+//! TOMLのテーブルは型付きのマップだ。  
+
+use casual_logger::{Log, Table};
 
 fn main() {
-    // If set to 1, it will remain until yesterday.
-    // If set to 0, it will remain until today.
-    // If set to -1, it will be deleted until today.
-    // If set to -2, it will be deleted until tomorrow.
-    // 1 にすると昨日の分まで残る。
-    // 0 にすると今日の分まで残る。
-    // -1 にすると今日の分まで消える。
-    // -2 にすると明日の分まで消える。
-    Log::set_retention_days(-1);
-
-    // Execute the deletion.
-    // 削除を実行します。
+    Log::set_file_name("today-s-plan");
     Log::remove_old_logs();
 
-    Log::info("Hooray!");
+    // Just add'_t'.
+    // '_t' を付けただけ。
+    Log::info_t(
+        "ShoppingToday", // A-Z, a-z, 0-9, _, -.
+        Table::default()
+            // Japanese YEN.
+            // 日本円。
+            .int("FluorescentLight", -7_000)
+            .int("VacuumCleaner", -53_000)
+            // '.literal()' is no validate. carefully.
+            // 構文チェックされません。慎重に。
+            .literal(
+                "VacuumCleanerPricesAtOtherStores",
+                "[ -63_000, -4_000, -10_000 ]",
+            )
+            .int("Rent", -40_000)
+            .uint("Salary", 190_000)
+            .str(
+                "Remark",
+                "Buy shelves in the near month.
+Replace the washing machine after a few years.
+近い月に棚。
+数年後に洗濯機買い替え。",
+            ),
+    );
 
     Log::flush();
 }

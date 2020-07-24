@@ -9,6 +9,8 @@
 // (2a3) `cargo run --example example3`
 // (2a4) `cargo run --example example4`
 // (2a5) `cargo run --example example5`
+// (2a6) `cargo run --example example6`
+// (2a7) `cargo run --example example7`
 // (2c) `cargo run --example fatal`
 // (2d) `cargo run --example important`
 // (2e) `cargo run --example overall`
@@ -28,11 +30,11 @@ extern crate chrono;
 extern crate regex;
 // extern crate sys_info;
 
-mod auto_correct;
 mod config;
 mod log_file;
 mod stringifier;
 mod table;
+pub mod toml; // WIP.
 
 use crate::config::Logger;
 use crate::config::LOGGER;
