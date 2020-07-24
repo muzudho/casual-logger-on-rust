@@ -157,6 +157,9 @@ casual_logger   | Remove 0 log file(s).
 Is the log file TOML?  
 ログファイルはTOMLですか？  
 
+Yes.  
+はい。  
+
 Your code:  
 
 ```rust
@@ -383,6 +386,71 @@ casual_logger   | Remove 0 log file(s).
 
 ## Example 7
 
+Q. Is there no configuration file in 'casual_logger' ?  
+Q. 'casual_logger' に設定ファイルは無いのですか？  
+
+A. There is no configuration file.  
+A. 設定ファイルはありません。  
+
+Q. What if I want to change the settings?  
+Q. 設定を変えたくなったらどうすればいいのですか？  
+
+A. Rebuild the source or create a configuration file by yourself.  
+A. ソースをビルドし直すか、設定ファイルを自作してください。  
+
+Q. What a bother. Why?  
+Q. なんて面倒だ。どうして？  
+
+A. Because it is a logger for those who have trouble setting.  
+Not suitable for applications with settings.  
+A. 設定が面倒な人のためのロガーだからです。  
+設定のあるアプリケーションには適していません。  
+
+The setting items are as follows:  
+設定項目は以下の通りです:  
+
+Your code:  
+
+```rust
+//! There is no configuration file.  
+//! 設定ファイルはありません。  
+
+use casual_logger::{Extension, Level, Log, Opt};
+
+fn main() {
+    Log::set_file_name("hello");
+    Log::set_file_ext(Extension::Log);
+    Log::set_retention_days(31);
+    Log::remove_old_logs();
+
+    Log::set_level(Level::Notice);
+    Log::set_timeout_secs(60);
+    Log::set_opt(Opt::Release);
+
+    Log::notice("Hello, world!!");
+
+    Log::flush();
+}
+```
+
+Output `./hello-2020-07-25.log` automatically generated:  
+
+```toml
+["Now=2020-07-25T08:46:04+0900&Pid=13044&Thr=ThreadId(1)&Seq=1"]
+Notice = 'Hello, world!!'
+
+
+```
+
+Terminal:  
+
+```plain
+casual_logger   | Remove 0 log file(s).
+                | If you don't want this message, set `Log::set_opt(Opt::Release);`.
+```
+
+## Example 8
+
 What if someone else used 'casual_logger' in another library?  
 もし他のライブラリで誰かが 'casual_logger' を使っていたなら、  
 どうなるでしょうか？  
@@ -393,7 +461,7 @@ Your code:
 //! See how to override the settings.  
 //! 設定を上書きする方法を確認してください。  
 
-use casual_logger::{Extension, Level, Log, Table};
+use casual_logger::{Extension, Level, Log, Opt, Table};
 
 fn main() {
     // By specifying important, the setting will be
@@ -403,7 +471,7 @@ fn main() {
     // 重要を指定することで、設定は早い者勝ちで有効になります。
     // いつでも important にできるので、
     // 迷ったら常に important を省きましょう……
-    Log::set_file_name_important("lesson1"); // Ok.
+    Log::set_file_name_important("important-example"); // Ok.
     Log::set_file_name("mischief1"); // Ignore it.
 
     Log::set_file_ext_important(Extension::LogToml); // Ok.
@@ -421,6 +489,9 @@ fn main() {
     Log::set_level_important(Level::Info); // Ok.
     Log::set_level(Level::Notice); // Ignore it.
 
+    Log::set_opt_important(Opt::Release); // Ok.
+    Log::set_opt(Opt::Development); // Ignore it.
+
     // Now for confirmation. Just use the log.
     // If there are more arguments, make a pre-judgment.
     // さあ確認です。ちょうどログが使えます。
@@ -430,7 +501,7 @@ fn main() {
             "This is an Application.",
             Table::default()
                 .str(
-                    "FileName",
+                    "FileNameStem",
                     &Log::get_file_name() //
                         .unwrap_or_else(|err| err),
                 )
@@ -455,6 +526,17 @@ fn main() {
                         .to_string(),
                         Err(e) => e.to_string(),
                     },
+                )
+                .str(
+                    "Optimization",
+                    &match Log::get_opt() {
+                        Ok(opt) => format!(
+                            "{:?}", //
+                            opt
+                        )
+                        .to_string(),
+                        Err(e) => e.to_string(),
+                    },
                 ),
         );
     }
@@ -463,14 +545,15 @@ fn main() {
 }
 ```
 
-Output `./lesson1-2020-07-23.log.toml` automatically generated:  
+Output `./important-example-2020-07-25.log.toml` automatically generated:  
 
 ```toml
-["Now=2020-07-23T19:56:09+0900&Pid=11516&Thr=ThreadId(1)&Seq=1"]
+["Now=2020-07-25T08:09:26+0900&Pid=18944&Thr=ThreadId(1)&Seq=1"]
 Info = 'This is an Application.'
 Extension = '.log.toml'
-FileName = 'lesson1'
+FileNameStem = 'important-example'
 Level = 'Info'
+Optimization = 'Release'
 RetentionDays = 2
 
 

@@ -138,7 +138,7 @@ impl InternalTable {
                 }
             }
             KindOfTable::ArrayOfTable(k_aot) => {
-                for sibling_table in &k_aot.tables {
+                for (i, sibling_table) in k_aot.tables.iter().enumerate() {
                     // Table header.
                     toml.push_str(&indent_spaces);
                     toml.push_str(&format!(
@@ -164,7 +164,7 @@ impl InternalTable {
                             InternalTable::stringify_sub_table(
                                 toml,
                                 indent_spaces,
-                                Some(path),
+                                Some(&format!("{}.{}", path, i)),
                                 None,
                                 sub_i_table,
                             );

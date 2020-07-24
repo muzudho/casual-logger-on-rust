@@ -11,6 +11,7 @@
 // (2a5) `cargo run --example example5`
 // (2a6) `cargo run --example example6`
 // (2a7) `cargo run --example example7`
+// (2a8) `cargo run --example example8`
 // (2c) `cargo run --example fatal`
 // (2d) `cargo run --example important`
 // (2e) `cargo run --example overall`

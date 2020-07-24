@@ -95,9 +95,9 @@ key",
             ),
     );
 
-    // Array of Table test. (Sub only)
+    // Table in Array-of-table test. (Sub only)
     Log::trace_t(
-        "TestArrayOfTable",
+        "Table in Array-of-table test.",
         Table::default()
             .sub_aot(
                 "z1",
@@ -141,6 +141,74 @@ key",
                             .int("The Cherry", -3)
                             .int("The Charley", -20)
                             .int("The Gamma", -300),
+                    ),
+            ),
+    );
+
+    // Sub-table in Array-of-table test. (Sub only)
+    Log::trace_t(
+        "Table in Array-of-table test.",
+        Table::default()
+            .sub_aot(
+                "z1",
+                &ArrayOfTable::default()
+                    .table(
+                        &Table::default().sub_t(
+                            "a",
+                            Table::default()
+                                .int("Apple", 1)
+                                .int("Alice", 18)
+                                .int("Alpha", 100),
+                        ),
+                    )
+                    .table(
+                        &Table::default().sub_t(
+                            "b",
+                            Table::default()
+                                .int("Banana", 2)
+                                .int("Bob", 19)
+                                .int("Beta", 200),
+                        ),
+                    )
+                    .table(
+                        &Table::default().sub_t(
+                            "c",
+                            Table::default()
+                                .int("Cherry", 3)
+                                .int("Charley", 20)
+                                .int("Gamma", 300),
+                        ),
+                    ),
+            )
+            .sub_aot(
+                "z2",
+                &ArrayOfTable::default()
+                    .table(
+                        &Table::default().sub_t(
+                            "a",
+                            Table::default()
+                                .int("The Apple", -1)
+                                .int("The Alice", -18)
+                                .int("The Alpha", -100),
+                        ),
+                    )
+                    .table(
+                        &Table::default().sub_t(
+                            "b",
+                            Table::default()
+                                .int("The Banana", -2)
+                                .int("The Bob", -19)
+                                .int("The Beta", -200),
+                        ),
+                    )
+                    .table(
+                        &Table::default().sub_t(
+                            "c",
+                            Table::default()
+                                .int("The Cherry", -3)
+                                .int("The Charley", -20)
+                                .int("The Gamma", -300),
+                        ),
                     ),
             ),
     );
