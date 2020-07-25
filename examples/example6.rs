@@ -28,13 +28,31 @@ fn main() {
                     .int("Kimchi", 1),
             )
             // Sub array of table.
-            // テーブルの配列です。
+            // テーブルのサブ配列です。
             .sub_aot(
                 "IHaveToCleanMyRoom",
                 ArrayOfTable::default()
                     .table(Table::default().str("Name", "Kitchen").bool("Clean", false))
                     .table(Table::default().str("Name", "Bath").bool("Wash", false))
                     .table(Table::default().str("Name", "Toilet").bool("Brush", false)),
+            )
+            // Sub array of sub table.
+            // サブ・テーブルのサブ配列です。
+            .sub_aot(
+                "IHaveToCleanMyRoom",
+                ArrayOfTable::default()
+                    .table(Table::default().sub_t(
+                        "SameName",
+                        Table::default().str("Name", "Kitchen").bool("Clean", false),
+                    ))
+                    .table(Table::default().sub_t(
+                        "SameName",
+                        Table::default().str("Name", "Bath").bool("Wash", false),
+                    ))
+                    .table(Table::default().sub_t(
+                        "SameName",
+                        Table::default().str("Name", "Toilet").bool("Brush", false),
+                    )),
             ),
     );
 
