@@ -341,13 +341,31 @@ fn main() {
                     .int("Kimchi", 1),
             )
             // Sub array of table.
-            // テーブルの配列です。
+            // テーブルのサブ配列です。
             .sub_aot(
                 "IHaveToCleanMyRoom",
                 ArrayOfTable::default()
                     .table(Table::default().str("Name", "Kitchen").bool("Clean", false))
                     .table(Table::default().str("Name", "Bath").bool("Wash", false))
                     .table(Table::default().str("Name", "Toilet").bool("Brush", false)),
+            )
+            // Sub array of sub table.
+            // サブ・テーブルのサブ配列です。
+            .sub_aot(
+                "SubArrayOfSubTable",
+                ArrayOfTable::default()
+                    .table(Table::default().sub_t(
+                        "SameName",
+                        Table::default().str("Name", "Kitchen").bool("Clean", false),
+                    ))
+                    .table(Table::default().sub_t(
+                        "SameName",
+                        Table::default().str("Name", "Bath").bool("Wash", false),
+                    ))
+                    .table(Table::default().sub_t(
+                        "SameName",
+                        Table::default().str("Name", "Toilet").bool("Brush", false),
+                    )),
             ),
     );
 
@@ -355,24 +373,36 @@ fn main() {
 }
 ```
 
-Output `./complex-toml-2020-07-23.log.toml` automatically generated:  
+Output `./complex-toml-2020-07-25.log.toml` automatically generated:  
 
 ```toml
-["Now=2020-07-23T19:54:44+0900&Pid=18220&Thr=ThreadId(1)&Seq=1"]
+["Now=2020-07-25T09:36:35+0900&Pid=11084&Thr=ThreadId(1)&Seq=1"]
 Info = "I'm in trouble."
-  [["Now=2020-07-23T19:54:44+0900&Pid=18220&Thr=ThreadId(1)&Seq=1".IHaveToCleanMyRoom]]
+  [["Now=2020-07-25T09:36:35+0900&Pid=11084&Thr=ThreadId(1)&Seq=1".IHaveToCleanMyRoom]]
   Clean = false
   Name = 'Kitchen'
-  [["Now=2020-07-23T19:54:44+0900&Pid=18220&Thr=ThreadId(1)&Seq=1".IHaveToCleanMyRoom]]
+  [["Now=2020-07-25T09:36:35+0900&Pid=11084&Thr=ThreadId(1)&Seq=1".IHaveToCleanMyRoom]]
   Name = 'Bath'
   Wash = false
-  [["Now=2020-07-23T19:54:44+0900&Pid=18220&Thr=ThreadId(1)&Seq=1".IHaveToCleanMyRoom]]
+  [["Now=2020-07-25T09:36:35+0900&Pid=11084&Thr=ThreadId(1)&Seq=1".IHaveToCleanMyRoom]]
   Brush = false
   Name = 'Toilet'
-  ["Now=2020-07-23T19:54:44+0900&Pid=18220&Thr=ThreadId(1)&Seq=1".RestFood]
+  ["Now=2020-07-25T09:36:35+0900&Pid=11084&Thr=ThreadId(1)&Seq=1".RestFood]
   BottoleOfTea = 1
   FrozenRamen = 2
   Kimchi = 1
+  [["Now=2020-07-25T09:36:35+0900&Pid=11084&Thr=ThreadId(1)&Seq=1".SubArrayOfSubTable]]
+    ["Now=2020-07-25T09:36:35+0900&Pid=11084&Thr=ThreadId(1)&Seq=1".SubArrayOfSubTable.0.SameName]
+    Clean = false
+    Name = 'Kitchen'
+  [["Now=2020-07-25T09:36:35+0900&Pid=11084&Thr=ThreadId(1)&Seq=1".SubArrayOfSubTable]]
+    ["Now=2020-07-25T09:36:35+0900&Pid=11084&Thr=ThreadId(1)&Seq=1".SubArrayOfSubTable.1.SameName]
+    Name = 'Bath'
+    Wash = false
+  [["Now=2020-07-25T09:36:35+0900&Pid=11084&Thr=ThreadId(1)&Seq=1".SubArrayOfSubTable]]
+    ["Now=2020-07-25T09:36:35+0900&Pid=11084&Thr=ThreadId(1)&Seq=1".SubArrayOfSubTable.2.SameName]
+    Brush = false
+    Name = 'Toilet'
 
 
 ```

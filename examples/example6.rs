@@ -39,7 +39,7 @@ fn main() {
             // Sub array of sub table.
             // サブ・テーブルのサブ配列です。
             .sub_aot(
-                "IHaveToCleanMyRoom",
+                "SubArrayOfSubTable",
                 ArrayOfTable::default()
                     .table(Table::default().sub_t(
                         "SameName",
