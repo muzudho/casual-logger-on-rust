@@ -128,7 +128,12 @@ fn main() {
     let key = "YourWeight";
     let value = 97.0;
 
-    Log::info_t("", Table::default().str("key", key).float("value", value));
+    Log::info_t(
+        "",
+        Table::default() //
+            .str("key", key)
+            .float("value", value),
+    );
 
     Log::flush();
 }

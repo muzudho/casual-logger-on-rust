@@ -1,4 +1,4 @@
-use crate::config::Logger;
+use crate::logger::Logger;
 use crate::stringifier::Stringifier;
 use crate::Opt;
 use regex::Regex;

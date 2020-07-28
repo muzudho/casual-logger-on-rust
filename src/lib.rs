@@ -31,14 +31,14 @@ extern crate chrono;
 extern crate regex;
 // extern crate sys_info;
 
-mod config;
 mod log_file;
+mod logger;
 mod stringifier;
 mod table;
 pub mod toml; // WIP.
 
-use crate::config::Logger;
-use crate::config::LOGGER;
+use crate::logger::Logger;
+use crate::logger::LOGGER;
 use crate::stringifier::Stringifier;
 use crate::table::InternalTable;
 use std::cell::RefCell;
