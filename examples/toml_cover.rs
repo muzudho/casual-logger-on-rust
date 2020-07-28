@@ -1,11 +1,13 @@
 //! Toml cover check.
 //! [TOML v1.0.0-rc.1](https://toml.io/en/v1.0.0-rc.1)
+//!
+//! Run: `cargo run --example toml_cover`.
 
 use casual_logger::{ArrayOfTable, Log, Table};
 
 fn main() {
     Log::set_file_name("toml-cover");
-    Log::set_retention_days(2);
+    Log::set_retention_days(-1);
     Log::remove_old_logs();
 
     // String.
@@ -28,6 +30,25 @@ fn main() {
                 "１行目
 ２行目
 ３行目",
+            )
+            .str("SingleLineContainsSingleQuotation", "'１行目'")
+            .str(
+                "SingleLineContainsSingleQuotationLn",
+                "'１行目'
+",
+            )
+            .str(
+                "MultiLineContainsSingleQuotation",
+                "１行目
+'２行目'
+３行目",
+            )
+            .str(
+                "MultiLineContainsSingleQuotationLn",
+                "１行目
+'２行目'
+３行目
+",
             )
             .str(
                 "MultiLineContainsTripleSingleQuotation",
