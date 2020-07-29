@@ -9,13 +9,13 @@ fn main() {
     //
     // +
     // | tic-tac-toe-2020-07-11.log.toml
-    // | 1----------           3--------
-    // |            2----------
+    // | 1----------           3---
+    // |            2----------    4----
     // |
-    // | 1 Prefix              3 Extention
-    // |   接頭辞                拡張子
-    // |            2 StartDate
-    // |              開始日
+    // | 1 Prefix              3 Suffix
+    // |   接頭辞                接尾辞
+    // |            2 StartDate    4 Extention
+    // |              開始日         拡張子
     // +
     //
     // - StartDate is automatically added.
@@ -30,8 +30,8 @@ fn main() {
     // 後の変更を無効にできます。
     // Log::set_file_name_important("tic-tac-toe");
     //
-    // Log file extension:
-    // 拡張子:
+    // Log file suffix and extension:
+    // 接尾辞、拡張子:
     //
     // '.log.toml' or '.log'.
     // '.log' for safety, include a word that

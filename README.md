@@ -722,13 +722,13 @@ fn main() {
     //
     // +
     // | tic-tac-toe-2020-07-11.log.toml
-    // | 1----------           3--------
-    // |            2----------
+    // | 1----------           3---
+    // |            2----------    4----
     // |
-    // | 1 Prefix              3 Extention
-    // |   接頭辞                拡張子
-    // |            2 StartDate
-    // |              開始日
+    // | 1 Prefix              3 Suffix
+    // |   接頭辞                接尾辞
+    // |            2 StartDate    4 Extention
+    // |              開始日         拡張子
     // +
     //
     // - StartDate is automatically added.
@@ -743,8 +743,8 @@ fn main() {
     // 後の変更を無効にできます。
     // Log::set_file_name_important("tic-tac-toe");
     //
-    // Log file extension:
-    // 拡張子:
+    // Log file suffix and extension:
+    // 接尾辞、拡張子:
     //
     // '.log.toml' or '.log'.
     // '.log' for safety, include a word that
@@ -1225,26 +1225,26 @@ Example of Log file name:
 ログ・ファイル名の例:  
 
 ```plain
-      tic-tac-toe-2020-07-22.log.toml
-      1----------           3--------
-                 2----------
+tic-tac-toe-2020-07-22.log.toml
+1----------           3---
+           2----------    4----
 
-      1 Prefix              3 Extention
-        接頭辞                拡張子
-                 2 StartDate
-                   開始日
+1 Prefix              3 Suffix
+  接頭辞                接尾辞
+           2 StartDate    4 Extention
+             開始日         拡張子
 ```
 
 ### File name
 
-| Part          | Name      | Description       | Default     |
-| ------------- | --------- | ----------------- | ----------- |
-| `./`          | file path | Working directory |             |
-|               |           | only.             |             |
-| `tic-tac-toe` | Prefix    | Editable.         | `default`   |
-| `-2020-07-22` | StartDate | Auto generated.   |             |
-| `.log.toml`   | Extension | `.log.toml` or    | `.log.toml` |
-|               |           | `.log`.           |             |
+| Part          | Name       | Description       | Default     |
+| ------------- | ---------- | ----------------- | ----------- |
+| `./`          | file path  | Working directory |             |
+|               |            | only.             |             |
+| `tic-tac-toe` | Prefix     | Editable.         | `default`   |
+| `-2020-07-22` | StartDate  | Auto generated.   |             |
+| `.log.toml`   | Suffix and | `.log.toml` or    | `.log.toml` |
+|               | Extension  | `.log`.           |             |
 
 It is difficult to explain the **file path** for beginners.  
 Therefore, it does not move.  
@@ -1260,7 +1260,7 @@ clearly states that you can delete the file.
 If you don't like the .toml **extension**, leave  
 the suffix empty and the .log extension.  
 
-Extension:  
+Suffix and Extension:  
 
 | Enum      | String      | Description                  | Default |
 | --------- | ----------- | ---------------------------- | ------- |
@@ -1276,7 +1276,7 @@ fn main() {
 
     // Prefix.
     Log::set_file_name("tic-tac-toe");
-    // Extension.
+    // Suffix and Extension.
     Log::set_file_ext(Extension::LogToml);
 
     // ...
