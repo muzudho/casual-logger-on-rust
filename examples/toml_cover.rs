@@ -14,71 +14,72 @@ fn main() {
     Log::infoln_t(
         "String test",
         Table::default()
-            .int("Distance", -128)
-            .uint("Age", 200018)
-            .float("Weight", 45.5)
-            .bool("Tall", false)
-            .char("Initial", 'A')
-            .str("FilePathOnWindows", "C:\\User\\Muzudho")
-            .str("FilePathOnWindowsInDSQ", "''C:\\User\\Muzudho''")
-            .str("FilePathOnLinuxOS", "/etc/nginx/conf.d")
-            .str("FilePathOnLinuxOSInDSQ", "''/etc/nginx/conf.d''")
-            .str("SinglePlain", "末尾改行なし")
-            .str("SinglePlainLn", "末尾改行あり\r\n")
+            .int("n01_Distance", -128)
+            .uint("n02_Age", 200018)
+            .float("n03_Weight", 45.5)
+            .bool("n04_Tall", false)
+            .char("n05_Initial", 'A')
+            .str("n06_FilePathOnWindows", "C:\\User\\Muzudho")
+            .str("n07_FilePathOnWindowsInDSQ", "''C:\\User\\Muzudho''")
+            .str("n08_FilePathOnLinuxOS", "/etc/nginx/conf.d")
+            .str("n09_FilePathOnLinuxOSInDSQ", "''/etc/nginx/conf.d''")
+            .str("n10_SinglePlain", "末尾改行なし")
+            .str("n11_SinglePlainLn", "末尾改行あり\r\n")
             .str(
-                "MultiLinePlain",
+                "n12_MultiLinePlain",
                 "１行目
 ２行目
 ３行目",
             )
-            .str("SingleLineContainsSingleQuotation", "'１行目'")
+            .str("n13_SingleLineContainsSingleQuotation", "'１行目'")
             .str(
-                "SingleLineContainsSingleQuotationLn",
+                "n14_SingleLineContainsSingleQuotationLn",
                 "'１行目'
 ",
             )
             .str(
-                "MultiLineContainsSingleQuotation",
+                "n15_MultiLineContainsSingleQuotation",
                 "１行目
 '２行目'
 ３行目",
             )
             .str(
-                "MultiLineContainsSingleQuotationLn",
+                "n16_MultiLineContainsSingleQuotationLn",
                 "１行目
 '２行目'
 ３行目
 ",
             )
             .str(
-                "MultiLineContainsTripleSingleQuotation",
+                "n17_MultiLineContainsTripleSingleQuotation",
                 "１行目
 '''２行目'''
 ３行目",
             )
             .str(
-                "MultiLineContainsTripleSingleQuotationLn",
+                "n18_MultiLineContainsTripleSingleQuotationLn",
                 "１行目
 '''２行目'''
 ３行目
 ",
             )
             .str(
-                "MultiLinePlainLn",
+                "n19_MultiLinePlainLn",
                 "１行目
 ２行目
 ３行目
 ",
             )
-            .str("DoubleQuotation", "\"quoted\"")
-            .str("NewLine", "\r\n")
-            .str(" Middle ", "Ignored space at left and right.")
+            .str("n20_DoubleQuotation", "\"quoted\"")
+            .str("n21_CarriageReturnLineFeed", "\r\n")
+            .str("n22_LineFeed", "\n")
+            .str(" n23_Middle ", "Ignored space at left and right.")
             .str(
-                "Apple . Banana",
+                "n24_Apple . Banana",
                 "Space quoted dot. I don't recommend it, but it's okay.",
             )
             .str(
-                "Dotted.Key",
+                "n25_Dotted.Key",
                 "Dotted key unsupported. Please use sub-table.",
             ),
     );

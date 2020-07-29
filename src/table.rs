@@ -42,6 +42,7 @@ impl InternalTable {
             table: KindOfTable::ArrayOfTable(aot.clone()),
         }
     }
+    /// Example: `Info = "Message"`.
     pub fn create_log_level_kv_pair(table: &Table) -> String {
         let message = if table.message_trailing_newline {
             // There is a trailing newline.

@@ -17,18 +17,15 @@ lazy_static! {
 // マルチプラットフォーム対応。Windowsか、それ以外か。
 #[cfg(windows)]
 const NEW_LINE_SEQUENCE: &'static str = "\\r\\n";
-#[cfg(windows)]
-const NEW_LINE_CHARS: &'static [char; 2] = &['\r', '\n'];
 #[cfg(not(windows))]
 const NEW_LINE_SEQUENCE: &'static str = "\\n";
-#[cfg(not(windows))]
-const NEW_LINE_CHARS: &'static [char; 1] = &['\n'];
-
+const CARRIAGE_RETURN: &'static char = &'\r';
+const LINE_FEED: &'static char = &'\n';
 enum NewLineType {
     /// `\r\n`.
-    Windows,
+    CarriageReturnLineFeed,
     /// `\n`
-    NotWindows,
+    LineFeed,
 }
 
 /// Unstable.  
@@ -61,33 +58,15 @@ impl Stringifier {
     /// Parse a string.  
     /// 文字列をパースします。  
     pub fn format_str_value(value: &str) -> String {
-        // let value = Table::convert_multi_byte_string(slice);
-        // Divide by A, B, C, E or F.
-        // A) You must use multi-line ["""].
-        //  * Multi-line string.
-        // B) You must use one-line ["""].
-        // C) You must use multi-line ['''].
-        // D) You must use one-line ['''].
-        // E) You must use ['].
-        // F) Use ["].
         let multi_line = if 1 < value.lines().count() {
+            // Multi-line.
             true
         } else {
-            /*
-            // "'xxx'\r\n" Supports missing cases.
-            // "'xxx'\r\n" ケースの取り逃しに対応。
-            let ch_vec: Vec<char> = value.chars().collect();
-            if let Some(_) = Stringifier::which_new_line_type(&ch_vec) {
-                true
-            } else {
-            */
+            // Single line.
             false
-            //}
         };
         if multi_line {
             // Multi-line string.
-            // if let Ok(re) = RE_TRIPLE_SINGLE_QUOTE.lock() {
-            // if re.is_match(value) {
             if value.contains("'''") {
                 let escaped_string = if let Some(escaped_trailing_newline_string) =
                     Stringifier::escape_trailing_newline(value)
@@ -118,7 +97,9 @@ impl Stringifier {
                 // (Result 1) Double quoted, Single-line.
                 return format!(
                     "\"{}\"",
-                    Stringifier::escape_double_quotation(&escaped_trailng_newline_string)
+                    Stringifier::escape_double_quotation(&Stringifier::escape_back_slash(
+                        &escaped_trailng_newline_string
+                    ))
                 );
             }
             if value.contains("'") {
@@ -144,27 +125,28 @@ impl Stringifier {
     pub fn escape_double_quotation(text: &str) -> String {
         text.replace("\"", "\\\"")
     }
+    /// Which new line type?  
+    /// 改行はどれですか？  
+    ///
+    /// Note: Even on Windows, there may be mixed '\n' line breaks.  
+    /// 注意: Windows でも、'\n' 改行が混じっていることがあります。  
     fn which_new_line_type(ch_vec: &Vec<char>) -> Option<NewLineType> {
-        if NEW_LINE_CHARS.len() == 2 && 1 < ch_vec.len() {
-            if ch_vec[ch_vec.len() - 2] == NEW_LINE_CHARS[0]
-                && ch_vec[ch_vec.len() - 1] == NEW_LINE_CHARS[1]
-            {
-                // For windows.
-                Some(NewLineType::Windows)
-            } else {
-                // No trailing new line.
-                None
+        // If the last '\n'.
+        // 最後が '\n' なら。
+        if 0 < ch_vec.len() && &ch_vec[ch_vec.len() - 1] == LINE_FEED {
+            // if the second from the last is '\r'.
+            // 最後から二番目が '\r' なら。
+            if 1 < ch_vec.len() && &ch_vec[ch_vec.len() - 2] == CARRIAGE_RETURN {
+                // It's "\r\n".
+                // "\r\n" です。
+                return Some(NewLineType::CarriageReturnLineFeed);
             }
-        } else if NEW_LINE_CHARS.len() == 1 && 0 < ch_vec.len() {
-            if ch_vec[ch_vec.len() - 1] == NEW_LINE_CHARS[0] {
-                // TODO For linux OS.
-                Some(NewLineType::NotWindows)
-            } else {
-                // No trailing new line.
-                None
-            }
+            // It's '\n'.
+            // '\n' です。
+            Some(NewLineType::LineFeed)
         } else {
             // No trailing new line.
+            // 末尾に改行はありません。
             None
         }
     }
@@ -179,7 +161,7 @@ impl Stringifier {
         let ch_vec: Vec<char> = value.chars().collect();
         if let Some(t) = Stringifier::which_new_line_type(&ch_vec) {
             match t {
-                NewLineType::NotWindows => {
+                NewLineType::LineFeed => {
                     // For Unix OS.
                     //*
                     Some(format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE).to_string())
@@ -197,7 +179,7 @@ impl Stringifier {
                     value.to_string()
                     // */
                 }
-                NewLineType::Windows => {
+                NewLineType::CarriageReturnLineFeed => {
                     // For windows.
                     //*
                     Some(format!("{}{}", value.trim_end(), NEW_LINE_SEQUENCE).to_string())
