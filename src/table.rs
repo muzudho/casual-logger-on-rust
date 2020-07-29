@@ -1,6 +1,6 @@
 use crate::stringifier::Stringifier;
 use crate::toml::auto_correct::AutoCorrect;
-use crate::{ArrayOfTable, Level, Table, NEW_LINE};
+use crate::{ArrayOfTable, Level, Log, Opt, Table, NEW_LINE};
 
 /// Kind of table.  
 /// テーブルの種類。  
@@ -320,14 +320,19 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn int<'a>(&'a mut self, key: &'a str, value: i128) -> &'a mut Self {
+        let mut old = None;
         self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
+            old = sorted_map.insert(
                 // Log detail level.
                 AutoCorrect::correct_key(key),
                 // Message.
                 value.to_string(),
             );
         });
+
+        if let Some(old) = old {
+            Table::print_already_use(key, &old, &value.to_string());
+        }
 
         self
     }
@@ -512,5 +517,20 @@ impl Table {
         });
 
         self
+    }
+    /// Key duplicate message.
+    /// キーの重複メッセージ。
+    fn print_already_use(key: &str, old: &str, value: &str) {
+        if let Ok(opt) = Log::get_opt() {
+            match opt {
+                Opt::BeginnersSupport | Opt::Development => {
+                    println!(
+                        "casual_logger   | |{}| is already use. |{}| is is overwritten by |{}|.",
+                        key, old, value
+                    );
+                }
+                _ => {} // Ignored it.
+            }
+        }
     }
 }
