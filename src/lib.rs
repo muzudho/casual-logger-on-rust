@@ -35,7 +35,7 @@ mod log_file;
 mod logger;
 mod stringifier;
 mod table;
-pub mod toml; // WIP.
+mod toml;
 
 use crate::logger::Logger;
 use crate::logger::LOGGER;
