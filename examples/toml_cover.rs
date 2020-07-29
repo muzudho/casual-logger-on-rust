@@ -38,6 +38,8 @@ fn main() {
             .usize("Usize", 2),
     );
 
+    // Primitive type conversion example.
+    // プリミティブ型変換の例。
     let i8_ = 1_i8;
     let i16_ = 1_i16;
     let i32_ = 1_i32;
@@ -50,9 +52,8 @@ fn main() {
     let u64_ = 1_u64;
     let u128_ = 1_u128;
     let usize_ = 1_usize;
-    // String.
     Log::infoln_t(
-        "Primitive type convert test.",
+        "Primitive type conversion example.",
         Table::default()
             .int("i8", i8_.into())
             .int("i16", i16_.into())

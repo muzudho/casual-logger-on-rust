@@ -704,16 +704,16 @@ fn main() {
     // Example of Log file name:
     // ログ・ファイル名の例:
     //
-    // +  
-    // | tic-tac-toe-2020-07-11.log.toml  
-    // | 1----------           3--------  
-    // |            2----------  
-    // |  
-    // | 1 Prefix              3 Extention  
-    // |   接頭辞                拡張子  
-    // |            2 StartDate  
-    // |              開始日  
-    // +  
+    // +
+    // | tic-tac-toe-2020-07-11.log.toml
+    // | 1----------           3--------
+    // |            2----------
+    // |
+    // | 1 Prefix              3 Extention
+    // |   接頭辞                拡張子
+    // |            2 StartDate
+    // |              開始日
+    // +
     //
     // - StartDate is automatically added.
     //   開始日は自動で付きます。
@@ -960,150 +960,181 @@ Replace the washing machine after a few years.
             ),
     );
 
+    // Primitive type conversion example.
+    // プリミティブ型変換の例。
+    let i8_ = 1_i8;
+    let i16_ = 1_i16;
+    let i32_ = 1_i32;
+    let i64_ = 1_i64;
+    let i128_ = 1_i128;
+    let isize_ = 1_isize;
+    let u8_ = 1_u8;
+    let u16_ = 1_u16;
+    let u32_ = 1_u32;
+    let u64_ = 1_u64;
+    let u128_ = 1_u128;
+    let usize_ = 1_usize;
+    Log::infoln_t(
+        "Primitive type conversion example.",
+        Table::default()
+            .int("i8", i8_.into())
+            .int("i16", i16_.into())
+            .int("i32", i32_.into())
+            .int("i64", i64_.into())
+            .int("i128", i128_)
+            .isize("isize", isize_)
+            .uint("u8", u8_.into())
+            .uint("u16", u16_.into())
+            .uint("u32", u32_.into())
+            .uint("u64", u64_.into())
+            .uint("u128", u128_)
+            .usize("usize", usize_),
+    );
+
     // Wait for logging to complete or to timeout.
     Log::flush();
 }
 ```
 
-Output `./tic-tac-toe-2020-07-23.log.toml` automatically generated:  
+Output `./tic-tac-toe-2020-07-30.log.toml` automatically generated:  
 
 ```toml
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=1"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=1"]
 Info = '''
 Hello, world!!
 こんにちわ、世界！！
 '''
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=2"]
-Info = "x is 100.\r\n"
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=2"]
+Info = "x is 100.\\r\\n"
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=3"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=3"]
 Trace = '( 1)TRACE'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=4"]
-Trace = "( 2)trace-line\r\n"
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=4"]
+Trace = "( 2)trace-line\\r\\n"
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=5"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=5"]
 Debug = '( 3)DEBUG'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=6"]
-Debug = "( 4)debug-line\r\n"
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=6"]
+Debug = "( 4)debug-line\\r\\n"
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=7"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=7"]
 Info = '( 5)INFO'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=8"]
-Info = "( 6)info-line\r\n"
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=8"]
+Info = "( 6)info-line\\r\\n"
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=9"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=9"]
 Notice = '( 7)NOTICE'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=10"]
-Notice = "( 8)notice-line\r\n"
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=10"]
+Notice = "( 8)notice-line\\r\\n"
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=11"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=11"]
 Warn = '( 9)WARN'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=12"]
-Warn = "(10)warn-line\r\n"
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=12"]
+Warn = "(10)warn-line\\r\\n"
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=13"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=13"]
 Error = '(11)ERROR'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=14"]
-Error = "(12)error-line\r\n"
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=14"]
+Error = "(12)error-line\\r\\n"
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=15"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=15"]
 Fatal = '(13)FATAL'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=16"]
-Fatal = "(14)fatal-line\r\n"
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=16"]
+Fatal = "(14)fatal-line\\r\\n"
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=17"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=17"]
 Trace = '(7)Trace on (7)Trace.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=18"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=18"]
 Debug = '(6)Debug on (7)Trace.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=19"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=19"]
 Info = '(5)Info on (7)Trace.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=20"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=20"]
 Notice = '(4)Notice on (7)Trace.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=21"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=21"]
 Warn = '(3)Warn on (7)Trace.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=22"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=22"]
 Error = '(2)Error on (7)Trace.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=23"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=23"]
 Fatal = '(1)Fatal on (7)Trace.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=24"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=24"]
 Debug = '(6)Debug on (6)debug.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=25"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=25"]
 Info = '(5)Info on (6)debug.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=26"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=26"]
 Notice = '(4)Notice on (6)debug.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=27"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=27"]
 Warn = '(3)Warn on (6)debug.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=28"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=28"]
 Error = '(2)Error on (6)debug.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=29"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=29"]
 Fatal = '(1)Fatal on (6)debug.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=30"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=30"]
 Info = '(5)Info on (5)Info.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=31"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=31"]
 Notice = '(4)Notice on (5)Info.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=32"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=32"]
 Warn = '(3)Warn on (5)Info.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=33"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=33"]
 Error = '(2)Error on (5)Info.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=34"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=34"]
 Fatal = '(1)Fatal on (5)Info.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=35"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=35"]
 Notice = '(4)Notice on (4)Notice.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=36"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=36"]
 Warn = '(3)Warn on (4)Notice.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=37"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=37"]
 Error = '(2)Error on (4)Notice.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=38"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=38"]
 Fatal = '(1)Fatal on (4)Notice.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=39"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=39"]
 Warn = '(3)Warn on (3)Warn.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=40"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=40"]
 Error = '(2)Error on (3)Warn.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=41"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=41"]
 Fatal = '(1)Fatal on (3)Warn.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=42"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=42"]
 Error = '(2)Error on (2)Error.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=43"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=43"]
 Fatal = '(1)Fatal on (2)Error.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=44"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=44"]
 Fatal = '(1)Fatal on (1)Fatal.'
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=45"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=45"]
 Info = 'ShoppingToday'
 Condition = 'A'
 FluorescentLight = -7000
@@ -1120,21 +1151,36 @@ ShelveDepth = 46.5
 VacuumCleaner = -53000
 VacuumCleanerPricesAtOtherStores = [ -63_000, -4_000, -10_000 ]
 
-["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=46"]
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=46"]
 Info = "I'm in trouble."
-  [["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=46".IHaveToCleanMyRoom]]
+  [["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=46".IHaveToCleanMyRoom]]
   Clean = false
   Name = 'Kitchen'
-  [["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=46".IHaveToCleanMyRoom]]
+  [["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=46".IHaveToCleanMyRoom]]
   Name = 'Bath'
   Wash = false
-  [["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=46".IHaveToCleanMyRoom]]
+  [["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=46".IHaveToCleanMyRoom]]
   Brush = false
   Name = 'Toilet'
-  ["Now=2020-07-23T19:57:30+0900&Pid=3664&Thr=ThreadId(1)&Seq=46".RestFood]
+  ["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=46".RestFood]
   BottoleOfTea = 1
   FrozenRamen = 2
   Kimchi = 1
+
+["Now=2020-07-30T01:49:36+0900&Pid=22136&Thr=ThreadId(1)&Seq=47"]
+Info = "Primitive type conversion example.\\r\\n"
+i128 = 1
+i16 = 1
+i32 = 1
+i64 = 1
+i8 = 1
+isize = 1
+u128 = 1
+u16 = 1
+u32 = 1
+u64 = 1
+u8 = 1
+usize = 1
 
 
 ```

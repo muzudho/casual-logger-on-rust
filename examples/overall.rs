@@ -263,6 +263,37 @@ Replace the washing machine after a few years.
             ),
     );
 
+    // Primitive type conversion example.
+    // プリミティブ型変換の例。
+    let i8_ = 1_i8;
+    let i16_ = 1_i16;
+    let i32_ = 1_i32;
+    let i64_ = 1_i64;
+    let i128_ = 1_i128;
+    let isize_ = 1_isize;
+    let u8_ = 1_u8;
+    let u16_ = 1_u16;
+    let u32_ = 1_u32;
+    let u64_ = 1_u64;
+    let u128_ = 1_u128;
+    let usize_ = 1_usize;
+    Log::infoln_t(
+        "Primitive type conversion example.",
+        Table::default()
+            .int("i8", i8_.into())
+            .int("i16", i16_.into())
+            .int("i32", i32_.into())
+            .int("i64", i64_.into())
+            .int("i128", i128_)
+            .isize("isize", isize_)
+            .uint("u8", u8_.into())
+            .uint("u16", u16_.into())
+            .uint("u32", u32_.into())
+            .uint("u64", u64_.into())
+            .uint("u128", u128_)
+            .usize("usize", usize_),
+    );
+
     // Wait for logging to complete or to timeout.
     Log::flush();
 }
