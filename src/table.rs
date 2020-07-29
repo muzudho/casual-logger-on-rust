@@ -331,6 +331,32 @@ impl Table {
 
         self
     }
+    /// Insert pointer size integer value.  
+    /// 符号付きポインター・サイズ整数を挿入します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    /// * `value` - A value.  
+    ///             値。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
+    pub fn isize<'a>(&'a mut self, key: &'a str, value: isize) -> &'a mut Self {
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                // Log detail level.
+                AutoCorrect::correct_key(key),
+                // Message.
+                value.to_string(),
+            );
+        });
+
+        self
+    }
     /// Insert literal string value. Do not put in quotes.  
     /// リテラル文字列を挿入します。引用符で挟みません。  
     ///
@@ -450,6 +476,32 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn uint<'a>(&'a mut self, key: &'a str, value: u128) -> &'a mut Self {
+        self.get_sorted_map(|sorted_map| {
+            sorted_map.insert(
+                // Log detail level.
+                AutoCorrect::correct_key(key),
+                // Message.
+                value.to_string(),
+            );
+        });
+
+        self
+    }
+    /// Insert unsigned pointer size integer value.  
+    /// 符号無しポインター・サイズ整数を挿入します。  
+    ///
+    /// # Arguments
+    ///
+    /// * `key` - A key.  
+    ///             キー。  
+    /// * `value` - A value.  
+    ///             値。  
+    ///
+    /// # Returns
+    ///
+    /// Table.  
+    /// テーブル。  
+    pub fn usize<'a>(&'a mut self, key: &'a str, value: usize) -> &'a mut Self {
         self.get_sorted_map(|sorted_map| {
             sorted_map.insert(
                 // Log detail level.
