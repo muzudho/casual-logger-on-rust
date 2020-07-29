@@ -486,9 +486,25 @@ casual_logger   | Remove 0 log file(s).
 
 ## Example 8
 
-What if someone else used 'casual_logger' in another library?  
-もし他のライブラリで誰かが 'casual_logger' を使っていたなら、  
+Q. What if someone else used 'casual_logger' in another library?  
+Q. もし他のライブラリで誰かが 'casual_logger' を使っていたなら、  
 どうなるでしょうか？  
+
+A. I think the logs will be crossed.  
+A. ログは混線すると思います。  
+
+Q. How can I avoid cross logging?  
+Q. ログの混線を避けるにはどうすればよいですか？  
+
+A. When embedding 'casual_logger' in a library, why not comment out  
+something less serious than the Error level?  
+Or it is a good option to replace it with another logger.  
+A. 'casual_logger' をライブラリに埋め込むときは、Errorレベルより  
+深刻でないものをコメントアウトするのはどうでしょうか？  
+または、別のロガーに置き換えることをお勧めします。  
+
+'casual_logger' does not maintain idempotency of functions, but it is first come first served:  
+'casual_logger' では関数の冪等性を保つのではなく、早い者勝ちの方針です:  
 
 Your code:  
 
