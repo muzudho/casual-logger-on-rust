@@ -243,13 +243,18 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn bool<'a>(&'a mut self, key: &'a str, value: bool) -> &'a mut Self {
+        let mut old = None;
         self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
+            old = sorted_map.insert(
                 AutoCorrect::correct_key(key),
                 // Message.
                 value.to_string(),
             );
         });
+
+        if let Some(old) = old {
+            Table::print_already_use(key, &old, &value.to_string());
+        }
 
         self
     }
@@ -268,14 +273,19 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn char<'a>(&'a mut self, key: &'a str, value: char) -> &'a mut Self {
+        let mut old = None;
         self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
+            old = sorted_map.insert(
                 // Log detail level.
                 AutoCorrect::correct_key(key),
                 // Message.
                 Stringifier::format_str_value(&value.to_string()).to_string(),
             );
         });
+
+        if let Some(old) = old {
+            Table::print_already_use(key, &old, &value.to_string());
+        }
 
         self
     }
@@ -294,14 +304,19 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn float<'a>(&'a mut self, key: &'a str, value: f64) -> &'a mut Self {
+        let mut old = None;
         self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
+            old = sorted_map.insert(
                 // Log detail level.
                 AutoCorrect::correct_key(key),
                 // Message.
                 value.to_string(),
             );
         });
+
+        if let Some(old) = old {
+            Table::print_already_use(key, &old, &value.to_string());
+        }
 
         self
     }
@@ -351,14 +366,19 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn isize<'a>(&'a mut self, key: &'a str, value: isize) -> &'a mut Self {
+        let mut old = None;
         self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
+            old = sorted_map.insert(
                 // Log detail level.
                 AutoCorrect::correct_key(key),
                 // Message.
                 value.to_string(),
             );
         });
+
+        if let Some(old) = old {
+            Table::print_already_use(key, &old, &value.to_string());
+        }
 
         self
     }
@@ -377,14 +397,19 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn literal<'a>(&'a mut self, key: &'a str, value: &str) -> &'a mut Self {
+        let mut old = None;
         self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
+            old = sorted_map.insert(
                 // Log detail level.
                 AutoCorrect::correct_key(key),
                 // Message.
                 value.to_string(),
             );
         });
+
+        if let Some(old) = old {
+            Table::print_already_use(key, &old, &value.to_string());
+        }
 
         self
     }
@@ -403,14 +428,19 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn str<'a>(&'a mut self, key: &'a str, value: &str) -> &'a mut Self {
+        let mut old = None;
         self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
+            old = sorted_map.insert(
                 // Log detail level.
                 AutoCorrect::correct_key(key),
                 // Message.
                 Stringifier::format_str_value(value).to_string(),
             );
         });
+
+        if let Some(old) = old {
+            Table::print_already_use(key, &old, &value.to_string());
+        }
 
         self
     }
@@ -429,14 +459,23 @@ impl Table {
     /// Main table.  
     /// メインの方のテーブル。  
     pub fn sub_t<'a>(&'a mut self, base_name: &str, sub_table: &Table) -> &'a mut Self {
+        let mut old = None;
         self.get_sub_tables(|sub_i_tables| {
-            sub_i_tables.insert(
+            old = sub_i_tables.insert(
                 // Base name.
                 AutoCorrect::correct_key(base_name),
                 // Message.
                 InternalTable::from_sub_table(&AutoCorrect::correct_key(base_name), &sub_table),
             );
         });
+
+        if let Some(_) = old {
+            Table::print_already_use(
+                &AutoCorrect::correct_key(base_name),
+                &"...Omitted...",
+                &"...Omitted...",
+            );
+        }
 
         self
     }
@@ -455,14 +494,23 @@ impl Table {
     /// Main table.  
     /// メインの方のテーブル。  
     pub fn sub_aot<'a>(&'a mut self, base_name: &str, aot: &ArrayOfTable) -> &'a mut Self {
+        let mut old = None;
         self.get_sub_tables(|sub_i_tables| {
-            sub_i_tables.insert(
+            old = sub_i_tables.insert(
                 // Base name.
                 AutoCorrect::correct_key(base_name),
                 // Message.
                 InternalTable::from_aot(&AutoCorrect::correct_key(base_name), &aot),
             );
         });
+
+        if let Some(_) = old {
+            Table::print_already_use(
+                &AutoCorrect::correct_key(base_name),
+                &"...Omitted...",
+                &"...Omitted...",
+            );
+        }
 
         self
     }
@@ -481,14 +529,19 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn uint<'a>(&'a mut self, key: &'a str, value: u128) -> &'a mut Self {
+        let mut old = None;
         self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
+            old = sorted_map.insert(
                 // Log detail level.
                 AutoCorrect::correct_key(key),
                 // Message.
                 value.to_string(),
             );
         });
+
+        if let Some(old) = old {
+            Table::print_already_use(key, &old, &value.to_string());
+        }
 
         self
     }
@@ -507,14 +560,19 @@ impl Table {
     /// Table.  
     /// テーブル。  
     pub fn usize<'a>(&'a mut self, key: &'a str, value: usize) -> &'a mut Self {
+        let mut old = None;
         self.get_sorted_map(|sorted_map| {
-            sorted_map.insert(
+            old = sorted_map.insert(
                 // Log detail level.
                 AutoCorrect::correct_key(key),
                 // Message.
                 value.to_string(),
             );
         });
+
+        if let Some(old) = old {
+            Table::print_already_use(key, &old, &value.to_string());
+        }
 
         self
     }

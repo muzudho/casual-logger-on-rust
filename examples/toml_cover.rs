@@ -13,7 +13,29 @@ fn main() {
     // Same key test.
     Log::infoln_t(
         "Same key test.",
-        Table::default().int("SameName", 1).int("SameName", 2),
+        Table::default()
+            .bool("Bool", false)
+            .bool("Bool", true)
+            .char("Char", 'a')
+            .char("Char", 'b')
+            .float("Float", 1.0)
+            .float("Float", 2.0)
+            .int("Int", 1)
+            .int("Int", 2)
+            .isize("Isize", 1)
+            .isize("Isize", 2)
+            .literal("Literal", "1")
+            .literal("Literal", "2")
+            .str("Str", "1")
+            .str("Str", "2")
+            .sub_t("Sub_t", &Table::default())
+            .sub_t("Sub_t", &Table::default())
+            .sub_aot("Sub_aot", &ArrayOfTable::default())
+            .sub_aot("Sub_aot", &ArrayOfTable::default())
+            .uint("Uint", 1)
+            .uint("Uint", 2)
+            .usize("Usize", 1)
+            .usize("Usize", 2),
     );
 
     let i8_ = 1_i8;
